@@ -7,6 +7,7 @@ public class PlayerController : MonoBehaviour
 
     Rigidbody rb;
     public float jumpForce;
+    public float speed;
     bool canJump;
 
     // Called before start
@@ -18,7 +19,7 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //rodney is sick
+        
     }
 
     // Update is called once per frame
@@ -28,7 +29,23 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space) && canJump)
         {
-            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            rb.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange);
+        }
+        if (Input.GetKey(KeyCode.W))
+        {
+            rb.AddForce(Vector3.forward * speed, ForceMode.VelocityChange);
+        }
+        if (Input.GetKey(KeyCode.S))
+        {
+            rb.AddForce(Vector3.back * speed, ForceMode.VelocityChange);
+        }
+        if (Input.GetKey(KeyCode.A))
+        {
+            rb.AddForce(Vector3.left * speed, ForceMode.VelocityChange);
+        }
+        if (Input.GetKey(KeyCode.D))
+        {
+            rb.AddForce(Vector3.right * speed, ForceMode.VelocityChange);
         }
 
 
