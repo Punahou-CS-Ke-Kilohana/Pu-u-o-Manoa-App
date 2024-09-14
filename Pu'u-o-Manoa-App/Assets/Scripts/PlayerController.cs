@@ -7,7 +7,8 @@ public class PlayerController : MonoBehaviour
 
     Rigidbody rb;
     public float jumpForce = 3.5f;
-    public float speed = 0.1f;
+    public float speedMultiplier = 0.1f;
+    public float maxSpeed = 2.5f;
     bool canJump;
     public Transform cameraTransform;
 
@@ -34,8 +35,7 @@ public class PlayerController : MonoBehaviour
         cameraRight.Normalize();
 
         CheckPressedKeys(cameraForward, cameraRight);
-
-        
+        LimitSpeed();
 
     }
 
@@ -70,19 +70,31 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKey(KeyCode.W))
         {
-            this.Move(moveDirection += cameraForward * speed);
+            this.Move(moveDirection += cameraForward * speedMultiplier);
         }
         if (Input.GetKey(KeyCode.S))
         {
-            this.Move(moveDirection -= cameraForward * speed);
+            this.Move(moveDirection -= cameraForward * speedMultiplier);
         }
         if (Input.GetKey(KeyCode.A))
         {
-            this.Move(moveDirection -= cameraRight * speed);
+            this.Move(moveDirection -= cameraRight * speedMultiplier);
         }
         if (Input.GetKey(KeyCode.D))
         {
-            this.Move(moveDirection += cameraRight * speed);
+            this.Move(moveDirection += cameraRight * speedMultiplier);
+        }
+    }
+
+    private void LimitSpeed()
+    {
+        Vector3 velocity = rb.velocity;
+        Vector3 horizontalVelocity = new Vector3(velocity.x, 0f, velocity.z);
+
+        if (horizontalVelocity.magnitude > maxSpeed)
+        {
+            horizontalVelocity = horizontalVelocity.normalized * maxSpeed;
+            rb.velocity = new Vector3(horizontalVelocity.x, velocity.y, horizontalVelocity.z);
         }
     }
 
