@@ -52,3 +52,11 @@ Update Mode: updateDependencies
 
 The following packages were updated:
   com.unity.visualscripting from version 1.9.2 to 1.9.4
+
+=== Tue Sep 17 16:39:06 2024
+
+Packages were changed.
+Update Mode: updateDependencies
+
+The following packages were updated:
+  com.unity.ide.rider from version 3.0.28 to 3.0.31
