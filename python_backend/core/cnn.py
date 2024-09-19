@@ -7,7 +7,6 @@ import torch.nn as nn
 
 from .utils import ParamChecker
 
-
 class TorchCNN(torch.nn.Module):
     def __init__(self, *, status_bars: bool = False, ikwiad: bool = False):
         super(TorchCNN, self).__init__()
