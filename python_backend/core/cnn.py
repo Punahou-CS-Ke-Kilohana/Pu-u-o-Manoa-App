@@ -6,7 +6,6 @@ import torch.optim as optim
 import torch.nn as nn
 
 from .utils import ParamChecker
-#test commit
 
 class TorchCNN(torch.nn.Module):
     def __init__(self, *, status_bars: bool = False, ikwiad: bool = False):
