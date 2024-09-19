@@ -7,6 +7,7 @@ import torch.nn as nn
 
 from .utils import ParamChecker
 
+
 class TorchCNN(torch.nn.Module):
     def __init__(self, *, status_bars: bool = False, ikwiad: bool = False):
         super(TorchCNN, self).__init__()
@@ -17,10 +18,19 @@ class TorchCNN(torch.nn.Module):
 
         # network allowed settings
         self.allowed_acts = [
-            ''
+            'relu',
+            'softplus',
+            'softmax',
+            'tanh',
+            'sigmoid',
+            'mish'
         ]
         self.allowed_optims = [
-            ''
+            'Adam',
+            'AdamW',
+            'Adagrad',
+            'RMSprop',
+            'SGD'
         ]
 
         # network features
@@ -142,8 +152,13 @@ class TorchCNN(torch.nn.Module):
             self._dense.append(torch.nn.Linear(**prms))
 
     def set_acts(self, *, methods=None, parameters=None):
-
         self._acts = []
+        if len(methods) != len(parameters):
+            raise RuntimeError("Not matching params and methods")
+        if not all([mth in self.allowed_acts for mth in methods]):
+            raise ValueError("Not a valid activator")
+        for act_pair in zip(methods, parameters):
+            ...
 
     def set_pool(self, *, parameters=None):
         # check if parameters are formatted correctly
