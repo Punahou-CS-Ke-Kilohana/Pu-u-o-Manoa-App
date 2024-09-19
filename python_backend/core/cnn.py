@@ -130,7 +130,7 @@ class TorchCNN(torch.nn.Module):
         for prms in dense_params:
             self._dense.append(torch.nn.Linear(**prms))
 
-    def set_acts(self, *, parameters=None):
+    def set_acts(self, *, methods=None, parameters=None):
         # todo
         self._acts = []
 
