@@ -1,7 +1,9 @@
 import types
 
 import torch
-import torch.nn
+import torch.functional as f
+import torch.optim as optim
+import torch.nn as nn
 
 from .utils import ParamChecker
 
@@ -14,6 +16,14 @@ class TorchCNN(torch.nn.Module):
         self._ikwiad = ikwiad
         self._status = status_bars
 
+        # network allowed settings
+        self.allowed_acts = [
+            ''
+        ]
+        self.allowed_optims = [
+            ''
+        ]
+
         # network features
         self._conv_sizes = None
         self._dense_sizes = None
@@ -22,6 +32,8 @@ class TorchCNN(torch.nn.Module):
 
         # technical network elements
         self._acts = None
+        self._optim = None
+        self._loss = None
         self._conv = None
         self._pool = None
         self._dense = None
@@ -131,7 +143,7 @@ class TorchCNN(torch.nn.Module):
             self._dense.append(torch.nn.Linear(**prms))
 
     def set_acts(self, *, methods=None, parameters=None):
-        # todo
+
         self._acts = []
 
     def set_pool(self, *, parameters=None):
@@ -189,19 +201,40 @@ class TorchCNN(torch.nn.Module):
     def configure_network(self, loader):
         ...
 
-    def set_hyperparameters(self, *, loss, optimizer):
+    def set_hyperparameters(self):
         ...
 
     def forward(self, x):
-        # todo
-        for cnv in range(len(self.t_conv)):
-            self.acts[cnv](self.t_dense[cnv](x))
-        for dns in range(len(self.t_dense)):
-            self.acts[len(self.conv) + dns](self.t_dense[dns](x))
+        for cnv in range(len(self._conv)):
+            x = self.acts[cnv](self._dense[cnv](x))
+        for dns in range(len(self._conv), len(self._dense)):
+            x = self.acts[dns](self._dense[dns](x))
         return x
 
     def fit(self, loader, *, parameters, **kwargs):
-        # todo
-        for epoch in range(...):
-            for batch in loader:
-                self.forward(batch)
+        hyperparam_checker = ParamChecker(name='hyperparams', ikwiad=self._ikwiad)
+        hyperparam_checker.set_types(
+            default={
+                'epochs': 5
+            },
+            dtypes={
+                'epochs': int
+            },
+            vtypes={
+                'epochs': lambda x: 0 < x
+            },
+            ctypes={
+                'epochs': lambda x: x
+            }
+        )
+        params = hyperparam_checker.check_params(parameters, **kwargs)
+        for epoch in range(params['epochs']):
+            running_loss = 0.0
+            for batch, (image, labels) in enumerate(loader, 0):
+                self._optim.zero_grad()
+                outputs = self.forward(batch)
+                loss = self._loss(outputs, labels)
+                loss.backward()
+                self._optim.step()
+                running_loss += loss.item()
+                # todo: status bar
