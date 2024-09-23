@@ -15,6 +15,6 @@ def get_image_paths(folder_path, output_file):
 
 # Replace with your actual folder path and desired output file path
 folder_path = 'python_backend/core/Pictures'  # Change to your folder's path
-output_file = 'python_backend/core/Pictures/picturePaths.txt'  # Output text file
+output_file = 'python_backend/core/Pictures/images.txt'  # Output text file
 
 get_image_paths(folder_path, output_file)
