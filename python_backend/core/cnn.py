@@ -18,12 +18,12 @@ class TorchCNN(torch.nn.Module):
 
         # network allowed settings
         self.allowed_acts = [
-            'relu',
-            'softplus',
-            'softmax',
-            'tanh',
-            'sigmoid',
-            'mish'
+            'ReLU',
+            'Softplus',
+            'Softmax',
+            'Tanh',
+            'Sigmoid',
+            'Mish'
         ]
         self.allowed_optims = [
             'Adam',
@@ -157,8 +157,84 @@ class TorchCNN(torch.nn.Module):
             raise RuntimeError("Not matching params and methods")
         if not all([mth in self.allowed_acts for mth in methods]):
             raise ValueError("Not a valid activator")
+
+        act_params = {
+            'ReLU': {
+                'default': {
+                    'inplace': False
+                },
+                'dtypes': {
+                    'inplace': (bool, int)
+                },
+                'vtypes': {
+                    'inplace': lambda x: True
+                },
+                'ctypes': {
+                    'inplace': lambda x: bool(x)
+                }
+            },
+            'Softplus': {
+                'default': {
+                    'beta': 1.0,
+                    'threshold': 20.0
+                },
+                'dtypes': {
+                    'beta': (float, int),
+                    'threshold': (float, int)
+                },
+                'vtypes': {
+                    'beta': lambda x: 0 < x,
+                    'threshold': lambda x: 0 < x
+                },
+                'ctypes': {
+                    'beta': lambda x: float(x),
+                    'threshold': lambda x: float(x)
+                }
+            },
+            'Softmax': {
+                'default': {
+                    'dim': None
+                },
+                'dtypes': {
+                    'dim': (types.NoneType, int)
+                },
+                'vtypes': {
+                    'dim': lambda x: True
+                },
+                'ctypes': {
+                    'dim': lambda x: x
+                }
+            },
+            'Tanh': {
+                'default': None,
+                'dtypes': None,
+                'vtypes': None,
+                'ctypes': None
+            },
+            'Sigmoid': {
+                'default': None,
+                'dtypes': None,
+                'vtypes': None,
+                'ctypes': None
+            },
+            'Mish': {
+                'default': {
+                    'inplace': False
+                },
+                'dtypes': {
+                    'inplace': (bool, int)
+                },
+                'vtypes': {
+                    'inplace': lambda x: True
+                },
+                'ctypes': {
+                    'inplace': lambda x: bool(x)
+                }
+            }
+        }
+
         for act_pair in zip(methods, parameters):
-            ...
+            self._acts.append(act_pair[0])
 
     def set_pool(self, *, parameters=None):
         # check if parameters are formatted correctly
@@ -211,6 +287,40 @@ class TorchCNN(torch.nn.Module):
         self._pool = []
         for prms in pool_params:
             self._pool.append(torch.nn.MaxPool2d(**prms))
+
+    def set_optim(self, method: str = 'Adam', params: dict = None, **kwargs):
+        optim_params = {
+            'Adam': {
+                'default': {
+                    'lr': 0.001,
+                    'betas': (0.9, 0.999),
+                    'eps': 1e-08,
+                    'weight_decay': 0.0,
+                    'amsgrad': False,
+                },
+                'dtypes': {
+                    'inplace': (bool, int)
+                },
+                'vtypes': {
+                    'inplace': lambda x: True
+                },
+                'ctypes': {
+                    'inplace': lambda x: bool(x)
+                }
+            },
+            'AdamW': {
+
+            },
+            'Adagrad': {
+
+            },
+            'RMSprop': {
+
+            },
+            'SGD':{
+
+            }
+        }
 
     def configure_network(self, loader):
         ...
