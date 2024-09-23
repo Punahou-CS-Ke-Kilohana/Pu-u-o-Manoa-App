@@ -68,7 +68,7 @@ class ParamChecker:
         self._vtypes = None
         self._ctypes = None
 
-    def set_types(self, default: dict, dtypes: dict, vtypes: dict, ctypes: dict) -> None:
+    def set_types(self, default: dict = None, dtypes: dict = None, vtypes: dict = None, ctypes: dict = None) -> None:
         r"""
         **Default class settings.**
 
@@ -102,11 +102,8 @@ class ParamChecker:
         """
         if not isinstance(default, (dict, types.NoneType)):
             # set default
-            if default is None:
-                # none type
-                self._default = default
-            elif all(not callable(value) for value in default.values()):
-                # non-callable type
+            if default is None or all(not callable(value) for value in default.values()):
+                # set types
                 self._default = default
             else:
                 # invalid type
@@ -114,11 +111,8 @@ class ParamChecker:
 
         if not isinstance(dtypes, (dict, types.NoneType)):
             # set datatypes
-            if dtypes is None:
-                # none type
-                self._dtypes = dtypes
-            elif all(not callable(value) for value in default.values()):
-                # non-callable type
+            if dtypes is None or all(not callable(value) for value in default.values()):
+                # set types
                 self._dtypes = dtypes
             else:
                 # invalid type
@@ -126,11 +120,8 @@ class ParamChecker:
 
         if not isinstance(vtypes, (dict, types.NoneType)):
             # set value types
-            if vtypes is None:
-                # none type
-                self._vtypes = vtypes
-            elif all(isinstance(value, types.LambdaType) for value in vtypes.values()):
-                # lambda type
+            if vtypes is None or all(isinstance(value, types.LambdaType) for value in vtypes.values()):
+                # set types
                 self._vtypes = vtypes
             else:
                 # invalid type
@@ -138,11 +129,8 @@ class ParamChecker:
 
         if not isinstance(ctypes, (dict, types.NoneType)):
             # set conversion types
-            if ctypes is None:
-                # none type
-                self._ctypes = ctypes
-            elif all(isinstance(value, types.LambdaType) for value in ctypes.values()):
-                # lambda type
+            if ctypes is None or all(isinstance(value, types.LambdaType) for value in ctypes.values()):
+                # set types
                 self._ctypes = ctypes
             else:
                 # invalid type
