@@ -1,4 +1,4 @@
-Unity Editor version:    2022.3.27f1 (73effa14754f)
+Unity Editor version:    2022.3.46f1 (8e9b8558c41a)
 Branch:                  2022.3/staging
 Build type:              Release
 Batch mode:              YES
@@ -11,7 +11,7 @@ Using pre-set license
 Pro License: YES
 
 COMMAND LINE ARGUMENTS:
-/Applications/Unity/Unity.app/Contents/MacOS/Unity
+/Applications/Unity/Hub/Editor/2022.3.46f1/Unity.app/Contents/MacOS/Unity
 -adb2
 -batchMode
 -noUpm
@@ -22,7 +22,7 @@ AssetImportWorker1
 -logFile
 Logs/AssetImportWorker1.log
 -srvPort
-60893
+55824
 Successfully changed project path to: /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App
 /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App
 [UnityMemory] Configuration Parameters - Can be set up in boot.config
@@ -56,15 +56,17 @@ Successfully changed project path to: /Users/iverbrugge25/Documents/GitHub/Pu-u-
     "memorysetup-temp-allocator-size-cloud-worker=32768"
     "memorysetup-temp-allocator-size-gi-baking-worker=262144"
     "memorysetup-temp-allocator-size-gfx=262144"
-Player connection [4414719360] Host "[IP] 10.3.200.119 [Port] 0 [Flags] 2 [Guid] 4246883767 [EditorId] 4246883767 [Version] 1048832 [Id] OSXEditor(0,iverbrugge25) [Debug] 1 [PackageName] OSXEditor [ProjectName] Editor" joined multi-casting on [225.0.0.222:54997]...
+Player connection [4481205632]  Target information:
 
-Player connection [4414719360] Host "[IP] 10.3.200.119 [Port] 0 [Flags] 2 [Guid] 4246883767 [EditorId] 4246883767 [Version] 1048832 [Id] OSXEditor(0,iverbrugge25) [Debug] 1 [PackageName] OSXEditor [ProjectName] Editor" joined alternative multi-casting on [225.0.0.222:34997]...
+Player connection [4481205632]  * "[IP] 10.3.200.119 [Port] 0 [Flags] 2 [Guid] 438634958 [EditorId] 438634958 [Version] 1048832 [Id] OSXEditor(0,iverbrugge25) [Debug] 1 [PackageName] OSXEditor [ProjectName] Editor" 
 
-[Physics::Module] Initialized MultithreadedJobDispatcher with 7 workers.
-Refreshing native plugins compatible for Editor in 34.99 ms, found 2 plugins.
+Player connection [4481205632] Host joined multi-casting on [225.0.0.222:54997]...
+Player connection [4481205632] Host joined alternative multi-casting on [225.0.0.222:34997]...
+[PhysX] Initialized MultithreadedTaskDispatcher with 8 workers.
+Refreshing native plugins compatible for Editor in 64.05 ms, found 2 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
-Initialize engine version: 2022.3.27f1 (73effa14754f)
-[Subsystems] Discovering subsystems at path /Applications/Unity/Unity.app/Contents/Resources/UnitySubsystems
+Initialize engine version: 2022.3.46f1 (8e9b8558c41a)
+[Subsystems] Discovering subsystems at path /Applications/Unity/Hub/Editor/2022.3.46f1/Unity.app/Contents/Resources/UnitySubsystems
 [Subsystems] Discovering subsystems at path /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Assets
 GfxDevice: creating device client; threaded=0; jobified=0
  preferred device: Apple M1 (high power)
@@ -73,56 +75,134 @@ Metal devices available: 1
 Using device Apple M1 (high power)
 Initializing Metal device caps: Apple M1
 Initialize mono
-Mono path[0] = '/Applications/Unity/Unity.app/Contents/Managed'
-Mono path[1] = '/Applications/Unity/Unity.app/Contents/MonoBleedingEdge/lib/mono/unityjit-macos'
-Mono config path = '/Applications/Unity/Unity.app/Contents/MonoBleedingEdge/etc'
-Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56848
+Mono path[0] = '/Applications/Unity/Hub/Editor/2022.3.46f1/Unity.app/Contents/Managed'
+Mono path[1] = '/Applications/Unity/Hub/Editor/2022.3.46f1/Unity.app/Contents/MonoBleedingEdge/lib/mono/unityjit-macos'
+Mono config path = '/Applications/Unity/Hub/Editor/2022.3.46f1/Unity.app/Contents/MonoBleedingEdge/etc'
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56619
 Begin MonoManager ReloadAssembly
 Registering precompiled unity dll's ...
-Register platform support module: /Applications/Unity/Unity.app/Contents/PlaybackEngines/MacStandaloneSupport/UnityEditor.OSXStandalone.Extensions.dll
-Registered in 0.002880 seconds.
-- Loaded All Assemblies, in  0.443 seconds
+Register platform support module: /Applications/Unity/Hub/Editor/2022.3.46f1/Unity.app/Contents/PlaybackEngines/MacStandaloneSupport/UnityEditor.OSXStandalone.Extensions.dll
+Register platform support module: /Applications/Unity/Hub/Editor/2022.3.46f1/PlaybackEngines/AndroidPlayer/UnityEditor.Android.Extensions.dll
+Register platform support module: /Applications/Unity/Hub/Editor/2022.3.46f1/PlaybackEngines/iOSSupport/UnityEditor.iOS.Extensions.dll
+Registered in 0.007209 seconds.
+- Loaded All Assemblies, in  0.501 seconds
+[usbmuxd] Start listen thread
+[usbmuxd] Listen thread started
+[usbmuxd] Send listen message
+Native extension for iOS target not found
+Native extension for Android target not found
+Android Extension - Scanning For ADB Devices 214 ms
 Native extension for OSXStandalone target not found
 Mono: successfully reloaded assembly
-- Finished resetting the current domain, in  0.185 seconds
-Domain Reload Profiling: 629ms
-	BeginReloadAssembly (213ms)
+- Finished resetting the current domain, in  0.544 seconds
+Domain Reload Profiling: 1046ms
+	BeginReloadAssembly (247ms)
 		ExecutionOrderSort (0ms)
 		DisableScriptedObjects (0ms)
 		BackupInstance (0ms)
 		ReleaseScriptingObjects (0ms)
 		CreateAndSetChildDomain (1ms)
-	RebuildCommonClasses (39ms)
+	RebuildCommonClasses (34ms)
 	RebuildNativeTypeToScriptingClass (9ms)
-	initialDomainReloadingComplete (38ms)
-	LoadAllAssembliesAndSetupDomain (144ms)
-		LoadAssemblies (216ms)
+	initialDomainReloadingComplete (42ms)
+	LoadAllAssembliesAndSetupDomain (169ms)
+		LoadAssemblies (255ms)
 		RebuildTransferFunctionScriptingTraits (0ms)
-		AnalyzeDomain (140ms)
-			TypeCache.Refresh (139ms)
-				TypeCache.ScanAssembly (117ms)
+		AnalyzeDomain (160ms)
+			TypeCache.Refresh (158ms)
+				TypeCache.ScanAssembly (144ms)
 			ScanForSourceGeneratedMonoScriptInfo (0ms)
 			ResolveRequiredComponents (1ms)
-	FinalizeReload (186ms)
+	FinalizeReload (545ms)
 		ReleaseScriptCaches (0ms)
 		RebuildScriptCaches (0ms)
-		SetupLoadedEditorAssemblies (145ms)
+		SetupLoadedEditorAssemblies (509ms)
 			LogAssemblyErrors (0ms)
-			InitializePlatformSupportModulesInManaged (7ms)
-			SetLoadedEditorAssemblies (5ms)
+			InitializePlatformSupportModulesInManaged (398ms)
+			SetLoadedEditorAssemblies (3ms)
 			RefreshPlugins (0ms)
 			BeforeProcessingInitializeOnLoad (2ms)
-			ProcessInitializeOnLoadAttributes (98ms)
-			ProcessInitializeOnLoadMethodAttributes (34ms)
+			ProcessInitializeOnLoadAttributes (76ms)
+			ProcessInitializeOnLoadMethodAttributes (30ms)
 			AfterProcessingInitializeOnLoad (0ms)
 			EditorAssembliesLoaded (0ms)
 		ExecutionOrderSort2 (0ms)
 		AwakeInstancesAfterBackupRestoration (0ms)
 ========================================================================
 Worker process is ready to serve import requests
+Caller must complete domain reload
 Begin MonoManager ReloadAssembly
-- Loaded All Assemblies, in  0.706 seconds
-Refreshing native plugins compatible for Editor in 27.23 ms, found 2 plugins.
+Symbol file data-0x2914ae600 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.Notifications.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x1503e0000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.PlasticSCM.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x138650000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.Timeline.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x291d17c00 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.VisualScripting.Shared.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x120590000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.AdaptivePerformance.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x2914ae600 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.CollabProxy.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x120590000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.VisualStudio.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x291d2aa00 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.AdaptivePerformance.Simulator.Extension.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x291d30200 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.Notifications.iOS.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x130568000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/UnityEditor.UI.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x130998000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.VisualScripting.Core.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x2914bac00 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.AdaptivePerformance.Profiler.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x1386a0000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/UnityEngine.UI.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x1387e0000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.VisualScripting.Core.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x150350000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.Rider.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x2914c1a00 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.AdaptivePerformance.Simulator.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x291d17c00 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.AdaptivePerformance.UI.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x1309e0000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/UnityEditor.TestRunner.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x150560000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.VisualScripting.Flow.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x1309e0000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.VisualScripting.Flow.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x150590000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.Timeline.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x12ba90800 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.VisualScripting.SettingsProvider.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x2914c6a00 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.Subsystem.Registration.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x120698000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.Mobile.AndroidLogcat.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x120590000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.VisualScripting.State.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x120698000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/UnityEngine.TestRunner.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x138870000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.TextMeshPro.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x150590000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x150350000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.AdaptivePerformance.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x2914ca000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.VisualScripting.State.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x2914d1600 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.VSCode.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x291d2aa00 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.Notifications.Android.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x12ba90800 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.Profiling.Core.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x2914d8c00 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.Notifications.Unified.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+- Loaded All Assemblies, in  0.772 seconds
+Native extension for iOS target not found
+Native extension for Android target not found
 Native extension for OSXStandalone target not found
 Package Manager log level set to [2]
 [Package Manager] Server::EnsureServerProcessIsRunning -- launch failed, reason: Unity was launched with the -noUpm command-line argument
@@ -135,49 +215,188 @@ Mono: successfully reloaded assembly
 [Package Manager] Server::EnsureServerProcessIsRunning -- launch failed, reason: Unity was launched with the -noUpm command-line argument
 [Package Manager] UpmClient::Send -- Unable to send message (not connected to UPM process).
 [Package Manager] Cannot connect to Unity Package Manager local server
-- Finished resetting the current domain, in  0.488 seconds
-Domain Reload Profiling: 1198ms
-	BeginReloadAssembly (161ms)
+- Finished resetting the current domain, in  0.490 seconds
+Domain Reload Profiling: 1263ms
+	BeginReloadAssembly (188ms)
 		ExecutionOrderSort (0ms)
 		DisableScriptedObjects (3ms)
 		BackupInstance (0ms)
 		ReleaseScriptingObjects (0ms)
-		CreateAndSetChildDomain (23ms)
-	RebuildCommonClasses (31ms)
-	RebuildNativeTypeToScriptingClass (8ms)
-	initialDomainReloadingComplete (29ms)
-	LoadAllAssembliesAndSetupDomain (479ms)
-		LoadAssemblies (441ms)
+		CreateAndSetChildDomain (27ms)
+	RebuildCommonClasses (33ms)
+	RebuildNativeTypeToScriptingClass (9ms)
+	initialDomainReloadingComplete (31ms)
+	LoadAllAssembliesAndSetupDomain (512ms)
+		LoadAssemblies (491ms)
 		RebuildTransferFunctionScriptingTraits (0ms)
-		AnalyzeDomain (141ms)
-			TypeCache.Refresh (127ms)
-				TypeCache.ScanAssembly (105ms)
+		AnalyzeDomain (153ms)
+			TypeCache.Refresh (140ms)
+				TypeCache.ScanAssembly (114ms)
 			ScanForSourceGeneratedMonoScriptInfo (9ms)
 			ResolveRequiredComponents (4ms)
-	FinalizeReload (489ms)
+	FinalizeReload (490ms)
 		ReleaseScriptCaches (0ms)
 		RebuildScriptCaches (0ms)
-		SetupLoadedEditorAssemblies (367ms)
+		SetupLoadedEditorAssemblies (329ms)
 			LogAssemblyErrors (0ms)
-			InitializePlatformSupportModulesInManaged (6ms)
+			InitializePlatformSupportModulesInManaged (44ms)
 			SetLoadedEditorAssemblies (2ms)
 			RefreshPlugins (0ms)
-			BeforeProcessingInitializeOnLoad (32ms)
-			ProcessInitializeOnLoadAttributes (312ms)
-			ProcessInitializeOnLoadMethodAttributes (15ms)
+			BeforeProcessingInitializeOnLoad (36ms)
+			ProcessInitializeOnLoadAttributes (232ms)
+			ProcessInitializeOnLoadMethodAttributes (13ms)
 			AfterProcessingInitializeOnLoad (1ms)
 			EditorAssembliesLoaded (0ms)
 		ExecutionOrderSort2 (0ms)
-		AwakeInstancesAfterBackupRestoration (4ms)
-Launching external process: /Applications/Unity/Unity.app/Contents/Tools/UnityShaderCompiler
-Launched and connected shader compiler UnityShaderCompiler after 0.43 seconds
-Refreshing native plugins compatible for Editor in 21.11 ms, found 2 plugins.
+		AwakeInstancesAfterBackupRestoration (3ms)
+Launching external process: /Applications/Unity/Hub/Editor/2022.3.46f1/Unity.app/Contents/Tools/UnityShaderCompiler
+Launched and connected shader compiler UnityShaderCompiler after 0.07 seconds
+Refreshing native plugins compatible for Editor in 38.13 ms, found 2 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
-Unloading 3214 Unused Serialized files (Serialized files now loaded: 0)
-Unloading 44 unused Assets / (63.5 KB). Loaded Objects now: 3663.
-Memory consumption went from 223.7 MB to 223.7 MB.
-Total: 3.426083 ms (FindLiveObjects: 0.249458 ms CreateObjectMapping: 0.047417 ms MarkObjects: 2.943500 ms  DeleteObjects: 0.184875 ms)
+Unloading 3199 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 18 unused Assets / (51.0 KB). Loaded Objects now: 3672.
+Memory consumption went from 220.1 MB to 220.1 MB.
+Total: 9.121542 ms (FindLiveObjects: 0.163708 ms CreateObjectMapping: 0.061458 ms MarkObjects: 6.309042 ms  DeleteObjects: 2.586250 ms)
 
+AssetImportParameters requested are different than current active one (requested -> active):
+  custom:container-demuxer-ogg: 62fdf1f143b41e24485cea50d1cbac27 -> 
+  custom:video-decoder-ogg-theora: a1e56fd34408186e4bbccfd4996cb3dc -> 
+  custom:CustomObjectIndexerAttribute: 9a22284fe3817be447336de3de66b15e -> 
+  custom:container-demuxer-webm: 4f35f7cbe854078d1ac9338744f61a02 -> 
+  custom:container-muxer-webm: aa71ff27fc2769a1b78a27578f13a17b -> 
+  custom:video-decoder-webm-vp8: 9c59270c3fd7afecdb556c50c9e8de78 -> 
+  custom:SearchIndexIgnoredProperties: e643bd26f0fe6173181afceb89e7c659 -> 
+  custom:AudioImporter_EditorPlatform: 3918e3fc78b5a79bad01e8451be0beb8 -> 
+  custom:framework-osx-AVFoundation: e770b220cccbd017edd2c1fefb359320 -> 
+  custom:video-encoder-webm-vp8: eb34c28f22e8b96e1ab97ce403110664 -> 
+  custom:audio-decoder-ogg-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
+  custom:audio-encoder-webm-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
+========================================================================
+Received Prepare
+Caller must complete domain reload
+Begin MonoManager ReloadAssembly
+Thread 0x290b87000 may have been prematurely finalized
+Symbol file data-0x29196fe00 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.Notifications.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x1506c0000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.PlasticSCM.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x1307d0000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.Timeline.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x29690ac00 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.VisualScripting.Shared.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x120550000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.AdaptivePerformance.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x291955600 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.CollabProxy.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x120550000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.VisualStudio.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x2a61a1600 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.AdaptivePerformance.Simulator.Extension.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x12b5a0e00 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.Notifications.iOS.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x138d18000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/UnityEditor.UI.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x1205a0000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.VisualScripting.Core.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x2a61a1600 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.AdaptivePerformance.Profiler.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x1205e8000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/UnityEngine.UI.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x130938000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.VisualScripting.Core.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x1506b0000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.Rider.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x2a61b5c00 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.AdaptivePerformance.Simulator.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x29690ac00 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.AdaptivePerformance.UI.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x120610000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/UnityEditor.TestRunner.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x138de0000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.VisualScripting.Flow.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x138e68000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.VisualScripting.Flow.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x1506c0000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.Timeline.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x12b5aea00 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.VisualScripting.SettingsProvider.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x29196fe00 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.Subsystem.Registration.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x138e88000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.Mobile.AndroidLogcat.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x130998000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.VisualScripting.State.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x138e88000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/UnityEngine.TestRunner.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x1309a8000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.TextMeshPro.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x138e88000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x1506f8000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.AdaptivePerformance.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x291977c00 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.VisualScripting.State.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x2a61b5c00 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.VSCode.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x2a61bc600 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.Notifications.Android.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x29197ea00 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.Profiling.Core.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x291977c00 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.Notifications.Unified.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+- Loaded All Assemblies, in  1.071 seconds
+Native extension for iOS target not found
+Native extension for Android target not found
+Native extension for OSXStandalone target not found
+[Package Manager] Server::EnsureServerProcessIsRunning -- launch failed, reason: Unity was launched with the -noUpm command-line argument
+[Package Manager] UpmClient::Send -- Unable to send message (not connected to UPM process).
+[Package Manager] Cannot connect to Unity Package Manager local server
+Mono: successfully reloaded assembly
+[Package Manager] Server::EnsureServerProcessIsRunning -- launch failed, reason: Unity was launched with the -noUpm command-line argument
+[Package Manager] UpmClient::Send -- Unable to send message (not connected to UPM process).
+[Package Manager] Cannot connect to Unity Package Manager local server
+- Finished resetting the current domain, in  9.555 seconds
+Domain Reload Profiling: 10627ms
+	BeginReloadAssembly (253ms)
+		ExecutionOrderSort (0ms)
+		DisableScriptedObjects (3ms)
+		BackupInstance (0ms)
+		ReleaseScriptingObjects (0ms)
+		CreateAndSetChildDomain (45ms)
+	RebuildCommonClasses (34ms)
+	RebuildNativeTypeToScriptingClass (9ms)
+	initialDomainReloadingComplete (27ms)
+	LoadAllAssembliesAndSetupDomain (748ms)
+		LoadAssemblies (913ms)
+		RebuildTransferFunctionScriptingTraits (0ms)
+		AnalyzeDomain (17ms)
+			TypeCache.Refresh (10ms)
+				TypeCache.ScanAssembly (0ms)
+			ScanForSourceGeneratedMonoScriptInfo (2ms)
+			ResolveRequiredComponents (5ms)
+	FinalizeReload (9556ms)
+		ReleaseScriptCaches (0ms)
+		RebuildScriptCaches (0ms)
+		SetupLoadedEditorAssemblies (314ms)
+			LogAssemblyErrors (0ms)
+			InitializePlatformSupportModulesInManaged (41ms)
+			SetLoadedEditorAssemblies (3ms)
+			RefreshPlugins (0ms)
+			BeforeProcessingInitializeOnLoad (37ms)
+			ProcessInitializeOnLoadAttributes (220ms)
+			ProcessInitializeOnLoadMethodAttributes (12ms)
+			AfterProcessingInitializeOnLoad (0ms)
+			EditorAssembliesLoaded (0ms)
+		ExecutionOrderSort2 (0ms)
+		AwakeInstancesAfterBackupRestoration (2ms)
+Refreshing native plugins compatible for Editor in 36.80 ms, found 2 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 3193 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 13 unused Assets / (27.9 KB). Loaded Objects now: 3675.
+Memory consumption went from 209.6 MB to 209.6 MB.
+Total: 4.695542 ms (FindLiveObjects: 0.211042 ms CreateObjectMapping: 0.075833 ms MarkObjects: 4.312292 ms  DeleteObjects: 0.095333 ms)
+
+Prepare: number of updated asset objects reloaded= 0
 AssetImportParameters requested are different than current active one (requested -> active):
   custom:container-demuxer-ogg: 62fdf1f143b41e24485cea50d1cbac27 -> 
   custom:video-decoder-ogg-theora: a1e56fd34408186e4bbccfd4996cb3dc -> 
@@ -193,18 +412,100 @@ AssetImportParameters requested are different than current active one (requested
   custom:audio-encoder-webm-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
 ========================================================================
 Received Import Request.
-  Time since last request: 332935.238714 seconds.
-  path: Assets/Editor
-  artifactKey: Guid(9a2df797eb7ea8e44843144af9429b99) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Editor using Guid(9a2df797eb7ea8e44843144af9429b99) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'af1660d60f4d2240e2d759c8cc93f1a4') in 0.001993 seconds
+  Time since last request: 29363.321733 seconds.
+  path: Assets/Materials/Mat 2.mat
+  artifactKey: Guid(d00214d28d6034290af0967c8d63b258) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Materials/Mat 2.mat using Guid(d00214d28d6034290af0967c8d63b258) Importer(815301076,1909f56bfc062723c751e8b465ee728b) [PhysX] Initialized MultithreadedTaskDispatcher with 8 workers.
+[PhysX] Initialized MultithreadedTaskDispatcher with 8 workers.
+ -> (artifact id: '888b3f285d35998f0f5c8992a155e8d9') in 0.549993 seconds
 Number of updated asset objects reloaded before import = 0
-Number of asset objects unloaded after import = 0
+Number of asset objects unloaded after import = 1
+========================================================================
+Received Import Request.
+  Time since last request: 0.000041 seconds.
+  path: Assets/Materials/Mat 3.mat
+  artifactKey: Guid(dee03235c7af345faa7ad9c5913b2894) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Materials/Mat 3.mat using Guid(dee03235c7af345faa7ad9c5913b2894) Importer(815301076,1909f56bfc062723c751e8b465ee728b) [PhysX] Initialized MultithreadedTaskDispatcher with 8 workers.
+[PhysX] Initialized MultithreadedTaskDispatcher with 8 workers.
+ -> (artifact id: 'ece476253ad8e589347f04a9bf06f0d1') in 0.008347 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 1
 ========================================================================
 Received Prepare
+Caller must complete domain reload
 Begin MonoManager ReloadAssembly
-Thread 0x288b47000 may have been prematurely finalized
-- Loaded All Assemblies, in  0.833 seconds
-Refreshing native plugins compatible for Editor in 12.36 ms, found 2 plugins.
+Thread 0x16b263000 may have been prematurely finalized
+Symbol file data-0x29123ac00 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.Notifications.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x1392f0000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.PlasticSCM.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x1393f0000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.Timeline.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x296aa7200 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.VisualScripting.Shared.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x120678000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.AdaptivePerformance.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x29123ac00 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.CollabProxy.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x120678000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.VisualStudio.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x12aa70c00 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.AdaptivePerformance.Simulator.Extension.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x2a62cac00 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.Notifications.iOS.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x138420000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/UnityEditor.UI.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x1392f0000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.VisualScripting.Core.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x2a62c2a00 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.AdaptivePerformance.Profiler.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x120978000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/UnityEngine.UI.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x130c40000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.VisualScripting.Core.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x138420000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.Rider.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x296aa7200 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.AdaptivePerformance.Simulator.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x29124ce00 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.AdaptivePerformance.UI.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x140648000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/UnityEditor.TestRunner.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x1406d0000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.VisualScripting.Flow.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x139490000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.VisualScripting.Flow.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x140648000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.Timeline.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x2a62cac00 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.VisualScripting.SettingsProvider.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x2a62d0000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.Subsystem.Registration.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x138420000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.Mobile.AndroidLogcat.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x120678000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.VisualScripting.State.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x120978000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/UnityEngine.TestRunner.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x130d08000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.TextMeshPro.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x138420000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x130c40000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.AdaptivePerformance.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x2a62cac00 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.VisualScripting.State.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x296aafc00 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.VSCode.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x12aa60c00 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.Notifications.Android.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x12aa56200 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.Profiling.Core.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x12aa56200 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.Notifications.Unified.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+- Loaded All Assemblies, in  0.688 seconds
+Native extension for iOS target not found
+Native extension for Android target not found
 Native extension for OSXStandalone target not found
 [Package Manager] Server::EnsureServerProcessIsRunning -- launch failed, reason: Unity was launched with the -noUpm command-line argument
 [Package Manager] UpmClient::Send -- Unable to send message (not connected to UPM process).
@@ -213,46 +514,46 @@ Mono: successfully reloaded assembly
 [Package Manager] Server::EnsureServerProcessIsRunning -- launch failed, reason: Unity was launched with the -noUpm command-line argument
 [Package Manager] UpmClient::Send -- Unable to send message (not connected to UPM process).
 [Package Manager] Cannot connect to Unity Package Manager local server
-- Finished resetting the current domain, in  1.237 seconds
-Domain Reload Profiling: 2071ms
-	BeginReloadAssembly (359ms)
+- Finished resetting the current domain, in  1.579 seconds
+Domain Reload Profiling: 2267ms
+	BeginReloadAssembly (234ms)
 		ExecutionOrderSort (0ms)
 		DisableScriptedObjects (4ms)
 		BackupInstance (0ms)
 		ReleaseScriptingObjects (0ms)
-		CreateAndSetChildDomain (101ms)
-	RebuildCommonClasses (36ms)
+		CreateAndSetChildDomain (38ms)
+	RebuildCommonClasses (31ms)
 	RebuildNativeTypeToScriptingClass (9ms)
 	initialDomainReloadingComplete (36ms)
-	LoadAllAssembliesAndSetupDomain (393ms)
-		LoadAssemblies (593ms)
+	LoadAllAssembliesAndSetupDomain (377ms)
+		LoadAssemblies (530ms)
 		RebuildTransferFunctionScriptingTraits (0ms)
-		AnalyzeDomain (24ms)
-			TypeCache.Refresh (12ms)
+		AnalyzeDomain (17ms)
+			TypeCache.Refresh (11ms)
 				TypeCache.ScanAssembly (0ms)
-			ScanForSourceGeneratedMonoScriptInfo (7ms)
-			ResolveRequiredComponents (5ms)
-	FinalizeReload (1238ms)
+			ScanForSourceGeneratedMonoScriptInfo (0ms)
+			ResolveRequiredComponents (6ms)
+	FinalizeReload (1579ms)
 		ReleaseScriptCaches (0ms)
 		RebuildScriptCaches (0ms)
-		SetupLoadedEditorAssemblies (312ms)
+		SetupLoadedEditorAssemblies (332ms)
 			LogAssemblyErrors (0ms)
-			InitializePlatformSupportModulesInManaged (4ms)
+			InitializePlatformSupportModulesInManaged (34ms)
 			SetLoadedEditorAssemblies (3ms)
 			RefreshPlugins (0ms)
-			BeforeProcessingInitializeOnLoad (35ms)
-			ProcessInitializeOnLoadAttributes (257ms)
-			ProcessInitializeOnLoadMethodAttributes (13ms)
+			BeforeProcessingInitializeOnLoad (41ms)
+			ProcessInitializeOnLoadAttributes (239ms)
+			ProcessInitializeOnLoadMethodAttributes (14ms)
 			AfterProcessingInitializeOnLoad (1ms)
 			EditorAssembliesLoaded (0ms)
 		ExecutionOrderSort2 (0ms)
-		AwakeInstancesAfterBackupRestoration (4ms)
-Refreshing native plugins compatible for Editor in 6.73 ms, found 2 plugins.
+		AwakeInstancesAfterBackupRestoration (3ms)
+Refreshing native plugins compatible for Editor in 18.32 ms, found 2 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
-Unloading 3208 Unused Serialized files (Serialized files now loaded: 0)
-Unloading 35 unused Assets / (38.3 KB). Loaded Objects now: 3667.
-Memory consumption went from 221.7 MB to 221.6 MB.
-Total: 3.501750 ms (FindLiveObjects: 0.848000 ms CreateObjectMapping: 0.051708 ms MarkObjects: 2.462208 ms  DeleteObjects: 0.138875 ms)
+Unloading 3192 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 13 unused Assets / (27.9 KB). Loaded Objects now: 3719.
+Memory consumption went from 214.1 MB to 214.1 MB.
+Total: 3.096333 ms (FindLiveObjects: 0.168834 ms CreateObjectMapping: 0.044541 ms MarkObjects: 2.836584 ms  DeleteObjects: 0.045750 ms)
 
 Prepare: number of updated asset objects reloaded= 0
 AssetImportParameters requested are different than current active one (requested -> active):
@@ -270,10 +571,80 @@ AssetImportParameters requested are different than current active one (requested
   custom:audio-encoder-webm-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
 ========================================================================
 Received Prepare
+Caller must complete domain reload
 Begin MonoManager ReloadAssembly
-Thread 0x288907000 may have been prematurely finalized
-- Loaded All Assemblies, in  0.789 seconds
-Refreshing native plugins compatible for Editor in 10.47 ms, found 2 plugins.
+Thread 0x293fd3000 may have been prematurely finalized
+Symbol file data-0x296cf8600 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.Notifications.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x1301e0000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.PlasticSCM.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x1383a8000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.Timeline.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x2a60d4400 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.VisualScripting.Shared.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x120b30000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.AdaptivePerformance.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x296cdfc00 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.CollabProxy.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x140748000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.VisualStudio.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x12aa88600 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.AdaptivePerformance.Simulator.Extension.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x12aa98a00 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.Notifications.iOS.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x140748000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/UnityEditor.UI.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x1301e0000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.VisualScripting.Core.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x29154ea00 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.AdaptivePerformance.Profiler.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x130228000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/UnityEngine.UI.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x140ba0000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.VisualScripting.Core.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x120b30000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.Rider.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x12aa98a00 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.AdaptivePerformance.Simulator.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x296d06a00 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.AdaptivePerformance.UI.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x1301f8000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/UnityEditor.TestRunner.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x1383f8000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.VisualScripting.Flow.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x140c00000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.VisualScripting.Flow.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x120c48000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.Timeline.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x296d06a00 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.VisualScripting.SettingsProvider.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x291553200 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.Subsystem.Registration.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x140ba0000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.Mobile.AndroidLogcat.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x140748000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.VisualScripting.State.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x140ba0000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/UnityEngine.TestRunner.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x1383f8000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.TextMeshPro.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x140ba0000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x130408000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.AdaptivePerformance.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x296d0e800 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.VisualScripting.State.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x12aa98a00 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.VSCode.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x12aa9f400 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.Notifications.Android.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x2a60dd000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.Profiling.Core.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x2a60dd000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.Notifications.Unified.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+- Loaded All Assemblies, in  0.659 seconds
+Native extension for iOS target not found
+Native extension for Android target not found
 Native extension for OSXStandalone target not found
 [Package Manager] Server::EnsureServerProcessIsRunning -- launch failed, reason: Unity was launched with the -noUpm command-line argument
 [Package Manager] UpmClient::Send -- Unable to send message (not connected to UPM process).
@@ -282,460 +653,185 @@ Mono: successfully reloaded assembly
 [Package Manager] Server::EnsureServerProcessIsRunning -- launch failed, reason: Unity was launched with the -noUpm command-line argument
 [Package Manager] UpmClient::Send -- Unable to send message (not connected to UPM process).
 [Package Manager] Cannot connect to Unity Package Manager local server
-- Finished resetting the current domain, in  1.465 seconds
-Domain Reload Profiling: 2255ms
-	BeginReloadAssembly (405ms)
+- Finished resetting the current domain, in  1.491 seconds
+Domain Reload Profiling: 2150ms
+	BeginReloadAssembly (201ms)
 		ExecutionOrderSort (0ms)
-		DisableScriptedObjects (5ms)
+		DisableScriptedObjects (3ms)
 		BackupInstance (0ms)
 		ReleaseScriptingObjects (0ms)
-		CreateAndSetChildDomain (78ms)
+		CreateAndSetChildDomain (35ms)
+	RebuildCommonClasses (42ms)
+	RebuildNativeTypeToScriptingClass (10ms)
+	initialDomainReloadingComplete (22ms)
+	LoadAllAssembliesAndSetupDomain (383ms)
+		LoadAssemblies (508ms)
+		RebuildTransferFunctionScriptingTraits (0ms)
+		AnalyzeDomain (15ms)
+			TypeCache.Refresh (10ms)
+				TypeCache.ScanAssembly (0ms)
+			ScanForSourceGeneratedMonoScriptInfo (0ms)
+			ResolveRequiredComponents (4ms)
+	FinalizeReload (1491ms)
+		ReleaseScriptCaches (0ms)
+		RebuildScriptCaches (0ms)
+		SetupLoadedEditorAssemblies (323ms)
+			LogAssemblyErrors (0ms)
+			InitializePlatformSupportModulesInManaged (40ms)
+			SetLoadedEditorAssemblies (3ms)
+			RefreshPlugins (0ms)
+			BeforeProcessingInitializeOnLoad (40ms)
+			ProcessInitializeOnLoadAttributes (225ms)
+			ProcessInitializeOnLoadMethodAttributes (13ms)
+			AfterProcessingInitializeOnLoad (1ms)
+			EditorAssembliesLoaded (0ms)
+		ExecutionOrderSort2 (0ms)
+		AwakeInstancesAfterBackupRestoration (3ms)
+Refreshing native plugins compatible for Editor in 13.70 ms, found 2 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 3193 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 13 unused Assets / (28.0 KB). Loaded Objects now: 3722.
+Memory consumption went from 214.6 MB to 214.5 MB.
+Total: 2.932709 ms (FindLiveObjects: 0.151125 ms CreateObjectMapping: 0.048208 ms MarkObjects: 2.698792 ms  DeleteObjects: 0.033959 ms)
+
+Prepare: number of updated asset objects reloaded= 0
+AssetImportParameters requested are different than current active one (requested -> active):
+  custom:container-demuxer-ogg: 62fdf1f143b41e24485cea50d1cbac27 -> 
+  custom:video-decoder-ogg-theora: a1e56fd34408186e4bbccfd4996cb3dc -> 
+  custom:CustomObjectIndexerAttribute: 9a22284fe3817be447336de3de66b15e -> 
+  custom:container-demuxer-webm: 4f35f7cbe854078d1ac9338744f61a02 -> 
+  custom:container-muxer-webm: aa71ff27fc2769a1b78a27578f13a17b -> 
+  custom:video-decoder-webm-vp8: 9c59270c3fd7afecdb556c50c9e8de78 -> 
+  custom:SearchIndexIgnoredProperties: e643bd26f0fe6173181afceb89e7c659 -> 
+  custom:AudioImporter_EditorPlatform: 3918e3fc78b5a79bad01e8451be0beb8 -> 
+  custom:framework-osx-AVFoundation: e770b220cccbd017edd2c1fefb359320 -> 
+  custom:video-encoder-webm-vp8: eb34c28f22e8b96e1ab97ce403110664 -> 
+  custom:audio-decoder-ogg-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
+  custom:audio-encoder-webm-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
+========================================================================
+Received Prepare
+Caller must complete domain reload
+Begin MonoManager ReloadAssembly
+Thread 0x293fd3000 may have been prematurely finalized
+Symbol file data-0x12a999000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.Notifications.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x1204e8000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.PlasticSCM.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x1302c0000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.Timeline.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x12a99f800 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.VisualScripting.Shared.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x1408f8000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.AdaptivePerformance.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x12a999000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.CollabProxy.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x130310000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.VisualStudio.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x296d3b400 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.AdaptivePerformance.Simulator.Extension.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x12a9a5600 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.Notifications.iOS.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x138728000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/UnityEditor.UI.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x1387d8000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.VisualScripting.Core.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x12a9abe00 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.AdaptivePerformance.Profiler.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x1409d0000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/UnityEngine.UI.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x1205e8000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.VisualScripting.Core.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x1408f8000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.Rider.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x296d40c00 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.AdaptivePerformance.Simulator.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x12bd6b400 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.AdaptivePerformance.UI.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x138838000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/UnityEditor.TestRunner.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x1204e8000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.VisualScripting.Flow.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x120cd8000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.VisualScripting.Flow.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x1409d0000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.Timeline.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x12a9a9e00 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.VisualScripting.SettingsProvider.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x296d40400 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.Subsystem.Registration.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x1409d0000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.Mobile.AndroidLogcat.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x1408f8000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.VisualScripting.State.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x1409d0000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/UnityEngine.TestRunner.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x140bb0000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.TextMeshPro.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x1409d0000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x130310000 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.AdaptivePerformance.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x2a60b1e00 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.VisualScripting.State.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x2a60b8c00 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.VSCode.Editor.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x12a9a9e00 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.Notifications.Android.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x12a9b0e00 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.Profiling.Core.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+Symbol file data-0x12a9a9e00 doesn't match image /Users/iverbrugge25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Library/ScriptAssemblies/Unity.Notifications.Unified.dll
+Symbol file LoadedFromMemory is not a mono symbol file
+- Loaded All Assemblies, in  0.672 seconds
+Native extension for iOS target not found
+Native extension for Android target not found
+Native extension for OSXStandalone target not found
+[Package Manager] Server::EnsureServerProcessIsRunning -- launch failed, reason: Unity was launched with the -noUpm command-line argument
+[Package Manager] UpmClient::Send -- Unable to send message (not connected to UPM process).
+[Package Manager] Cannot connect to Unity Package Manager local server
+Mono: successfully reloaded assembly
+[Package Manager] Server::EnsureServerProcessIsRunning -- launch failed, reason: Unity was launched with the -noUpm command-line argument
+[Package Manager] UpmClient::Send -- Unable to send message (not connected to UPM process).
+[Package Manager] Cannot connect to Unity Package Manager local server
+- Finished resetting the current domain, in  1.452 seconds
+Domain Reload Profiling: 2125ms
+	BeginReloadAssembly (240ms)
+		ExecutionOrderSort (0ms)
+		DisableScriptedObjects (3ms)
+		BackupInstance (0ms)
+		ReleaseScriptingObjects (0ms)
+		CreateAndSetChildDomain (35ms)
 	RebuildCommonClasses (33ms)
 	RebuildNativeTypeToScriptingClass (9ms)
 	initialDomainReloadingComplete (20ms)
-	LoadAllAssembliesAndSetupDomain (322ms)
-		LoadAssemblies (573ms)
+	LoadAllAssembliesAndSetupDomain (370ms)
+		LoadAssemblies (534ms)
 		RebuildTransferFunctionScriptingTraits (0ms)
-		AnalyzeDomain (27ms)
-			TypeCache.Refresh (13ms)
-				TypeCache.ScanAssembly (0ms)
-			ScanForSourceGeneratedMonoScriptInfo (6ms)
-			ResolveRequiredComponents (7ms)
-	FinalizeReload (1465ms)
-		ReleaseScriptCaches (0ms)
-		RebuildScriptCaches (0ms)
-		SetupLoadedEditorAssemblies (312ms)
-			LogAssemblyErrors (0ms)
-			InitializePlatformSupportModulesInManaged (4ms)
-			SetLoadedEditorAssemblies (2ms)
-			RefreshPlugins (0ms)
-			BeforeProcessingInitializeOnLoad (34ms)
-			ProcessInitializeOnLoadAttributes (259ms)
-			ProcessInitializeOnLoadMethodAttributes (11ms)
-			AfterProcessingInitializeOnLoad (1ms)
-			EditorAssembliesLoaded (0ms)
-		ExecutionOrderSort2 (0ms)
-		AwakeInstancesAfterBackupRestoration (4ms)
-Refreshing native plugins compatible for Editor in 8.18 ms, found 2 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Unloading 3209 Unused Serialized files (Serialized files now loaded: 0)
-Unloading 35 unused Assets / (37.4 KB). Loaded Objects now: 3670.
-Memory consumption went from 222.5 MB to 222.5 MB.
-Total: 2.719666 ms (FindLiveObjects: 0.133000 ms CreateObjectMapping: 0.043666 ms MarkObjects: 2.477333 ms  DeleteObjects: 0.065208 ms)
-
-Prepare: number of updated asset objects reloaded= 0
-AssetImportParameters requested are different than current active one (requested -> active):
-  custom:container-demuxer-ogg: 62fdf1f143b41e24485cea50d1cbac27 -> 
-  custom:video-decoder-ogg-theora: a1e56fd34408186e4bbccfd4996cb3dc -> 
-  custom:CustomObjectIndexerAttribute: 9a22284fe3817be447336de3de66b15e -> 
-  custom:container-demuxer-webm: 4f35f7cbe854078d1ac9338744f61a02 -> 
-  custom:container-muxer-webm: aa71ff27fc2769a1b78a27578f13a17b -> 
-  custom:video-decoder-webm-vp8: 9c59270c3fd7afecdb556c50c9e8de78 -> 
-  custom:SearchIndexIgnoredProperties: e643bd26f0fe6173181afceb89e7c659 -> 
-  custom:AudioImporter_EditorPlatform: 3918e3fc78b5a79bad01e8451be0beb8 -> 
-  custom:framework-osx-AVFoundation: e770b220cccbd017edd2c1fefb359320 -> 
-  custom:video-encoder-webm-vp8: eb34c28f22e8b96e1ab97ce403110664 -> 
-  custom:audio-decoder-ogg-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
-  custom:audio-encoder-webm-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
-========================================================================
-Received Prepare
-Begin MonoManager ReloadAssembly
-Thread 0x16f357000 may have been prematurely finalized
-- Loaded All Assemblies, in  0.710 seconds
-Refreshing native plugins compatible for Editor in 15.16 ms, found 2 plugins.
-Native extension for OSXStandalone target not found
-[Package Manager] Server::EnsureServerProcessIsRunning -- launch failed, reason: Unity was launched with the -noUpm command-line argument
-[Package Manager] UpmClient::Send -- Unable to send message (not connected to UPM process).
-[Package Manager] Cannot connect to Unity Package Manager local server
-Mono: successfully reloaded assembly
-[Package Manager] Server::EnsureServerProcessIsRunning -- launch failed, reason: Unity was launched with the -noUpm command-line argument
-[Package Manager] UpmClient::Send -- Unable to send message (not connected to UPM process).
-[Package Manager] Cannot connect to Unity Package Manager local server
-- Finished resetting the current domain, in  1.731 seconds
-Domain Reload Profiling: 2443ms
-	BeginReloadAssembly (226ms)
-		ExecutionOrderSort (0ms)
-		DisableScriptedObjects (3ms)
-		BackupInstance (0ms)
-		ReleaseScriptingObjects (0ms)
-		CreateAndSetChildDomain (46ms)
-	RebuildCommonClasses (34ms)
-	RebuildNativeTypeToScriptingClass (9ms)
-	initialDomainReloadingComplete (57ms)
-	LoadAllAssembliesAndSetupDomain (384ms)
-		LoadAssemblies (519ms)
-		RebuildTransferFunctionScriptingTraits (0ms)
-		AnalyzeDomain (15ms)
-			TypeCache.Refresh (9ms)
+		AnalyzeDomain (13ms)
+			TypeCache.Refresh (8ms)
 				TypeCache.ScanAssembly (0ms)
 			ScanForSourceGeneratedMonoScriptInfo (0ms)
 			ResolveRequiredComponents (5ms)
-	FinalizeReload (1732ms)
+	FinalizeReload (1452ms)
 		ReleaseScriptCaches (0ms)
 		RebuildScriptCaches (0ms)
-		SetupLoadedEditorAssemblies (387ms)
+		SetupLoadedEditorAssemblies (333ms)
 			LogAssemblyErrors (0ms)
-			InitializePlatformSupportModulesInManaged (8ms)
+			InitializePlatformSupportModulesInManaged (35ms)
 			SetLoadedEditorAssemblies (3ms)
 			RefreshPlugins (0ms)
-			BeforeProcessingInitializeOnLoad (44ms)
-			ProcessInitializeOnLoadAttributes (318ms)
-			ProcessInitializeOnLoadMethodAttributes (13ms)
+			BeforeProcessingInitializeOnLoad (41ms)
+			ProcessInitializeOnLoadAttributes (238ms)
+			ProcessInitializeOnLoadMethodAttributes (15ms)
 			AfterProcessingInitializeOnLoad (1ms)
 			EditorAssembliesLoaded (0ms)
 		ExecutionOrderSort2 (0ms)
 		AwakeInstancesAfterBackupRestoration (3ms)
-Refreshing native plugins compatible for Editor in 13.93 ms, found 2 plugins.
+Refreshing native plugins compatible for Editor in 14.21 ms, found 2 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
-Unloading 3209 Unused Serialized files (Serialized files now loaded: 0)
-Unloading 35 unused Assets / (37.3 KB). Loaded Objects now: 3673.
-Memory consumption went from 222.7 MB to 222.6 MB.
-Total: 2.833458 ms (FindLiveObjects: 0.162584 ms CreateObjectMapping: 0.049083 ms MarkObjects: 2.526792 ms  DeleteObjects: 0.094208 ms)
-
-Prepare: number of updated asset objects reloaded= 0
-AssetImportParameters requested are different than current active one (requested -> active):
-  custom:container-demuxer-ogg: 62fdf1f143b41e24485cea50d1cbac27 -> 
-  custom:video-decoder-ogg-theora: a1e56fd34408186e4bbccfd4996cb3dc -> 
-  custom:CustomObjectIndexerAttribute: 9a22284fe3817be447336de3de66b15e -> 
-  custom:container-demuxer-webm: 4f35f7cbe854078d1ac9338744f61a02 -> 
-  custom:container-muxer-webm: aa71ff27fc2769a1b78a27578f13a17b -> 
-  custom:video-decoder-webm-vp8: 9c59270c3fd7afecdb556c50c9e8de78 -> 
-  custom:SearchIndexIgnoredProperties: e643bd26f0fe6173181afceb89e7c659 -> 
-  custom:AudioImporter_EditorPlatform: 3918e3fc78b5a79bad01e8451be0beb8 -> 
-  custom:framework-osx-AVFoundation: e770b220cccbd017edd2c1fefb359320 -> 
-  custom:video-encoder-webm-vp8: eb34c28f22e8b96e1ab97ce403110664 -> 
-  custom:audio-decoder-ogg-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
-  custom:audio-encoder-webm-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
-========================================================================
-Received Prepare
-Begin MonoManager ReloadAssembly
-Thread 0x16f357000 may have been prematurely finalized
-- Loaded All Assemblies, in  0.712 seconds
-Refreshing native plugins compatible for Editor in 11.86 ms, found 2 plugins.
-Native extension for OSXStandalone target not found
-[Package Manager] Server::EnsureServerProcessIsRunning -- launch failed, reason: Unity was launched with the -noUpm command-line argument
-[Package Manager] UpmClient::Send -- Unable to send message (not connected to UPM process).
-[Package Manager] Cannot connect to Unity Package Manager local server
-Mono: successfully reloaded assembly
-[Package Manager] Server::EnsureServerProcessIsRunning -- launch failed, reason: Unity was launched with the -noUpm command-line argument
-[Package Manager] UpmClient::Send -- Unable to send message (not connected to UPM process).
-[Package Manager] Cannot connect to Unity Package Manager local server
-- Finished resetting the current domain, in  1.515 seconds
-Domain Reload Profiling: 2227ms
-	BeginReloadAssembly (249ms)
-		ExecutionOrderSort (0ms)
-		DisableScriptedObjects (3ms)
-		BackupInstance (0ms)
-		ReleaseScriptingObjects (0ms)
-		CreateAndSetChildDomain (51ms)
-	RebuildCommonClasses (32ms)
-	RebuildNativeTypeToScriptingClass (10ms)
-	initialDomainReloadingComplete (31ms)
-	LoadAllAssembliesAndSetupDomain (390ms)
-		LoadAssemblies (529ms)
-		RebuildTransferFunctionScriptingTraits (0ms)
-		AnalyzeDomain (25ms)
-			TypeCache.Refresh (14ms)
-				TypeCache.ScanAssembly (0ms)
-			ScanForSourceGeneratedMonoScriptInfo (6ms)
-			ResolveRequiredComponents (4ms)
-	FinalizeReload (1515ms)
-		ReleaseScriptCaches (0ms)
-		RebuildScriptCaches (0ms)
-		SetupLoadedEditorAssemblies (344ms)
-			LogAssemblyErrors (0ms)
-			InitializePlatformSupportModulesInManaged (5ms)
-			SetLoadedEditorAssemblies (2ms)
-			RefreshPlugins (0ms)
-			BeforeProcessingInitializeOnLoad (38ms)
-			ProcessInitializeOnLoadAttributes (285ms)
-			ProcessInitializeOnLoadMethodAttributes (14ms)
-			AfterProcessingInitializeOnLoad (1ms)
-			EditorAssembliesLoaded (0ms)
-		ExecutionOrderSort2 (0ms)
-		AwakeInstancesAfterBackupRestoration (3ms)
-Refreshing native plugins compatible for Editor in 14.33 ms, found 2 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Unloading 3209 Unused Serialized files (Serialized files now loaded: 0)
-Unloading 35 unused Assets / (37.3 KB). Loaded Objects now: 3676.
-Memory consumption went from 222.9 MB to 222.9 MB.
-Total: 3.666666 ms (FindLiveObjects: 0.242000 ms CreateObjectMapping: 0.063583 ms MarkObjects: 3.267875 ms  DeleteObjects: 0.091666 ms)
-
-Prepare: number of updated asset objects reloaded= 0
-AssetImportParameters requested are different than current active one (requested -> active):
-  custom:container-demuxer-ogg: 62fdf1f143b41e24485cea50d1cbac27 -> 
-  custom:video-decoder-ogg-theora: a1e56fd34408186e4bbccfd4996cb3dc -> 
-  custom:CustomObjectIndexerAttribute: 9a22284fe3817be447336de3de66b15e -> 
-  custom:container-demuxer-webm: 4f35f7cbe854078d1ac9338744f61a02 -> 
-  custom:container-muxer-webm: aa71ff27fc2769a1b78a27578f13a17b -> 
-  custom:video-decoder-webm-vp8: 9c59270c3fd7afecdb556c50c9e8de78 -> 
-  custom:SearchIndexIgnoredProperties: e643bd26f0fe6173181afceb89e7c659 -> 
-  custom:AudioImporter_EditorPlatform: 3918e3fc78b5a79bad01e8451be0beb8 -> 
-  custom:framework-osx-AVFoundation: e770b220cccbd017edd2c1fefb359320 -> 
-  custom:video-encoder-webm-vp8: eb34c28f22e8b96e1ab97ce403110664 -> 
-  custom:audio-decoder-ogg-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
-  custom:audio-encoder-webm-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
-========================================================================
-Received Prepare
-Begin MonoManager ReloadAssembly
-Thread 0x16f357000 may have been prematurely finalized
-- Loaded All Assemblies, in  0.612 seconds
-Refreshing native plugins compatible for Editor in 17.18 ms, found 2 plugins.
-Native extension for OSXStandalone target not found
-[Package Manager] Server::EnsureServerProcessIsRunning -- launch failed, reason: Unity was launched with the -noUpm command-line argument
-[Package Manager] UpmClient::Send -- Unable to send message (not connected to UPM process).
-[Package Manager] Cannot connect to Unity Package Manager local server
-Mono: successfully reloaded assembly
-[Package Manager] Server::EnsureServerProcessIsRunning -- launch failed, reason: Unity was launched with the -noUpm command-line argument
-[Package Manager] UpmClient::Send -- Unable to send message (not connected to UPM process).
-[Package Manager] Cannot connect to Unity Package Manager local server
-- Finished resetting the current domain, in  1.573 seconds
-Domain Reload Profiling: 2185ms
-	BeginReloadAssembly (212ms)
-		ExecutionOrderSort (0ms)
-		DisableScriptedObjects (3ms)
-		BackupInstance (0ms)
-		ReleaseScriptingObjects (0ms)
-		CreateAndSetChildDomain (42ms)
-	RebuildCommonClasses (33ms)
-	RebuildNativeTypeToScriptingClass (9ms)
-	initialDomainReloadingComplete (22ms)
-	LoadAllAssembliesAndSetupDomain (337ms)
-		LoadAssemblies (467ms)
-		RebuildTransferFunctionScriptingTraits (0ms)
-		AnalyzeDomain (12ms)
-			TypeCache.Refresh (7ms)
-				TypeCache.ScanAssembly (0ms)
-			ScanForSourceGeneratedMonoScriptInfo (0ms)
-			ResolveRequiredComponents (4ms)
-	FinalizeReload (1573ms)
-		ReleaseScriptCaches (0ms)
-		RebuildScriptCaches (0ms)
-		SetupLoadedEditorAssemblies (358ms)
-			LogAssemblyErrors (0ms)
-			InitializePlatformSupportModulesInManaged (5ms)
-			SetLoadedEditorAssemblies (3ms)
-			RefreshPlugins (0ms)
-			BeforeProcessingInitializeOnLoad (43ms)
-			ProcessInitializeOnLoadAttributes (293ms)
-			ProcessInitializeOnLoadMethodAttributes (14ms)
-			AfterProcessingInitializeOnLoad (1ms)
-			EditorAssembliesLoaded (0ms)
-		ExecutionOrderSort2 (0ms)
-		AwakeInstancesAfterBackupRestoration (3ms)
-Refreshing native plugins compatible for Editor in 15.61 ms, found 2 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Unloading 3209 Unused Serialized files (Serialized files now loaded: 0)
-Unloading 35 unused Assets / (37.3 KB). Loaded Objects now: 3679.
-Memory consumption went from 223.1 MB to 223.1 MB.
-Total: 3.370583 ms (FindLiveObjects: 0.169042 ms CreateObjectMapping: 0.044583 ms MarkObjects: 3.089542 ms  DeleteObjects: 0.067000 ms)
-
-Prepare: number of updated asset objects reloaded= 0
-AssetImportParameters requested are different than current active one (requested -> active):
-  custom:container-demuxer-ogg: 62fdf1f143b41e24485cea50d1cbac27 -> 
-  custom:video-decoder-ogg-theora: a1e56fd34408186e4bbccfd4996cb3dc -> 
-  custom:CustomObjectIndexerAttribute: 9a22284fe3817be447336de3de66b15e -> 
-  custom:container-demuxer-webm: 4f35f7cbe854078d1ac9338744f61a02 -> 
-  custom:container-muxer-webm: aa71ff27fc2769a1b78a27578f13a17b -> 
-  custom:video-decoder-webm-vp8: 9c59270c3fd7afecdb556c50c9e8de78 -> 
-  custom:SearchIndexIgnoredProperties: e643bd26f0fe6173181afceb89e7c659 -> 
-  custom:AudioImporter_EditorPlatform: 3918e3fc78b5a79bad01e8451be0beb8 -> 
-  custom:framework-osx-AVFoundation: e770b220cccbd017edd2c1fefb359320 -> 
-  custom:video-encoder-webm-vp8: eb34c28f22e8b96e1ab97ce403110664 -> 
-  custom:audio-decoder-ogg-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
-  custom:audio-encoder-webm-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
-========================================================================
-Received Prepare
-Begin MonoManager ReloadAssembly
-Thread 0x16f357000 may have been prematurely finalized
-- Loaded All Assemblies, in  0.653 seconds
-Refreshing native plugins compatible for Editor in 16.15 ms, found 2 plugins.
-Native extension for OSXStandalone target not found
-[Package Manager] Server::EnsureServerProcessIsRunning -- launch failed, reason: Unity was launched with the -noUpm command-line argument
-[Package Manager] UpmClient::Send -- Unable to send message (not connected to UPM process).
-[Package Manager] Cannot connect to Unity Package Manager local server
-Mono: successfully reloaded assembly
-[Package Manager] Server::EnsureServerProcessIsRunning -- launch failed, reason: Unity was launched with the -noUpm command-line argument
-[Package Manager] UpmClient::Send -- Unable to send message (not connected to UPM process).
-[Package Manager] Cannot connect to Unity Package Manager local server
-- Finished resetting the current domain, in  1.785 seconds
-Domain Reload Profiling: 2439ms
-	BeginReloadAssembly (223ms)
-		ExecutionOrderSort (0ms)
-		DisableScriptedObjects (3ms)
-		BackupInstance (0ms)
-		ReleaseScriptingObjects (0ms)
-		CreateAndSetChildDomain (52ms)
-	RebuildCommonClasses (32ms)
-	RebuildNativeTypeToScriptingClass (9ms)
-	initialDomainReloadingComplete (29ms)
-	LoadAllAssembliesAndSetupDomain (361ms)
-		LoadAssemblies (490ms)
-		RebuildTransferFunctionScriptingTraits (0ms)
-		AnalyzeDomain (12ms)
-			TypeCache.Refresh (7ms)
-				TypeCache.ScanAssembly (0ms)
-			ScanForSourceGeneratedMonoScriptInfo (0ms)
-			ResolveRequiredComponents (5ms)
-	FinalizeReload (1786ms)
-		ReleaseScriptCaches (0ms)
-		RebuildScriptCaches (0ms)
-		SetupLoadedEditorAssemblies (354ms)
-			LogAssemblyErrors (0ms)
-			InitializePlatformSupportModulesInManaged (4ms)
-			SetLoadedEditorAssemblies (3ms)
-			RefreshPlugins (0ms)
-			BeforeProcessingInitializeOnLoad (36ms)
-			ProcessInitializeOnLoadAttributes (296ms)
-			ProcessInitializeOnLoadMethodAttributes (14ms)
-			AfterProcessingInitializeOnLoad (1ms)
-			EditorAssembliesLoaded (0ms)
-		ExecutionOrderSort2 (0ms)
-		AwakeInstancesAfterBackupRestoration (3ms)
-Refreshing native plugins compatible for Editor in 7.56 ms, found 2 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Unloading 3209 Unused Serialized files (Serialized files now loaded: 0)
-Unloading 35 unused Assets / (37.3 KB). Loaded Objects now: 3682.
-Memory consumption went from 223.3 MB to 223.3 MB.
-Total: 3.523792 ms (FindLiveObjects: 0.171458 ms CreateObjectMapping: 0.044833 ms MarkObjects: 3.232750 ms  DeleteObjects: 0.073917 ms)
-
-Prepare: number of updated asset objects reloaded= 0
-AssetImportParameters requested are different than current active one (requested -> active):
-  custom:container-demuxer-ogg: 62fdf1f143b41e24485cea50d1cbac27 -> 
-  custom:video-decoder-ogg-theora: a1e56fd34408186e4bbccfd4996cb3dc -> 
-  custom:CustomObjectIndexerAttribute: 9a22284fe3817be447336de3de66b15e -> 
-  custom:container-demuxer-webm: 4f35f7cbe854078d1ac9338744f61a02 -> 
-  custom:container-muxer-webm: aa71ff27fc2769a1b78a27578f13a17b -> 
-  custom:video-decoder-webm-vp8: 9c59270c3fd7afecdb556c50c9e8de78 -> 
-  custom:SearchIndexIgnoredProperties: e643bd26f0fe6173181afceb89e7c659 -> 
-  custom:AudioImporter_EditorPlatform: 3918e3fc78b5a79bad01e8451be0beb8 -> 
-  custom:framework-osx-AVFoundation: e770b220cccbd017edd2c1fefb359320 -> 
-  custom:video-encoder-webm-vp8: eb34c28f22e8b96e1ab97ce403110664 -> 
-  custom:audio-decoder-ogg-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
-  custom:audio-encoder-webm-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
-========================================================================
-Received Prepare
-Begin MonoManager ReloadAssembly
-Thread 0x16f357000 may have been prematurely finalized
-- Loaded All Assemblies, in  0.674 seconds
-Refreshing native plugins compatible for Editor in 15.81 ms, found 2 plugins.
-Native extension for OSXStandalone target not found
-[Package Manager] Server::EnsureServerProcessIsRunning -- launch failed, reason: Unity was launched with the -noUpm command-line argument
-[Package Manager] UpmClient::Send -- Unable to send message (not connected to UPM process).
-[Package Manager] Cannot connect to Unity Package Manager local server
-Mono: successfully reloaded assembly
-[Package Manager] Server::EnsureServerProcessIsRunning -- launch failed, reason: Unity was launched with the -noUpm command-line argument
-[Package Manager] UpmClient::Send -- Unable to send message (not connected to UPM process).
-[Package Manager] Cannot connect to Unity Package Manager local server
-- Finished resetting the current domain, in  1.652 seconds
-Domain Reload Profiling: 2327ms
-	BeginReloadAssembly (222ms)
-		ExecutionOrderSort (0ms)
-		DisableScriptedObjects (3ms)
-		BackupInstance (0ms)
-		ReleaseScriptingObjects (0ms)
-		CreateAndSetChildDomain (58ms)
-	RebuildCommonClasses (31ms)
-	RebuildNativeTypeToScriptingClass (9ms)
-	initialDomainReloadingComplete (38ms)
-	LoadAllAssembliesAndSetupDomain (373ms)
-		LoadAssemblies (496ms)
-		RebuildTransferFunctionScriptingTraits (0ms)
-		AnalyzeDomain (16ms)
-			TypeCache.Refresh (7ms)
-				TypeCache.ScanAssembly (0ms)
-			ScanForSourceGeneratedMonoScriptInfo (0ms)
-			ResolveRequiredComponents (8ms)
-	FinalizeReload (1653ms)
-		ReleaseScriptCaches (0ms)
-		RebuildScriptCaches (0ms)
-		SetupLoadedEditorAssemblies (361ms)
-			LogAssemblyErrors (0ms)
-			InitializePlatformSupportModulesInManaged (13ms)
-			SetLoadedEditorAssemblies (3ms)
-			RefreshPlugins (0ms)
-			BeforeProcessingInitializeOnLoad (39ms)
-			ProcessInitializeOnLoadAttributes (292ms)
-			ProcessInitializeOnLoadMethodAttributes (14ms)
-			AfterProcessingInitializeOnLoad (1ms)
-			EditorAssembliesLoaded (0ms)
-		ExecutionOrderSort2 (0ms)
-		AwakeInstancesAfterBackupRestoration (3ms)
-Refreshing native plugins compatible for Editor in 9.36 ms, found 2 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Unloading 3209 Unused Serialized files (Serialized files now loaded: 0)
-Unloading 35 unused Assets / (37.3 KB). Loaded Objects now: 3685.
-Memory consumption went from 223.5 MB to 223.5 MB.
-Total: 4.161291 ms (FindLiveObjects: 0.248292 ms CreateObjectMapping: 0.043416 ms MarkObjects: 3.770459 ms  DeleteObjects: 0.098416 ms)
-
-Prepare: number of updated asset objects reloaded= 0
-AssetImportParameters requested are different than current active one (requested -> active):
-  custom:container-demuxer-ogg: 62fdf1f143b41e24485cea50d1cbac27 -> 
-  custom:video-decoder-ogg-theora: a1e56fd34408186e4bbccfd4996cb3dc -> 
-  custom:CustomObjectIndexerAttribute: 9a22284fe3817be447336de3de66b15e -> 
-  custom:container-demuxer-webm: 4f35f7cbe854078d1ac9338744f61a02 -> 
-  custom:container-muxer-webm: aa71ff27fc2769a1b78a27578f13a17b -> 
-  custom:video-decoder-webm-vp8: 9c59270c3fd7afecdb556c50c9e8de78 -> 
-  custom:SearchIndexIgnoredProperties: e643bd26f0fe6173181afceb89e7c659 -> 
-  custom:AudioImporter_EditorPlatform: 3918e3fc78b5a79bad01e8451be0beb8 -> 
-  custom:framework-osx-AVFoundation: e770b220cccbd017edd2c1fefb359320 -> 
-  custom:video-encoder-webm-vp8: eb34c28f22e8b96e1ab97ce403110664 -> 
-  custom:audio-decoder-ogg-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
-  custom:audio-encoder-webm-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
-========================================================================
-Received Prepare
-Begin MonoManager ReloadAssembly
-Thread 0x16f357000 may have been prematurely finalized
-- Loaded All Assemblies, in  0.578 seconds
-Refreshing native plugins compatible for Editor in 8.80 ms, found 2 plugins.
-Native extension for OSXStandalone target not found
-[Package Manager] Server::EnsureServerProcessIsRunning -- launch failed, reason: Unity was launched with the -noUpm command-line argument
-[Package Manager] UpmClient::Send -- Unable to send message (not connected to UPM process).
-[Package Manager] Cannot connect to Unity Package Manager local server
-Mono: successfully reloaded assembly
-[Package Manager] Server::EnsureServerProcessIsRunning -- launch failed, reason: Unity was launched with the -noUpm command-line argument
-[Package Manager] UpmClient::Send -- Unable to send message (not connected to UPM process).
-[Package Manager] Cannot connect to Unity Package Manager local server
-- Finished resetting the current domain, in 10.220 seconds
-Domain Reload Profiling: 10799ms
-	BeginReloadAssembly (231ms)
-		ExecutionOrderSort (1ms)
-		DisableScriptedObjects (6ms)
-		BackupInstance (0ms)
-		ReleaseScriptingObjects (0ms)
-		CreateAndSetChildDomain (55ms)
-	RebuildCommonClasses (29ms)
-	RebuildNativeTypeToScriptingClass (9ms)
-	initialDomainReloadingComplete (18ms)
-	LoadAllAssembliesAndSetupDomain (291ms)
-		LoadAssemblies (393ms)
-		RebuildTransferFunctionScriptingTraits (0ms)
-		AnalyzeDomain (27ms)
-			TypeCache.Refresh (11ms)
-				TypeCache.ScanAssembly (1ms)
-			ScanForSourceGeneratedMonoScriptInfo (10ms)
-			ResolveRequiredComponents (4ms)
-	FinalizeReload (10220ms)
-		ReleaseScriptCaches (0ms)
-		RebuildScriptCaches (0ms)
-		SetupLoadedEditorAssemblies (329ms)
-			LogAssemblyErrors (0ms)
-			InitializePlatformSupportModulesInManaged (8ms)
-			SetLoadedEditorAssemblies (3ms)
-			RefreshPlugins (0ms)
-			BeforeProcessingInitializeOnLoad (34ms)
-			ProcessInitializeOnLoadAttributes (270ms)
-			ProcessInitializeOnLoadMethodAttributes (12ms)
-			AfterProcessingInitializeOnLoad (1ms)
-			EditorAssembliesLoaded (0ms)
-		ExecutionOrderSort2 (0ms)
-		AwakeInstancesAfterBackupRestoration (3ms)
-Refreshing native plugins compatible for Editor in 50.66 ms, found 2 plugins.
-Preloading 0 native plugins for Editor in 0.00 ms.
-Unloading 3209 Unused Serialized files (Serialized files now loaded: 0)
-Unloading 35 unused Assets / (38.4 KB). Loaded Objects now: 3688.
-Memory consumption went from 223.7 MB to 223.7 MB.
-Total: 13.276916 ms (FindLiveObjects: 0.194375 ms CreateObjectMapping: 0.078750 ms MarkObjects: 12.892500 ms  DeleteObjects: 0.110292 ms)
+Unloading 3193 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 13 unused Assets / (27.9 KB). Loaded Objects now: 3725.
+Memory consumption went from 214.8 MB to 214.7 MB.
+Total: 3.422292 ms (FindLiveObjects: 0.178791 ms CreateObjectMapping: 0.042292 ms MarkObjects: 3.148917 ms  DeleteObjects: 0.051792 ms)
 
 Prepare: number of updated asset objects reloaded= 0
 AssetImportParameters requested are different than current active one (requested -> active):
