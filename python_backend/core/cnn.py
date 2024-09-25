@@ -25,6 +25,10 @@ class TorchCNN(torch.nn.Module):
             'Sigmoid',
             'Mish'
         ]
+        self.allowed_losses = [
+            'CrossEntropyLoss'
+            'MSELoss'
+        ]
         self.allowed_optims = [
             'Adam',
             'AdamW',
@@ -41,11 +45,11 @@ class TorchCNN(torch.nn.Module):
 
         # technical network elements
         self._acts = None
-        self._optim = None
-        self._loss = None
         self._conv = None
         self._pool = None
         self._dense = None
+        self._optim = None
+        self._loss = None
 
     def set_sizes(self, *, conv_channels: list = None, dense_sizes: list = None) -> None:
         if conv_channels is None:
@@ -56,8 +60,8 @@ class TorchCNN(torch.nn.Module):
         self._dense_sizes = ['flattened', *dense_sizes, 'classes']
 
     def set_conv(self, *, parameters: list) -> None:
-        # check if parameters are formatted correctly
         if not (isinstance(parameters, list) or len(parameters) != len(self._conv_sizes) - 1):
+            # invalid parameter format
             raise ValueError(f"Convolutional parameters were not formatted correctly: {parameters}")
 
         # instantiate parameter checker
@@ -112,8 +116,8 @@ class TorchCNN(torch.nn.Module):
             self._conv.append(torch.nn.Conv2d(*self._dense_sizes[prms:prms + 1], **conv_params[prms]))
 
     def set_dense(self, *, parameters=None):
-        # check if parameters are formatted correctly
-        if not (isinstance(parameters, list) or len(parameters) < 1):
+        if not (isinstance(parameters, list) or len(parameters) != len(self._dense_sizes) - 1):
+            # invalid parameter format
             raise ValueError(f"Dense parameters were not formatted correctly: {parameters}")
 
         # instantiate parameter checker
@@ -152,6 +156,7 @@ class TorchCNN(torch.nn.Module):
             self._dense.append(torch.nn.Linear(**prms))
 
     def set_acts(self, *, methods=None, parameters=None):
+        # todo
         self._acts = []
         if len(methods) != len(parameters):
             raise RuntimeError("Not matching params and methods")
@@ -234,11 +239,12 @@ class TorchCNN(torch.nn.Module):
         }
 
         for act_pair in zip(methods, parameters):
+            # todo
             self._acts.append(act_pair[0])
 
-    def set_pool(self, *, parameters=None):
-        # check if parameters are formatted correctly
-        if not (isinstance(parameters, list) or len(parameters) < 1):
+    def set_pool(self, *, parameters: dict = None):
+        if not (isinstance(parameters, dict) or len(parameters) < len(self._conv_sizes)):
+            # invalid parameter format
             raise ValueError(f"Pooling parameters were not formatted correctly: {parameters}")
 
         # instantiate parameter checker
@@ -288,8 +294,13 @@ class TorchCNN(torch.nn.Module):
         for prms in pool_params:
             self._pool.append(torch.nn.MaxPool2d(**prms))
 
-    def set_optim(self, method: str = 'Adam', params: dict = None, **kwargs):
-        optim_params = {
+    def set_loss(self, method: str = 'CrossEntropyLoss', *, parameters: dict = None, **kwargs):
+        # todo
+        ...
+
+    def set_optim(self, method: str = 'Adam', *, parameters: dict = None, **kwargs):
+        # define default optimization parameters
+        def_optim_params = {
             'Adam': {
                 'default': {
                     'lr': 0.001,
@@ -297,35 +308,239 @@ class TorchCNN(torch.nn.Module):
                     'eps': 1e-08,
                     'weight_decay': 0.0,
                     'amsgrad': False,
+                    'foreach': None,
+                    'maximize': False,
+                    'fused': False
                 },
                 'dtypes': {
-                    'inplace': (bool, int)
+                    'lr': (float, int),
+                    'betas': tuple,
+                    'eps': (float, int),
+                    'weight_decay': (float, int),
+                    'amsgrad': (bool, int),
+                    'foreach': (bool, int),
+                    'maximize': (bool, int),
+                    'fused': (bool, int)
                 },
                 'vtypes': {
-                    'inplace': lambda x: True
+                    'lr': lambda x: 0.0 <= x,
+                    'betas': lambda x: len(x) == 2 and all(isinstance(i, float) and 0.0 < i < 1.0 for i in x),
+                    'eps': lambda x: 0.0 < x,
+                    'weight_decay': lambda x: 0.0 <= x,
+                    'amsgrad': lambda x: True,
+                    'foreach': lambda x: True,
+                    'maximize': lambda x: True,
+                    'fused': lambda x: True
                 },
                 'ctypes': {
-                    'inplace': lambda x: bool(x)
+                    'lr': lambda x: float(x),
+                    'betas': lambda x: x,
+                    'eps': lambda x: float(x),
+                    'weight_decay': lambda x: float(x),
+                    'amsgrad': lambda x: bool(x),
+                    'foreach': lambda x: bool(x),
+                    'maximize': lambda x: bool(x),
+                    'fused': lambda x: bool(x)
                 }
             },
             'AdamW': {
-
+                'default': {
+                    'lr': 0.001,
+                    'betas': (0.9, 0.999),
+                    'eps': 1e-08,
+                    'weight_decay': 0.0,
+                    'amsgrad': False,
+                    'foreach': None,
+                    'maximize': False,
+                    'fused': False
+                },
+                'dtypes': {
+                    'lr': (float, int),
+                    'betas': tuple,
+                    'eps': (float, int),
+                    'weight_decay': (float, int),
+                    'amsgrad': (bool, int),
+                    'foreach': (bool, int),
+                    'maximize': (bool, int),
+                    'fused': (bool, int)
+                },
+                'vtypes': {
+                    'lr': lambda x: 0.0 <= x,
+                    'betas': lambda x: len(x) == 2 and all(isinstance(i, float) and 0.0 < i < 1.0 for i in x),
+                    'eps': lambda x: 0.0 < x,
+                    'weight_decay': lambda x: 0.0 <= x,
+                    'amsgrad': lambda x: True,
+                    'foreach': lambda x: True,
+                    'maximize': lambda x: True,
+                    'fused': lambda x: True
+                },
+                'ctypes': {
+                    'lr': lambda x: float(x),
+                    'betas': lambda x: x,
+                    'eps': lambda x: float(x),
+                    'weight_decay': lambda x: float(x),
+                    'amsgrad': lambda x: bool(x),
+                    'foreach': lambda x: bool(x),
+                    'maximize': lambda x: bool(x),
+                    'fused': lambda x: bool(x)
+                }
             },
             'Adagrad': {
-
+                'default': {
+                    'lr:': 0.01,
+                    'lr_decay': 0.0,
+                    'weight_decay': 0.0,
+                    'initial_accumulator_value': 0.0,
+                    'eps': 1e-10,
+                    'foreach': None,
+                    'maximize': False,
+                    'fused': None
+                },
+                'dtypes': {
+                    'lr': (float, int),
+                    'lr_decay': (float, int),
+                    'weight_decay': (float, int),
+                    'initial_accumulator_value': (float, int),
+                    'eps': (float, int),
+                    'foreach': (bool, int),
+                    'maximize': (bool, int),
+                    'fused': (bool, int)
+                },
+                'vtypes': {
+                    'lr': lambda x: 0.0 <= x,
+                    'lr_decay': lambda x: 0.0 <= x,
+                    'weight_decay': lambda x: 0.0 <= x,
+                    'initial_accumulator_value': lambda x: 0.0 <= x,
+                    'eps': lambda x: 0.0 < x,
+                    'foreach': lambda x: True,
+                    'maximize': lambda x: True,
+                    'fused': lambda x: True
+                },
+                'ctypes': {
+                    'lr': lambda x: float(x),
+                    'lr_decay': lambda x: float(x),
+                    'weight_decay': lambda x: float(x),
+                    'initial_accumulator_value': lambda x: float(x),
+                    'eps': lambda x: float(x),
+                    'foreach': lambda x: bool(x),
+                    'maximize': lambda x: bool(x),
+                    'fused': lambda x: bool(x)
+                }
             },
             'RMSprop': {
-
+                'default': {
+                    'lr:': 0.01,
+                    'alpha': 0.99,
+                    'eps': 1e-10,
+                    'weight_decay': 0.0,
+                    'momentum': 0.0,
+                    'centered': False,
+                    'foreach': None,
+                    'maximize': False
+                },
+                'dtypes': {
+                    'lr': (float, int),
+                    'alpha': (float, int),
+                    'eps': (float, int),
+                    'weight_decay': (float, int),
+                    'momentum': (float, int),
+                    'centered': (bool, int),
+                    'foreach': (bool, int),
+                    'maximize': (bool, int)
+                },
+                'vtypes': {
+                    'lr': lambda x: 0.0 <= x,
+                    'alpha': lambda x: 0.0 < x < 1.0,
+                    'eps': lambda x: 0.0 < x,
+                    'weight_decay': lambda x: 0.0 <= x,
+                    'momentum': lambda x: 0.0 <= x < 1.0,
+                    'centered': lambda x: True,
+                    'foreach': lambda x: True,
+                    'maximize': lambda x: True
+                },
+                'ctypes': {
+                    'lr': lambda x: float(x),
+                    'alpha': lambda x: float(x),
+                    'eps': lambda x: float(x),
+                    'weight_decay': lambda x: float(x),
+                    'momentum': lambda x: float(x),
+                    'centered': lambda x: bool(x),
+                    'foreach': lambda x: bool(x),
+                    'maximize': lambda x: bool(x)
+                }
             },
-            'SGD':{
-
+            'SGD': {
+                'default': {
+                    'lr:': 0.001,
+                    'momentum': 0.0,
+                    'dampening': 0.0,
+                    'weight_decay': 0.0,
+                    'nesterov': False,
+                    'maximize': False,
+                    'foreach': None,
+                    'fused': None
+                },
+                'dtypes': {
+                    'lr:': (float, int),
+                    'momentum': (float, int),
+                    'dampening': (float, int),
+                    'weight_decay': (float, int),
+                    'nesterov': (bool, int),
+                    'maximize': (bool, int),
+                    'foreach': (bool, int),
+                    'fused': (bool, int)
+                },
+                'vtypes': {
+                    'lr:': lambda x: 0.0 <= x,
+                    'momentum': lambda x: 0.0 <= x < 1.0,
+                    'dampening': lambda x: 0.0 <= x < 1.0,
+                    'weight_decay': lambda x: 0.0 <= x,
+                    'nesterov': lambda x: x,
+                    'maximize': lambda x: x,
+                    'foreach': lambda x: x,
+                    'fused': lambda x: x
+                },
+                'ctypes': {
+                    'lr:': lambda x: float(x),
+                    'momentum': lambda x: float(x),
+                    'dampening': lambda x: float(x),
+                    'weight_decay': lambda x: float(x),
+                    'nesterov': lambda x: bool(x),
+                    'maximize': lambda x: bool(x),
+                    'foreach': lambda x: bool(x),
+                    'fused': lambda x: bool(x)
+                }
             }
         }
 
+        # define pytorch optimization reference
+        optim_ref = {
+            'Adam': torch.optim.SGD,
+            'AdamW': torch.optim.AdamW,
+            'Adagrad': torch.optim.Adagrad,
+            'RMSprop': torch.optim.RMSprop,
+            'SGD': torch.optim.SGD
+        }
+
+        if method not in self.allowed_optims:
+            # invalid optimization method
+            raise ValueError(
+                f"Optimization method is invalid: {method}\n",
+                f"Choose from: {[optim_mthd for optim_mthd in self.allowed_optims]}"
+            )
+
+        # set optimizer
+        optim_checker = ParamChecker(name='optimizer', ikwiad=self._ikwiad)
+        optim_checker.set_types(def_optim_params[method])
+        optim_params = optim_checker.check_params(parameters, **kwargs)
+        self._optim = optim_ref[method](optim_params)
+
     def configure_network(self, loader):
+        # todo
         ...
 
     def set_hyperparameters(self):
+        # todo
         ...
 
     def forward(self, x):
