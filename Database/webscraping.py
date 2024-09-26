@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 import json
 
 # name of all plants you want to scrape data for
-plants = ["Abutilon_eremitopetalum", "Abutilon_incanum", "Abutilon_menziesii"]
+plants = ["Abutilon_eremitopetalum", "Abutilon_incanum", "Abutilon_menziesii", "Dodonaea_viscosa", "Metrosideros_polymorpha"]
 
 all_results = {}
 
@@ -37,6 +37,6 @@ for plant in plants:
 
     all_results[plant] = result
 # puts all data into json file
-with open('plant_data.json', 'w') as f:
+with open('Database/plant_data.json', 'w') as f:
     json_output = json.dumps(all_results, indent=4, ensure_ascii=False)
     f.write(json_output)
