@@ -22,13 +22,13 @@ def one_hot_encode(y, num_classes=num_classes):
 
 # Load your dataset using ImageFolder
 training_data = datasets.ImageFolder(
-    root="Pictures",  # Set this to your training folder path
+    root="../Pictures",  # Set this to your training folder path
     transform=transform,
     target_transform=one_hot_encode  # Use the named function for target transformation
 )
 
 test_data = datasets.ImageFolder(
-    root="Pictures",  # Set this to your test folder path
+    root="../Pictures",  # Set this to your test folder path
     transform=transform,
     target_transform=one_hot_encode  # Use the named function for target transformation
 )
