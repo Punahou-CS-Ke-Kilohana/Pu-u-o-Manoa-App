@@ -238,6 +238,16 @@ class TorchCNN(torch.nn.Module):
             }
         }
 
+        # make activations reference
+        activation_ref = {
+            'ReLU': torch.nn.ReLU,
+            'Softplus': torch.nn.Softplus,
+            'Softmax': torch.nn.Softmax,
+            'Tanh': torch.nn.Tanh,
+            'Sigmoid': torch.nn.Sigmoid,
+            'Mish': torch.nn.Mish
+        }
+
         for act_pair in zip(methods, parameters):
             # todo
             self._acts.append(act_pair[0])
@@ -283,7 +293,7 @@ class TorchCNN(torch.nn.Module):
                 'ceil_mode': lambda x: bool(x)
             }
         )
-
+    
         # get each layer's parameters
         pool_params = []
         for prm in parameters:
@@ -295,7 +305,112 @@ class TorchCNN(torch.nn.Module):
             self._pool.append(torch.nn.MaxPool2d(**prms))
 
     def set_loss(self, method: str = 'CrossEntropyLoss', *, parameters: dict = None, **kwargs):
-        # todo
+        def_loss_params = {
+            "CrossEntropyLoss": {
+                'default': {
+                    'weight': None,
+                    'size_average': True,
+                    'ignore_index': -100,
+                    'reduce': True,
+                    'reduction': 'mean',
+                    'label_smoothing': 0.0
+                },
+                'dtypes': {
+                    'weight': (type(None), torch.Tensor),
+                    'size_average': bool,
+                    'ignore_index': int,
+                    'reduce': bool,
+                    'reduction': str,
+                    'label_smoothing': float
+                },
+                'vtypes': {
+                    'weight': lambda x: x is None or isinstance(x, torch.Tensor),
+                    'size_average': lambda x: isinstance(x, bool),
+                    'ignore_index': lambda x: isinstance(x, int),
+                    'reduce': lambda x: isinstance(x, bool),
+                    'reduction': lambda x: x in ['none', 'mean', 'sum'],
+                    'label_smoothing': lambda x: 0.0 <= x <= 1.0
+                },
+                'ctypes': {
+                    'weight': lambda x: x if x is None else torch.tensor(x, dtype=torch.float32),
+                    'size_average': lambda x: bool(x),
+                    'ignore_index': lambda x: int(x),
+                    'reduce': lambda x: bool(x),
+                    'reduction': lambda x: str(x),
+                    'label_smoothing': lambda x: float(x)
+                }
+            },
+            "MSELoss": {
+                'default': {
+                    'size_average': True,
+                    'reduce': True,
+                    'reduction': 'mean'
+                },
+                'dtypes': {
+                    'size_average': bool,
+                    'reduce': bool,
+                    'reduction': str
+                },
+                'vtypes': {
+                    'size_average': lambda x: isinstance(x, bool),
+                    'reduce': lambda x: isinstance(x, bool),
+                    'reduction': lambda x: x in ['none', 'mean', 'sum']
+                },
+                'ctypes': {
+                    'size_average': lambda x: bool(x),
+                    'reduce': lambda x: bool(x),
+                    'reduction': lambda x: str(x)
+                }
+            },
+            "L1Loss": {
+                'default': {
+                    'size_average': True,
+                    'reduce': True,
+                    'reduction': 'mean'
+                },
+                'dtypes': {
+                    'size_average': bool,
+                    'reduce': bool,
+                    'reduction': str
+                },
+                'vtypes': {
+                    'size_average': lambda x: isinstance(x, bool),
+                    'reduce': lambda x: isinstance(x, bool),
+                    'reduction': lambda x: x in ['none', 'mean', 'sum']
+                },
+                'ctypes': {
+                    'size_average': lambda x: bool(x),
+                    'reduce': lambda x: bool(x),
+                    'reduction': lambda x: str(x)
+                }
+            },
+            "SigmoidFocalLoss": {
+                'default': {
+                    'alpha': 0.25,
+                    'gamma': 2.0,
+                    'reduction': 'none'
+                },
+                'dtypes': {
+                    'alpha': float,
+                    'gamma': float,
+                    'reduction': str
+                },
+                'vtypes': {
+                    'alpha': lambda x: isinstance(x, float) and (0.0 < x < 1.0 or x == -1.0),
+                    'gamma': lambda x: isinstance(x, float) and x >= 0.0,
+                    'reduction': lambda x: x in ['none', 'mean', 'sum']
+                },
+                'ctypes': {
+                    'alpha': lambda x: float(x),
+                    'gamma': lambda x: float(x),
+                    'reduction': lambda x: str(x)
+                }
+            }
+        }
+
+        
+        
+        
         ...
 
     def set_optim(self, method: str = 'Adam', *, parameters: dict = None, **kwargs):
@@ -515,7 +630,7 @@ class TorchCNN(torch.nn.Module):
 
         # define pytorch optimization reference
         optim_ref = {
-            'Adam': torch.optim.SGD,
+            'Adam': torch.optim.Adam,
             'AdamW': torch.optim.AdamW,
             'Adagrad': torch.optim.Adagrad,
             'RMSprop': torch.optim.RMSprop,
