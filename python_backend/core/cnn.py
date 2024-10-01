@@ -115,6 +115,62 @@ class TorchCNN(torch.nn.Module):
         for prms in range(len(conv_params)):
             self._conv.append(torch.nn.Conv2d(*self._dense_sizes[prms:prms + 1], **conv_params[prms]))
 
+    def set_pool(self, *, parameters: dict = None):
+        if not (isinstance(parameters, dict) or len(parameters) < len(self._conv_sizes)):
+            # invalid parameter format
+            raise ValueError(f"Pooling parameters were not formatted correctly: {parameters}")
+
+        # instantiate parameter checker
+        pool_checker = ParamChecker(name='pool', ikwiad=self._ikwiad)
+        pool_checker.set_types(
+            default={
+                'kernel_size': 3,
+                'stride': None,
+                'padding': 0,
+                'dilation': 1,
+                'return_indices': False,
+                'ceil_mode': False
+            },
+            dtypes={
+                'kernel_size': (int, tuple),
+                'stride': (types.NoneType, int, tuple),
+                'padding': (int, tuple),
+                'dilation': (int, tuple),
+                'return_indices': (bool, int),
+                'ceil_mode': (bool, int)
+            },
+            vtypes={
+                'kernel_size': lambda x: (isinstance(x, int) and 0 < x) or (
+                            isinstance(x, tuple) and len(x) == 2 and all(isinstance(i, int) and 0 < i for i in x)),
+                'stride': lambda x: (isinstance(x, types.NoneType)) or (isinstance(x, int) and 0 < x) or (
+                            isinstance(x, tuple) and len(x) == 2 and all(isinstance(i, int) and 0 < i for i in x)),
+                'padding': lambda x: (isinstance(x, int) and 0 <= x) or (
+                            isinstance(x, tuple) and len(x) == 2 and all(isinstance(i, int) and 0 <= i for i in x)),
+                'dilation': lambda x: (isinstance(x, int) and 0 < x) or (
+                            isinstance(x, tuple) and len(x) == 2 and all(isinstance(i, int) and 0 < i for i in x)),
+                'return_indices': lambda x: True,
+                'ceil_mode': lambda x: True
+            },
+            ctypes={
+                'kernel_size': lambda x: x,
+                'stride': lambda x: x,
+                'padding': lambda x: x,
+                'dilation': lambda x: x,
+                'return_indices': lambda x: bool(x),
+                'ceil_mode': lambda x: bool(x)
+            }
+        )
+
+        # get each layer's parameters
+        pool_params = []
+        for prm in parameters:
+            pool_params.append(pool_checker.check_params(prm))
+
+        # set pooling layers
+        self._pool = []
+        for prms in pool_params:
+            self._pool.append(torch.nn.MaxPool2d(**prms))
+
     def set_dense(self, *, parameters=None):
         if not (isinstance(parameters, list) or len(parameters) != len(self._dense_sizes) - 1):
             # invalid parameter format
@@ -249,64 +305,15 @@ class TorchCNN(torch.nn.Module):
         }
 
         for act_pair in zip(methods, parameters):
-            # todo
-            self._acts.append(act_pair[0])
-
-    def set_pool(self, *, parameters: dict = None):
-        if not (isinstance(parameters, dict) or len(parameters) < len(self._conv_sizes)):
-            # invalid parameter format
-            raise ValueError(f"Pooling parameters were not formatted correctly: {parameters}")
-
-        # instantiate parameter checker
-        pool_checker = ParamChecker(name='pool', ikwiad=self._ikwiad)
-        pool_checker.set_types(
-            default={
-                'kernel_size': 3,
-                'stride': None,
-                'padding': 0,
-                'dilation': 1,
-                'return_indices': False,
-                'ceil_mode': False
-            },
-            dtypes={
-                'kernel_size': (int, tuple),
-                'stride': (types.NoneType, int, tuple),
-                'padding': (int, tuple),
-                'dilation': (int, tuple),
-                'return_indices': (bool, int),
-                'ceil_mode': (bool, int)
-            },
-            vtypes={
-                'kernel_size': lambda x: (isinstance(x, int) and 0 < x) or (isinstance(x, tuple) and len(x) == 2 and all(isinstance(i, int) and 0 < i for i in x)),
-                'stride': lambda x: (isinstance(x, types.NoneType)) or (isinstance(x, int) and 0 < x) or (isinstance(x, tuple) and len(x) == 2 and all(isinstance(i, int) and 0 < i for i in x)),
-                'padding': lambda x: (isinstance(x, int) and 0 <= x) or (isinstance(x, tuple) and len(x) == 2 and all(isinstance(i, int) and 0 <= i for i in x)),
-                'dilation': lambda x: (isinstance(x, int) and 0 < x) or (isinstance(x, tuple) and len(x) == 2 and all(isinstance(i, int) and 0 < i for i in x)),
-                'return_indices': lambda x: True,
-                'ceil_mode': lambda x: True
-            },
-            ctypes={
-                'kernel_size': lambda x: x,
-                'stride': lambda x: x,
-                'padding': lambda x: x,
-                'dilation': lambda x: x,
-                'return_indices': lambda x: bool(x),
-                'ceil_mode': lambda x: bool(x)
-            }
-        )
-    
-        # get each layer's parameters
-        pool_params = []
-        for prm in parameters:
-            pool_params.append(pool_checker.check_params(prm))
-
-        # set pooling layers
-        self._pool = []
-        for prms in pool_params:
-            self._pool.append(torch.nn.MaxPool2d(**prms))
+            # set activation objects
+            act_checker = ParamChecker(name='activations', ikwiad=self._ikwiad)
+            act_checker.set_types(**act_params[act_pair[0]])
+            act_prms = act_checker.check_params(act_pair[1])
+            self._acts.append(activation_ref[act_pair[0]](act_prms))
 
     def set_loss(self, method: str = 'CrossEntropyLoss', *, parameters: dict = None, **kwargs):
         def_loss_params = {
-            "CrossEntropyLoss": {
+            'CrossEntropyLoss': {
                 'default': {
                     'weight': None,
                     'size_average': True,
@@ -340,7 +347,7 @@ class TorchCNN(torch.nn.Module):
                     'label_smoothing': lambda x: float(x)
                 }
             },
-            "MSELoss": {
+            'MSELoss': {
                 'default': {
                     'size_average': True,
                     'reduce': True,
@@ -362,7 +369,7 @@ class TorchCNN(torch.nn.Module):
                     'reduction': lambda x: str(x)
                 }
             },
-            "L1Loss": {
+            'L1Loss': {
                 'default': {
                     'size_average': True,
                     'reduce': True,
@@ -381,37 +388,30 @@ class TorchCNN(torch.nn.Module):
                 'ctypes': {
                     'size_average': lambda x: bool(x),
                     'reduce': lambda x: bool(x),
-                    'reduction': lambda x: str(x)
-                }
-            },
-            "SigmoidFocalLoss": {
-                'default': {
-                    'alpha': 0.25,
-                    'gamma': 2.0,
-                    'reduction': 'none'
-                },
-                'dtypes': {
-                    'alpha': float,
-                    'gamma': float,
-                    'reduction': str
-                },
-                'vtypes': {
-                    'alpha': lambda x: isinstance(x, float) and (0.0 < x < 1.0 or x == -1.0),
-                    'gamma': lambda x: isinstance(x, float) and x >= 0.0,
-                    'reduction': lambda x: x in ['none', 'mean', 'sum']
-                },
-                'ctypes': {
-                    'alpha': lambda x: float(x),
-                    'gamma': lambda x: float(x),
                     'reduction': lambda x: str(x)
                 }
             }
         }
 
-        
-        
-        
-        ...
+        # define pytorch loss reference
+        loss_ref = {
+            'CrossEntropyLoss': torch.nn.CrossEntropyLoss,
+            'MSELoss': torch.nn.MSELoss,
+            'L1Loss': torch.nn.L1Loss
+        }
+
+        if method not in self.allowed_losses:
+            # invalid loss method
+            raise ValueError(
+                f"Optimization method is invalid: {method}\n",
+                f"Choose from: {[loss_mthd for loss_mthd in self.allowed_losses]}"
+            )
+
+        # set loss
+        loss_checker = ParamChecker(name='losses', ikwiad=self._ikwiad)
+        loss_checker.set_types(**def_loss_params[method])
+        loss_params = loss_checker.check_params(parameters, **kwargs)
+        self._loss = loss_ref[method](loss_params)
 
     def set_optim(self, method: str = 'Adam', *, parameters: dict = None, **kwargs):
         # define default optimization parameters
@@ -646,7 +646,7 @@ class TorchCNN(torch.nn.Module):
 
         # set optimizer
         optim_checker = ParamChecker(name='optimizer', ikwiad=self._ikwiad)
-        optim_checker.set_types(def_optim_params[method])
+        optim_checker.set_types(**def_optim_params[method])
         optim_params = optim_checker.check_params(parameters, **kwargs)
         self._optim = optim_ref[method](optim_params)
 
