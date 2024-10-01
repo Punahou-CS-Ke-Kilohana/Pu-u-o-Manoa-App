@@ -43,7 +43,7 @@ for plant in plantLinks:
     else:
         print(f"Could not get data for {plant}")
 
-    all_results[plant] = result
+    all_results[plant.split("/")[-1]] = result
 
 # Ensure the directory exists
 output_dir = 'Database'
