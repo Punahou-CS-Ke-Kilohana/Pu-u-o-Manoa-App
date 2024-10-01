@@ -309,7 +309,7 @@ class TorchCNN(torch.nn.Module):
             act_checker = ParamChecker(name='activations', ikwiad=self._ikwiad)
             act_checker.set_types(**act_params[act_pair[0]])
             act_prms = act_checker.check_params(act_pair[1])
-            self._acts.append(activation_ref[[act_pair[0]](act_prms))
+            self._acts.append(activation_ref[act_pair[0]](act_prms))
 
     def set_loss(self, method: str = 'CrossEntropyLoss', *, parameters: dict = None, **kwargs):
         def_loss_params = {
