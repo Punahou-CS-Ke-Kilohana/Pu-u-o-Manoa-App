@@ -1,3 +1,12 @@
+r"""
+**Utility functions.**
+
+Attributes:
+----------
+**ParamChecker**:
+    Checks parameters.
+"""
+
 import types
 import warnings
 

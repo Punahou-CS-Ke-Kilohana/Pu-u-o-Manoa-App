@@ -1,9 +1,6 @@
 import types
 
 import torch
-import torch.functional as f
-import torch.optim as optim
-import torch.nn as nn
 
 from .utils import ParamChecker
 
@@ -40,27 +37,32 @@ class TorchCNN(torch.nn.Module):
         # network features
         self._conv_sizes = None
         self._dense_sizes = None
-        self._feature_space = None
-        self._classifications = None
 
         # technical network elements
+        # activations areas
         self._acts = None
+        # convolutional areas
         self._conv = None
         self._pool = None
+        # dense areas
         self._dense = None
-        self._optim = None
+        # gradient usages
         self._loss = None
+        self._optim = None
 
-    def set_sizes(self, *, conv_channels: list = None, dense_sizes: list = None) -> None:
+    def set_sizes(self, *, conv_channels: list = None, dense_sizes: list = None):
         if conv_channels is None:
+            # default convolutional channels
             conv_channels = [128, 64, 32]
         if dense_sizes is None:
+            # default dense sizes
             dense_sizes = [256, 128, 64, 32]
+        # unpack sizes
         self._conv_sizes = ['batching', *conv_channels]
         self._dense_sizes = ['flattened', *dense_sizes, 'classes']
 
-    def set_conv(self, *, parameters: list) -> None:
-        if not (isinstance(parameters, list) or len(parameters) != len(self._conv_sizes) - 1):
+    def set_conv(self, *, parameters: list):
+        if not (isinstance(parameters, list)) or (len(parameters) != len(self._conv_sizes)):
             # invalid parameter format
             raise ValueError(f"Convolutional parameters were not formatted correctly: {parameters}")
 
@@ -115,8 +117,8 @@ class TorchCNN(torch.nn.Module):
         for prms in range(len(conv_params)):
             self._conv.append(torch.nn.Conv2d(*self._dense_sizes[prms:prms + 1], **conv_params[prms]))
 
-    def set_pool(self, *, parameters: list = None):
-        if not (isinstance(parameters, list) or len(parameters) < len(self._conv_sizes)):
+    def set_pool(self, *, parameters: list):
+        if not (isinstance(parameters, list)) or (len(parameters) != len(self._conv_sizes)):
             # invalid parameter format
             raise ValueError(f"Pooling parameters were not formatted correctly: {parameters}")
 
@@ -140,14 +142,10 @@ class TorchCNN(torch.nn.Module):
                 'ceil_mode': (bool, int)
             },
             vtypes={
-                'kernel_size': lambda x: (isinstance(x, int) and 0 < x) or (
-                            isinstance(x, tuple) and len(x) == 2 and all(isinstance(i, int) and 0 < i for i in x)),
-                'stride': lambda x: (isinstance(x, types.NoneType)) or (isinstance(x, int) and 0 < x) or (
-                            isinstance(x, tuple) and len(x) == 2 and all(isinstance(i, int) and 0 < i for i in x)),
-                'padding': lambda x: (isinstance(x, int) and 0 <= x) or (
-                            isinstance(x, tuple) and len(x) == 2 and all(isinstance(i, int) and 0 <= i for i in x)),
-                'dilation': lambda x: (isinstance(x, int) and 0 < x) or (
-                            isinstance(x, tuple) and len(x) == 2 and all(isinstance(i, int) and 0 < i for i in x)),
+                'kernel_size': lambda x: (isinstance(x, int) and 0 < x) or (isinstance(x, tuple) and len(x) == 2 and all(isinstance(i, int) and 0 < i for i in x)),
+                'stride': lambda x: (isinstance(x, types.NoneType)) or (isinstance(x, int) and 0 < x) or (isinstance(x, tuple) and len(x) == 2 and all(isinstance(i, int) and 0 < i for i in x)),
+                'padding': lambda x: (isinstance(x, int) and 0 <= x) or (isinstance(x, tuple) and len(x) == 2 and all(isinstance(i, int) and 0 <= i for i in x)),
+                'dilation': lambda x: (isinstance(x, int) and 0 < x) or (isinstance(x, tuple) and len(x) == 2 and all(isinstance(i, int) and 0 < i for i in x)),
                 'return_indices': lambda x: True,
                 'ceil_mode': lambda x: True
             },
@@ -171,7 +169,7 @@ class TorchCNN(torch.nn.Module):
         for prms in pool_params:
             self._pool.append(torch.nn.MaxPool2d(**prms))
 
-    def set_dense(self, *, parameters: list = None):
+    def set_dense(self, *, parameters: list):
         if not (isinstance(parameters, list) or len(parameters) != len(self._dense_sizes) - 1):
             # invalid parameter format
             raise ValueError(f"Dense parameters were not formatted correctly: {parameters}")
@@ -211,11 +209,14 @@ class TorchCNN(torch.nn.Module):
         for prms in dense_params:
             self._dense.append(torch.nn.Linear(**prms))
 
-    def set_acts(self, *, methods=None, parameters=None):
-        # progress
+    def set_acts(self, *, methods: list, parameters: list):
         self._acts = []
         if len(methods) != len(parameters):
             raise RuntimeError("Not matching params and methods")
+            # progress
+        if not (isinstance(methods, list) or len(parameters) != len(self._dense_sizes) - 1):
+            # invalid parameter format
+            raise ValueError(f"Dense parameters were not formatted correctly: {parameters}")
         if not all([mth in self.allowed_acts for mth in methods]):
             raise ValueError("Not a valid activator")
 
@@ -651,10 +652,6 @@ class TorchCNN(torch.nn.Module):
         self._optim = optim_ref[method](optim_params)
 
     def configure_network(self, loader):
-        # todo
-        ...
-
-    def set_hyperparameters(self):
         # todo
         ...
 
