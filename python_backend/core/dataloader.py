@@ -24,12 +24,12 @@ def one_hot_encode(y, num_classes=num_classes):
 
 # Load your dataset using ImageFolder
 training_data = datasets.ImageFolder(
-    root=f"{os.getcwd()}/python_backend/Pictures",  # Set this to your training folder path
+    root=os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Pictures'),  # Set this to your training folder path
     transform=transform,
     target_transform=one_hot_encode  # Use the named function for target transformation
 )
 test_data = datasets.ImageFolder(
-    root=f"{os.getcwd()}/python_backend/Pictures",  # Set this to your test folder path
+    root=os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Pictures'),  # Set this to your test folder path
     transform=transform,
     target_transform=one_hot_encode  # Use the named function for target transformation
 )
@@ -41,7 +41,9 @@ test_dataloader = DataLoader(test_data, batch_size=16, shuffle=True, num_workers
 # Example to check batch shapes and visualize
 train_features, train_labels = next(iter(train_dataloader))
 print(f"Feature batch shape: {train_features.size()}")
+print(f"Feature space: ({train_features.size()[1]}, {train_features.size()[2]})")
 print(f"Labels batch shape: {train_labels.size()}")
+print(f"Classes: {train_labels.size()[1]}")
 
 # Visualize the first image in the batch
 # img = train_features[0]  # Get the first image in the batch

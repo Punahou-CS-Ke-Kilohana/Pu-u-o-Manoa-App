@@ -3,6 +3,8 @@
 # Get latest from https://github.com/github/gitignore/blob/main/Unity.gitignore
 #
 Pu'u-o-Manoa-App/Library/
+Pu'u-o-Manoa-App/Temp/
+Pu'u-o-Manoa-App/Logs/
 /[Ll]ibrary/
 /[Tt]emp/
 /[Oo]bj/
