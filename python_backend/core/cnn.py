@@ -115,8 +115,8 @@ class TorchCNN(torch.nn.Module):
         for prms in range(len(conv_params)):
             self._conv.append(torch.nn.Conv2d(*self._dense_sizes[prms:prms + 1], **conv_params[prms]))
 
-    def set_pool(self, *, parameters: dict = None):
-        if not (isinstance(parameters, dict) or len(parameters) < len(self._conv_sizes)):
+    def set_pool(self, *, parameters: list = None):
+        if not (isinstance(parameters, list) or len(parameters) < len(self._conv_sizes)):
             # invalid parameter format
             raise ValueError(f"Pooling parameters were not formatted correctly: {parameters}")
 
@@ -171,7 +171,7 @@ class TorchCNN(torch.nn.Module):
         for prms in pool_params:
             self._pool.append(torch.nn.MaxPool2d(**prms))
 
-    def set_dense(self, *, parameters=None):
+    def set_dense(self, *, parameters: list = None):
         if not (isinstance(parameters, list) or len(parameters) != len(self._dense_sizes) - 1):
             # invalid parameter format
             raise ValueError(f"Dense parameters were not formatted correctly: {parameters}")
@@ -212,7 +212,7 @@ class TorchCNN(torch.nn.Module):
             self._dense.append(torch.nn.Linear(**prms))
 
     def set_acts(self, *, methods=None, parameters=None):
-        # todo
+        # progress
         self._acts = []
         if len(methods) != len(parameters):
             raise RuntimeError("Not matching params and methods")
@@ -661,6 +661,7 @@ class TorchCNN(torch.nn.Module):
     def forward(self, x):
         for cnv in range(len(self._conv)):
             x = self.acts[cnv](self._dense[cnv](x))
+        x.flatten()
         for dns in range(len(self._conv), len(self._dense)):
             x = self.acts[dns](self._dense[dns](x))
         return x
