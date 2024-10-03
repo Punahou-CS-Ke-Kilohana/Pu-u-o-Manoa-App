@@ -1,9 +1,6 @@
 import types
 
 import torch
-import torch.functional as f
-import torch.optim as optim
-import torch.nn as nn
 
 from .utils import ParamChecker
 
@@ -25,6 +22,10 @@ class TorchCNN(torch.nn.Module):
             'Sigmoid',
             'Mish'
         ]
+        self.allowed_losses = [
+            'CrossEntropyLoss'
+            'MSELoss'
+        ]
         self.allowed_optims = [
             'Adam',
             'AdamW',
@@ -36,28 +37,33 @@ class TorchCNN(torch.nn.Module):
         # network features
         self._conv_sizes = None
         self._dense_sizes = None
-        self._feature_space = None
-        self._classifications = None
 
         # technical network elements
+        # activations areas
         self._acts = None
-        self._optim = None
-        self._loss = None
+        # convolutional areas
         self._conv = None
         self._pool = None
+        # dense areas
         self._dense = None
+        # gradient usages
+        self._loss = None
+        self._optim = None
 
-    def set_sizes(self, *, conv_channels: list = None, dense_sizes: list = None) -> None:
+    def set_sizes(self, *, conv_channels: list = None, dense_sizes: list = None):
         if conv_channels is None:
+            # default convolutional channels
             conv_channels = [128, 64, 32]
         if dense_sizes is None:
+            # default dense sizes
             dense_sizes = [256, 128, 64, 32]
+        # unpack sizes
         self._conv_sizes = ['batching', *conv_channels]
         self._dense_sizes = ['flattened', *dense_sizes, 'classes']
 
-    def set_conv(self, *, parameters: list) -> None:
-        # check if parameters are formatted correctly
-        if not (isinstance(parameters, list) or len(parameters) != len(self._conv_sizes) - 1):
+    def set_conv(self, *, parameters: list):
+        if not (isinstance(parameters, list)) or (len(parameters) != len(self._conv_sizes)):
+            # invalid parameter format
             raise ValueError(f"Convolutional parameters were not formatted correctly: {parameters}")
 
         # instantiate parameter checker
@@ -111,9 +117,61 @@ class TorchCNN(torch.nn.Module):
         for prms in range(len(conv_params)):
             self._conv.append(torch.nn.Conv2d(*self._dense_sizes[prms:prms + 1], **conv_params[prms]))
 
-    def set_dense(self, *, parameters=None):
-        # check if parameters are formatted correctly
-        if not (isinstance(parameters, list) or len(parameters) < 1):
+    def set_pool(self, *, parameters: list):
+        if not (isinstance(parameters, list)) or (len(parameters) != len(self._conv_sizes)):
+            # invalid parameter format
+            raise ValueError(f"Pooling parameters were not formatted correctly: {parameters}")
+
+        # instantiate parameter checker
+        pool_checker = ParamChecker(name='pool', ikwiad=self._ikwiad)
+        pool_checker.set_types(
+            default={
+                'kernel_size': 3,
+                'stride': None,
+                'padding': 0,
+                'dilation': 1,
+                'return_indices': False,
+                'ceil_mode': False
+            },
+            dtypes={
+                'kernel_size': (int, tuple),
+                'stride': (types.NoneType, int, tuple),
+                'padding': (int, tuple),
+                'dilation': (int, tuple),
+                'return_indices': (bool, int),
+                'ceil_mode': (bool, int)
+            },
+            vtypes={
+                'kernel_size': lambda x: (isinstance(x, int) and 0 < x) or (isinstance(x, tuple) and len(x) == 2 and all(isinstance(i, int) and 0 < i for i in x)),
+                'stride': lambda x: (isinstance(x, types.NoneType)) or (isinstance(x, int) and 0 < x) or (isinstance(x, tuple) and len(x) == 2 and all(isinstance(i, int) and 0 < i for i in x)),
+                'padding': lambda x: (isinstance(x, int) and 0 <= x) or (isinstance(x, tuple) and len(x) == 2 and all(isinstance(i, int) and 0 <= i for i in x)),
+                'dilation': lambda x: (isinstance(x, int) and 0 < x) or (isinstance(x, tuple) and len(x) == 2 and all(isinstance(i, int) and 0 < i for i in x)),
+                'return_indices': lambda x: True,
+                'ceil_mode': lambda x: True
+            },
+            ctypes={
+                'kernel_size': lambda x: x,
+                'stride': lambda x: x,
+                'padding': lambda x: x,
+                'dilation': lambda x: x,
+                'return_indices': lambda x: bool(x),
+                'ceil_mode': lambda x: bool(x)
+            }
+        )
+
+        # get each layer's parameters
+        pool_params = []
+        for prm in parameters:
+            pool_params.append(pool_checker.check_params(prm))
+
+        # set pooling layers
+        self._pool = []
+        for prms in pool_params:
+            self._pool.append(torch.nn.MaxPool2d(**prms))
+
+    def set_dense(self, *, parameters: list):
+        if not (isinstance(parameters, list) or len(parameters) != len(self._dense_sizes) - 1):
+            # invalid parameter format
             raise ValueError(f"Dense parameters were not formatted correctly: {parameters}")
 
         # instantiate parameter checker
@@ -151,10 +209,14 @@ class TorchCNN(torch.nn.Module):
         for prms in dense_params:
             self._dense.append(torch.nn.Linear(**prms))
 
-    def set_acts(self, *, methods=None, parameters=None):
+    def set_acts(self, *, methods: list, parameters: list):
         self._acts = []
         if len(methods) != len(parameters):
             raise RuntimeError("Not matching params and methods")
+            # progress
+        if not (isinstance(methods, list) or len(parameters) != len(self._dense_sizes) - 1):
+            # invalid parameter format
+            raise ValueError(f"Dense parameters were not formatted correctly: {parameters}")
         if not all([mth in self.allowed_acts for mth in methods]):
             raise ValueError("Not a valid activator")
 
@@ -233,63 +295,128 @@ class TorchCNN(torch.nn.Module):
             }
         }
 
+        # make activations reference
+        activation_ref = {
+            'ReLU': torch.nn.ReLU,
+            'Softplus': torch.nn.Softplus,
+            'Softmax': torch.nn.Softmax,
+            'Tanh': torch.nn.Tanh,
+            'Sigmoid': torch.nn.Sigmoid,
+            'Mish': torch.nn.Mish
+        }
+
         for act_pair in zip(methods, parameters):
-            self._acts.append(act_pair[0])
+            # set activation objects
+            act_checker = ParamChecker(name='activations', ikwiad=self._ikwiad)
+            act_checker.set_types(**act_params[act_pair[0]])
+            act_prms = act_checker.check_params(act_pair[1])
+            self._acts.append(activation_ref[act_pair[0]](act_prms))
 
-    def set_pool(self, *, parameters=None):
-        # check if parameters are formatted correctly
-        if not (isinstance(parameters, list) or len(parameters) < 1):
-            raise ValueError(f"Pooling parameters were not formatted correctly: {parameters}")
-
-        # instantiate parameter checker
-        pool_checker = ParamChecker(name='pool', ikwiad=self._ikwiad)
-        pool_checker.set_types(
-            default={
-                'kernel_size': 3,
-                'stride': None,
-                'padding': 0,
-                'dilation': 1,
-                'return_indices': False,
-                'ceil_mode': False
+    def set_loss(self, method: str = 'CrossEntropyLoss', *, parameters: dict = None, **kwargs):
+        def_loss_params = {
+            'CrossEntropyLoss': {
+                'default': {
+                    'weight': None,
+                    'size_average': True,
+                    'ignore_index': -100,
+                    'reduce': True,
+                    'reduction': 'mean',
+                    'label_smoothing': 0.0
+                },
+                'dtypes': {
+                    'weight': (type(None), torch.Tensor),
+                    'size_average': bool,
+                    'ignore_index': int,
+                    'reduce': bool,
+                    'reduction': str,
+                    'label_smoothing': float
+                },
+                'vtypes': {
+                    'weight': lambda x: x is None or isinstance(x, torch.Tensor),
+                    'size_average': lambda x: isinstance(x, bool),
+                    'ignore_index': lambda x: isinstance(x, int),
+                    'reduce': lambda x: isinstance(x, bool),
+                    'reduction': lambda x: x in ['none', 'mean', 'sum'],
+                    'label_smoothing': lambda x: 0.0 <= x <= 1.0
+                },
+                'ctypes': {
+                    'weight': lambda x: x if x is None else torch.tensor(x, dtype=torch.float32),
+                    'size_average': lambda x: bool(x),
+                    'ignore_index': lambda x: int(x),
+                    'reduce': lambda x: bool(x),
+                    'reduction': lambda x: str(x),
+                    'label_smoothing': lambda x: float(x)
+                }
             },
-            dtypes={
-                'kernel_size': (int, tuple),
-                'stride': (types.NoneType, int, tuple),
-                'padding': (int, tuple),
-                'dilation': (int, tuple),
-                'return_indices': (bool, int),
-                'ceil_mode': (bool, int)
+            'MSELoss': {
+                'default': {
+                    'size_average': True,
+                    'reduce': True,
+                    'reduction': 'mean'
+                },
+                'dtypes': {
+                    'size_average': bool,
+                    'reduce': bool,
+                    'reduction': str
+                },
+                'vtypes': {
+                    'size_average': lambda x: isinstance(x, bool),
+                    'reduce': lambda x: isinstance(x, bool),
+                    'reduction': lambda x: x in ['none', 'mean', 'sum']
+                },
+                'ctypes': {
+                    'size_average': lambda x: bool(x),
+                    'reduce': lambda x: bool(x),
+                    'reduction': lambda x: str(x)
+                }
             },
-            vtypes={
-                'kernel_size': lambda x: (isinstance(x, int) and 0 < x) or (isinstance(x, tuple) and len(x) == 2 and all(isinstance(i, int) and 0 < i for i in x)),
-                'stride': lambda x: (isinstance(x, types.NoneType)) or (isinstance(x, int) and 0 < x) or (isinstance(x, tuple) and len(x) == 2 and all(isinstance(i, int) and 0 < i for i in x)),
-                'padding': lambda x: (isinstance(x, int) and 0 <= x) or (isinstance(x, tuple) and len(x) == 2 and all(isinstance(i, int) and 0 <= i for i in x)),
-                'dilation': lambda x: (isinstance(x, int) and 0 < x) or (isinstance(x, tuple) and len(x) == 2 and all(isinstance(i, int) and 0 < i for i in x)),
-                'return_indices': lambda x: True,
-                'ceil_mode': lambda x: True
-            },
-            ctypes={
-                'kernel_size': lambda x: x,
-                'stride': lambda x: x,
-                'padding': lambda x: x,
-                'dilation': lambda x: x,
-                'return_indices': lambda x: bool(x),
-                'ceil_mode': lambda x: bool(x)
+            'L1Loss': {
+                'default': {
+                    'size_average': True,
+                    'reduce': True,
+                    'reduction': 'mean'
+                },
+                'dtypes': {
+                    'size_average': bool,
+                    'reduce': bool,
+                    'reduction': str
+                },
+                'vtypes': {
+                    'size_average': lambda x: isinstance(x, bool),
+                    'reduce': lambda x: isinstance(x, bool),
+                    'reduction': lambda x: x in ['none', 'mean', 'sum']
+                },
+                'ctypes': {
+                    'size_average': lambda x: bool(x),
+                    'reduce': lambda x: bool(x),
+                    'reduction': lambda x: str(x)
+                }
             }
-        )
+        }
 
-        # get each layer's parameters
-        pool_params = []
-        for prm in parameters:
-            pool_params.append(pool_checker.check_params(prm))
+        # define pytorch loss reference
+        loss_ref = {
+            'CrossEntropyLoss': torch.nn.CrossEntropyLoss,
+            'MSELoss': torch.nn.MSELoss,
+            'L1Loss': torch.nn.L1Loss
+        }
 
-        # set pooling layers
-        self._pool = []
-        for prms in pool_params:
-            self._pool.append(torch.nn.MaxPool2d(**prms))
+        if method not in self.allowed_losses:
+            # invalid loss method
+            raise ValueError(
+                f"Optimization method is invalid: {method}\n",
+                f"Choose from: {[loss_mthd for loss_mthd in self.allowed_losses]}"
+            )
 
-    def set_optim(self, method: str = 'Adam', params: dict = None, **kwargs):
-        optim_params = {
+        # set loss
+        loss_checker = ParamChecker(name='losses', ikwiad=self._ikwiad)
+        loss_checker.set_types(**def_loss_params[method])
+        loss_params = loss_checker.check_params(parameters, **kwargs)
+        self._loss = loss_ref[method](loss_params)
+
+    def set_optim(self, method: str = 'Adam', *, parameters: dict = None, **kwargs):
+        # define default optimization parameters
+        def_optim_params = {
             'Adam': {
                 'default': {
                     'lr': 0.001,
@@ -297,40 +424,241 @@ class TorchCNN(torch.nn.Module):
                     'eps': 1e-08,
                     'weight_decay': 0.0,
                     'amsgrad': False,
+                    'foreach': None,
+                    'maximize': False,
+                    'fused': False
                 },
                 'dtypes': {
-                    'inplace': (bool, int)
+                    'lr': (float, int),
+                    'betas': tuple,
+                    'eps': (float, int),
+                    'weight_decay': (float, int),
+                    'amsgrad': (bool, int),
+                    'foreach': (bool, int),
+                    'maximize': (bool, int),
+                    'fused': (bool, int)
                 },
                 'vtypes': {
-                    'inplace': lambda x: True
+                    'lr': lambda x: 0.0 <= x,
+                    'betas': lambda x: len(x) == 2 and all(isinstance(i, float) and 0.0 < i < 1.0 for i in x),
+                    'eps': lambda x: 0.0 < x,
+                    'weight_decay': lambda x: 0.0 <= x,
+                    'amsgrad': lambda x: True,
+                    'foreach': lambda x: True,
+                    'maximize': lambda x: True,
+                    'fused': lambda x: True
                 },
                 'ctypes': {
-                    'inplace': lambda x: bool(x)
+                    'lr': lambda x: float(x),
+                    'betas': lambda x: x,
+                    'eps': lambda x: float(x),
+                    'weight_decay': lambda x: float(x),
+                    'amsgrad': lambda x: bool(x),
+                    'foreach': lambda x: bool(x),
+                    'maximize': lambda x: bool(x),
+                    'fused': lambda x: bool(x)
                 }
             },
             'AdamW': {
-
+                'default': {
+                    'lr': 0.001,
+                    'betas': (0.9, 0.999),
+                    'eps': 1e-08,
+                    'weight_decay': 0.0,
+                    'amsgrad': False,
+                    'foreach': None,
+                    'maximize': False,
+                    'fused': False
+                },
+                'dtypes': {
+                    'lr': (float, int),
+                    'betas': tuple,
+                    'eps': (float, int),
+                    'weight_decay': (float, int),
+                    'amsgrad': (bool, int),
+                    'foreach': (bool, int),
+                    'maximize': (bool, int),
+                    'fused': (bool, int)
+                },
+                'vtypes': {
+                    'lr': lambda x: 0.0 <= x,
+                    'betas': lambda x: len(x) == 2 and all(isinstance(i, float) and 0.0 < i < 1.0 for i in x),
+                    'eps': lambda x: 0.0 < x,
+                    'weight_decay': lambda x: 0.0 <= x,
+                    'amsgrad': lambda x: True,
+                    'foreach': lambda x: True,
+                    'maximize': lambda x: True,
+                    'fused': lambda x: True
+                },
+                'ctypes': {
+                    'lr': lambda x: float(x),
+                    'betas': lambda x: x,
+                    'eps': lambda x: float(x),
+                    'weight_decay': lambda x: float(x),
+                    'amsgrad': lambda x: bool(x),
+                    'foreach': lambda x: bool(x),
+                    'maximize': lambda x: bool(x),
+                    'fused': lambda x: bool(x)
+                }
             },
             'Adagrad': {
-
+                'default': {
+                    'lr:': 0.01,
+                    'lr_decay': 0.0,
+                    'weight_decay': 0.0,
+                    'initial_accumulator_value': 0.0,
+                    'eps': 1e-10,
+                    'foreach': None,
+                    'maximize': False,
+                    'fused': None
+                },
+                'dtypes': {
+                    'lr': (float, int),
+                    'lr_decay': (float, int),
+                    'weight_decay': (float, int),
+                    'initial_accumulator_value': (float, int),
+                    'eps': (float, int),
+                    'foreach': (bool, int),
+                    'maximize': (bool, int),
+                    'fused': (bool, int)
+                },
+                'vtypes': {
+                    'lr': lambda x: 0.0 <= x,
+                    'lr_decay': lambda x: 0.0 <= x,
+                    'weight_decay': lambda x: 0.0 <= x,
+                    'initial_accumulator_value': lambda x: 0.0 <= x,
+                    'eps': lambda x: 0.0 < x,
+                    'foreach': lambda x: True,
+                    'maximize': lambda x: True,
+                    'fused': lambda x: True
+                },
+                'ctypes': {
+                    'lr': lambda x: float(x),
+                    'lr_decay': lambda x: float(x),
+                    'weight_decay': lambda x: float(x),
+                    'initial_accumulator_value': lambda x: float(x),
+                    'eps': lambda x: float(x),
+                    'foreach': lambda x: bool(x),
+                    'maximize': lambda x: bool(x),
+                    'fused': lambda x: bool(x)
+                }
             },
             'RMSprop': {
-
+                'default': {
+                    'lr:': 0.01,
+                    'alpha': 0.99,
+                    'eps': 1e-10,
+                    'weight_decay': 0.0,
+                    'momentum': 0.0,
+                    'centered': False,
+                    'foreach': None,
+                    'maximize': False
+                },
+                'dtypes': {
+                    'lr': (float, int),
+                    'alpha': (float, int),
+                    'eps': (float, int),
+                    'weight_decay': (float, int),
+                    'momentum': (float, int),
+                    'centered': (bool, int),
+                    'foreach': (bool, int),
+                    'maximize': (bool, int)
+                },
+                'vtypes': {
+                    'lr': lambda x: 0.0 <= x,
+                    'alpha': lambda x: 0.0 < x < 1.0,
+                    'eps': lambda x: 0.0 < x,
+                    'weight_decay': lambda x: 0.0 <= x,
+                    'momentum': lambda x: 0.0 <= x < 1.0,
+                    'centered': lambda x: True,
+                    'foreach': lambda x: True,
+                    'maximize': lambda x: True
+                },
+                'ctypes': {
+                    'lr': lambda x: float(x),
+                    'alpha': lambda x: float(x),
+                    'eps': lambda x: float(x),
+                    'weight_decay': lambda x: float(x),
+                    'momentum': lambda x: float(x),
+                    'centered': lambda x: bool(x),
+                    'foreach': lambda x: bool(x),
+                    'maximize': lambda x: bool(x)
+                }
             },
-            'SGD':{
-
+            'SGD': {
+                'default': {
+                    'lr:': 0.001,
+                    'momentum': 0.0,
+                    'dampening': 0.0,
+                    'weight_decay': 0.0,
+                    'nesterov': False,
+                    'maximize': False,
+                    'foreach': None,
+                    'fused': None
+                },
+                'dtypes': {
+                    'lr:': (float, int),
+                    'momentum': (float, int),
+                    'dampening': (float, int),
+                    'weight_decay': (float, int),
+                    'nesterov': (bool, int),
+                    'maximize': (bool, int),
+                    'foreach': (bool, int),
+                    'fused': (bool, int)
+                },
+                'vtypes': {
+                    'lr:': lambda x: 0.0 <= x,
+                    'momentum': lambda x: 0.0 <= x < 1.0,
+                    'dampening': lambda x: 0.0 <= x < 1.0,
+                    'weight_decay': lambda x: 0.0 <= x,
+                    'nesterov': lambda x: x,
+                    'maximize': lambda x: x,
+                    'foreach': lambda x: x,
+                    'fused': lambda x: x
+                },
+                'ctypes': {
+                    'lr:': lambda x: float(x),
+                    'momentum': lambda x: float(x),
+                    'dampening': lambda x: float(x),
+                    'weight_decay': lambda x: float(x),
+                    'nesterov': lambda x: bool(x),
+                    'maximize': lambda x: bool(x),
+                    'foreach': lambda x: bool(x),
+                    'fused': lambda x: bool(x)
+                }
             }
         }
 
-    def configure_network(self, loader):
-        ...
+        # define pytorch optimization reference
+        optim_ref = {
+            'Adam': torch.optim.Adam,
+            'AdamW': torch.optim.AdamW,
+            'Adagrad': torch.optim.Adagrad,
+            'RMSprop': torch.optim.RMSprop,
+            'SGD': torch.optim.SGD
+        }
 
-    def set_hyperparameters(self):
+        if method not in self.allowed_optims:
+            # invalid optimization method
+            raise ValueError(
+                f"Optimization method is invalid: {method}\n",
+                f"Choose from: {[optim_mthd for optim_mthd in self.allowed_optims]}"
+            )
+
+        # set optimizer
+        optim_checker = ParamChecker(name='optimizer', ikwiad=self._ikwiad)
+        optim_checker.set_types(**def_optim_params[method])
+        optim_params = optim_checker.check_params(parameters, **kwargs)
+        self._optim = optim_ref[method](optim_params)
+
+    def configure_network(self, loader):
+        # todo
         ...
 
     def forward(self, x):
         for cnv in range(len(self._conv)):
             x = self.acts[cnv](self._dense[cnv](x))
+        x.flatten()
         for dns in range(len(self._conv), len(self._dense)):
             x = self.acts[dns](self._dense[dns](x))
         return x
