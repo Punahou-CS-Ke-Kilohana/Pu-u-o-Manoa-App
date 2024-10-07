@@ -2,7 +2,7 @@ import types
 
 import torch
 
-from .utils import ParamChecker
+from utils import ParamChecker
 
 
 class TorchCNN(torch.nn.Module):
