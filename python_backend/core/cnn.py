@@ -3,6 +3,7 @@ import types
 import torch
 
 from utils import ParamChecker
+from dataloader import DataLoader
 
 
 class TorchCNN(torch.nn.Module):
