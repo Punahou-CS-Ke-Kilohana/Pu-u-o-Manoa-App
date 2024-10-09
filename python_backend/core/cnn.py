@@ -652,9 +652,10 @@ class TorchCNN(torch.nn.Module):
         optim_params = optim_checker.check_params(parameters, **kwargs)
         self._optim = optim_ref[method](optim_params)
 
-    def configure_network(self, loader):
+    def configure_network(self, loader: DataLoader):
         # todo
-        ...
+        self.batch_size = loader.batch_size
+        in_size = ()
 
     def forward(self, x):
         for cnv in range(len(self._conv)):

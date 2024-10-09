@@ -44,6 +44,7 @@ print(f"Feature batch shape: {train_features.size()}")
 print(f"Feature space: ({train_features.size()[1]}, {train_features.size()[2]})")
 print(f"Labels batch shape: {train_labels.size()}")
 print(f"Classes: {train_labels.size()[1]}")
+print(f"Batch Size: {train_dataloader.batch_size}")
 
 # Visualize the first image in the batch
 # img = train_features[0]  # Get the first image in the batch
