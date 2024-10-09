@@ -1,11 +1,5 @@
 # Pu-u-o-Manoa-App
 
-## Dedicated to IV
-This project is dedicated to my favorite man, IV, who I've known since kindergarten.
-
-## Overview
-The Pu-u-o-Manoa-App combines AI functionality and mapping features to provide an interactive user experience. The project is built with a neural network and connected through a Unity-based UI, featuring a joystick-controlled map with terrain details.
-
 ## Project Timeline
 
 ### AI Development
