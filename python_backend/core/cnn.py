@@ -44,7 +44,9 @@ class TorchCNN(torch.nn.Module):
         self._acts = None
         # convolutional areas
         self._conv = None
+        self._conv_params = None
         self._pool = None
+        self._pool_params = None
         # dense areas
         self._dense = None
         # gradient usages
@@ -109,14 +111,14 @@ class TorchCNN(torch.nn.Module):
         )
 
         # get each layer's parameters
-        conv_params = []
+        self._conv_params = []
         for prm in parameters:
-            conv_params.append(conv_checker.check_params(prm))
+            self._conv_params.append(conv_checker.check_params(prm))
 
         # set convolutional layers
         self._conv = []
-        for prms in range(len(conv_params)):
-            self._conv.append(torch.nn.Conv2d(*self._dense_sizes[prms:prms + 1], **conv_params[prms]))
+        for prms in range(len(self._conv_params)):
+            self._conv.append(torch.nn.Conv2d(*self._conv_sizes[prms:prms + 1], **self._conv_params[prms]))
 
     def set_pool(self, *, parameters: list):
         if not (isinstance(parameters, list)) or (len(parameters) != len(self._conv_sizes)):
@@ -161,13 +163,13 @@ class TorchCNN(torch.nn.Module):
         )
 
         # get each layer's parameters
-        pool_params = []
+        self._pool_params = []
         for prm in parameters:
-            pool_params.append(pool_checker.check_params(prm))
+            self._pool_params.append(pool_checker.check_params(prm))
 
         # set pooling layers
         self._pool = []
-        for prms in pool_params:
+        for prms in self._pool_params:
             self._pool.append(torch.nn.MaxPool2d(**prms))
 
     def set_dense(self, *, parameters: list):
@@ -654,8 +656,57 @@ class TorchCNN(torch.nn.Module):
 
     def configure_network(self, loader: DataLoader):
         # todo
-        self.batch_size = loader.batch_size
-        in_size = ()
+        batch_size = loader.batch_size  # for later
+        config_batch = next(iter(loader))
+        height = config_batch.size()[1]
+        width = config_batch.size()[2]
+
+        for lyr in range(len(self._conv_params)):
+            # awful segment of code that I should remove
+            if len(self._conv_params[lyr]['padding']) == 1:
+                padding = (self._conv_params[lyr]['padding'], self._conv_params[lyr]['padding'])
+            else:
+                padding = self._conv_params[lyr]['padding']
+            if len(self._conv_params[lyr]['dilation']) == 1:
+                dilation = (self._conv_params[lyr]['dilation'], self._conv_params[lyr]['dilation'])
+            else:
+                dilation = self._conv_params[lyr]['dilation']
+            if len(self._conv_params[lyr]['kernel_size']) == 1:
+                kernel_size = (self._conv_params[lyr]['kernel_size'], self._conv_params[lyr]['kernel_size'])
+            else:
+                kernel_size = self._conv_params[lyr]['kernel_size']
+            if len(self._conv_params[lyr]['stride']) == 1:
+                stride = (self._conv_params[lyr]['stride'], self._conv_params[lyr]['stride'])
+            else:
+                stride = self._conv_params[lyr]['stride']
+
+            if len(self._pool_params[lyr]['padding']) == 1:
+                pool_padding = (self._pool_params[lyr]['padding'], self._pool_params[lyr]['padding'])
+            else:
+                pool_padding = self._pool_params[lyr]['padding']
+            if len(self._pool_params[lyr]['dilation']) == 1:
+                pool_dilation = (self._pool_params[lyr]['dilation'], self._pool_params[lyr]['dilation'])
+            else:
+                pool_dilation = self._pool_params[lyr]['dilation']
+            if len(self._pool_params[lyr]['kernel_size']) == 1:
+                pool_kernel_size = (self._pool_params[lyr]['kernel_size'], self._pool_params[lyr]['kernel_size'])
+            else:
+                pool_kernel_size = self._pool_params[lyr]['kernel_size']
+            if self._pool_params[lyr]['stride'] is None:
+                pool_stride = pool_kernel_size
+            elif len(self._pool_params[lyr]['stride']) == 1:
+                pool_stride = (self._pool_params[lyr]['stride'], self._pool_params[lyr]['stride'])
+            else:
+                pool_stride = self._pool_params[lyr]['stride']
+
+            # height and width iteration
+            height = (height + 2 * padding[0] - dilation[0] * (kernel_size[0] - 1) - 1) / stride[0] + 1
+            width = (width + 2 * padding[1] - dilation[1] * (kernel_size[1] - 1) - 1) / stride[1] + 1
+            height = (height + 2 * pool_padding[0] - pool_dilation[0] * (pool_kernel_size[0] - 1) - 1) / pool_stride[0] + 1
+            width = (width + 2 * pool_padding[1] - pool_dilation[1] * (pool_kernel_size[1] - 1) - 1) / pool_stride[1] + 1
+
+        # real (this will not work)
+        self.dense_sizes[0] = height * width
 
     def forward(self, x):
         for cnv in range(len(self._conv)):
