@@ -12,6 +12,11 @@ public class PlayerController : MonoBehaviour
     bool canJump;
     public Transform cameraTransform;
 
+    // joystick attempt
+    public Joystick joystick;  // Reference to the Joystick script
+    public float moveSpeed = 5f;
+
+
     // Called before start
     private void Awake()
     {
@@ -37,6 +42,13 @@ public class PlayerController : MonoBehaviour
         CheckPressedKeys(cameraForward, cameraRight);
         LimitSpeed();
 
+        // Get the input from the joystick
+        float horizontal = joystick.Horizontal();
+        float vertical = joystick.Vertical();
+
+        // Move the player based on joystick input
+        Vector3 direction = new Vector3(horizontal, 0f, vertical);
+        transform.Translate(direction * moveSpeed * Time.deltaTime, Space.World);
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -59,6 +71,13 @@ public class PlayerController : MonoBehaviour
     {
         rb.AddForce(force, ForceMode.Impulse);
     }
+
+
+
+
+
+
+    private void CheckJoystick
 
     private void CheckPressedKeys(Vector3 cameraForward, Vector3 cameraRight)
     {
