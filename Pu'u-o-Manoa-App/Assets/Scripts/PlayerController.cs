@@ -11,10 +11,13 @@ public class PlayerController : MonoBehaviour
     public float maxSpeed = 2.5f;
     bool canJump;
     public Transform cameraTransform;
+    private GameObject player;
+    public Camera mainCamera = Camera.main;
 
     // Called before start
     private void Awake()
     {
+        player = GameObject.FindGameObjectWithTag("Player");
         rb = GetComponent<Rigidbody>();
     }
 
@@ -83,6 +86,12 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKey(KeyCode.D))
         {
             this.Move(moveDirection += cameraRight * speedMultiplier);
+        }
+
+        if (Input.GetKey(KeyCode.V))
+        {
+            Destroy(player);
+            mainCamera.enabled = true;
         }
     }
 
