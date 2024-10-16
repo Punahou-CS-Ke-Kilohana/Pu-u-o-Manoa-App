@@ -2,8 +2,8 @@ import types
 
 import torch
 
-from utils import ParamChecker
-from dataloader import DataLoader
+from .utils import ParamChecker
+from .dataloader import DataLoader
 
 
 class TorchCNN(torch.nn.Module):
@@ -38,6 +38,7 @@ class TorchCNN(torch.nn.Module):
         # network features
         self._conv_sizes = None
         self._dense_sizes = None
+        self._dataloader = None
 
         # technical network elements
         # activations areas
@@ -209,8 +210,8 @@ class TorchCNN(torch.nn.Module):
 
         # set dense layers
         self._dense = []
-        for prms in dense_params:
-            self._dense.append(torch.nn.Linear(**prms))
+        for prms in range(len(dense_params)):
+            self._dense.append(torch.nn.Linear(*self._dense_sizes[prms:prms + 1], **dense_params[prms]))
 
     def set_acts(self, *, methods: list, parameters: list):
         self._acts = []
@@ -655,7 +656,7 @@ class TorchCNN(torch.nn.Module):
         self._optim = optim_ref[method](optim_params)
 
     def configure_network(self, loader: DataLoader):
-        # todo
+        self._dataloader = loader
         batch_size = loader.batch_size  # for later
         config_batch = next(iter(loader))
         height = config_batch.size()[1]
@@ -706,7 +707,9 @@ class TorchCNN(torch.nn.Module):
             width = (width + 2 * pool_padding[1] - pool_dilation[1] * (pool_kernel_size[1] - 1) - 1) / pool_stride[1] + 1
 
         # real (this will not work)
-        self.dense_sizes[0] = height * width
+        self._dense_sizes[0] = height * width
+        self._conv_sizes[0] = 1  # make this batching soon
+        self._dense_Sizes[-1] = config_batch.size()[1]
 
     def forward(self, x):
         for cnv in range(len(self._conv)):
@@ -716,7 +719,7 @@ class TorchCNN(torch.nn.Module):
             x = self.acts[dns](self._dense[dns](x))
         return x
 
-    def fit(self, loader, *, parameters, **kwargs):
+    def fit(self, *, parameters, **kwargs):
         hyperparam_checker = ParamChecker(name='hyperparams', ikwiad=self._ikwiad)
         hyperparam_checker.set_types(
             default={
@@ -735,7 +738,7 @@ class TorchCNN(torch.nn.Module):
         params = hyperparam_checker.check_params(parameters, **kwargs)
         for epoch in range(params['epochs']):
             running_loss = 0.0
-            for batch, (image, labels) in enumerate(loader, 0):
+            for batch, (image, labels) in enumerate(self._dataloader, 0):
                 self._optim.zero_grad()
                 outputs = self.forward(batch)
                 loss = self._loss(outputs, labels)
@@ -743,3 +746,4 @@ class TorchCNN(torch.nn.Module):
                 self._optim.step()
                 running_loss += loss.item()
                 # todo: status bar
+            print(running_loss)
