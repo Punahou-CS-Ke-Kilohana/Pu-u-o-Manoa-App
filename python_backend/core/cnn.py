@@ -209,8 +209,8 @@ class TorchCNN(torch.nn.Module):
 
         # set dense layers
         self._dense = []
-        for prms in dense_params:
-            self._dense.append(torch.nn.Linear(**prms))
+        for prms in range(len(dense_params)):
+            self._dense.append(torch.nn.Linear(*self._dense_sizes[prms:prms + 1], **dense_params[prms]))
 
     def set_acts(self, *, methods: list, parameters: list):
         self._acts = []
@@ -655,7 +655,6 @@ class TorchCNN(torch.nn.Module):
         self._optim = optim_ref[method](optim_params)
 
     def configure_network(self, loader: DataLoader):
-        # todo
         batch_size = loader.batch_size  # for later
         config_batch = next(iter(loader))
         height = config_batch.size()[1]
@@ -706,7 +705,9 @@ class TorchCNN(torch.nn.Module):
             width = (width + 2 * pool_padding[1] - pool_dilation[1] * (pool_kernel_size[1] - 1) - 1) / pool_stride[1] + 1
 
         # real (this will not work)
-        self.dense_sizes[0] = height * width
+        self._dense_sizes[0] = height * width
+        self._conv_sizes[0] = 1  # make this batching soon
+        self._dense_Sizes[-1] = config_batch.size()[1]
 
     def forward(self, x):
         for cnv in range(len(self._conv)):
@@ -743,3 +744,4 @@ class TorchCNN(torch.nn.Module):
                 self._optim.step()
                 running_loss += loss.item()
                 # todo: status bar
+            print(running_loss)
