@@ -658,9 +658,18 @@ class TorchCNN(torch.nn.Module):
     def configure_network(self, loader: DataLoader):
         self._dataloader = loader
         batch_size = loader.batch_size  # for later
-        config_batch = next(iter(loader))
-        height = config_batch.size()[1]
-        width = config_batch.size()[2]
+        
+        # Get the first batch of data from the DataLoader (features, labels)
+        config_batch, _ = next(iter(loader))  # Unpack the features, ignore the labels
+
+        # config_batch has the shape [batch_size, height, width, channels]
+        height = config_batch.size()[1]  # Height of the image
+        width = config_batch.size()[2]   # Width of the image
+        
+        # You can now use the height and width for further configuration
+        print(f"Image Height: {height}, Image Width: {width}")
+
+
 
         for lyr in range(len(self._conv_params)):
             # awful segment of code that I should remove
