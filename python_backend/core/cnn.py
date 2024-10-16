@@ -2,8 +2,8 @@ import types
 
 import torch
 
-from utils import ParamChecker
-from dataloader import DataLoader
+from .utils import ParamChecker
+from .dataloader import DataLoader
 
 
 class TorchCNN(torch.nn.Module):
@@ -38,13 +38,16 @@ class TorchCNN(torch.nn.Module):
         # network features
         self._conv_sizes = None
         self._dense_sizes = None
+        self._dataloader = None
 
         # technical network elements
         # activations areas
         self._acts = None
         # convolutional areas
         self._conv = None
+        self._conv_params = None
         self._pool = None
+        self._pool_params = None
         # dense areas
         self._dense = None
         # gradient usages
@@ -109,14 +112,14 @@ class TorchCNN(torch.nn.Module):
         )
 
         # get each layer's parameters
-        conv_params = []
+        self._conv_params = []
         for prm in parameters:
-            conv_params.append(conv_checker.check_params(prm))
+            self._conv_params.append(conv_checker.check_params(prm))
 
         # set convolutional layers
         self._conv = []
-        for prms in range(len(conv_params)):
-            self._conv.append(torch.nn.Conv2d(*self._dense_sizes[prms:prms + 1], **conv_params[prms]))
+        for prms in range(len(self._conv_params)):
+            self._conv.append(torch.nn.Conv2d(*self._conv_sizes[prms:prms + 1], **self._conv_params[prms]))
 
     def set_pool(self, *, parameters: list):
         if not (isinstance(parameters, list)) or (len(parameters) != len(self._conv_sizes)):
@@ -161,13 +164,13 @@ class TorchCNN(torch.nn.Module):
         )
 
         # get each layer's parameters
-        pool_params = []
+        self._pool_params = []
         for prm in parameters:
-            pool_params.append(pool_checker.check_params(prm))
+            self._pool_params.append(pool_checker.check_params(prm))
 
         # set pooling layers
         self._pool = []
-        for prms in pool_params:
+        for prms in self._pool_params:
             self._pool.append(torch.nn.MaxPool2d(**prms))
 
     def set_dense(self, *, parameters: list):
@@ -207,8 +210,8 @@ class TorchCNN(torch.nn.Module):
 
         # set dense layers
         self._dense = []
-        for prms in dense_params:
-            self._dense.append(torch.nn.Linear(**prms))
+        for prms in range(len(dense_params)):
+            self._dense.append(torch.nn.Linear(*self._dense_sizes[prms:prms + 1], **dense_params[prms]))
 
     def set_acts(self, *, methods: list, parameters: list):
         self._acts = []
@@ -653,9 +656,69 @@ class TorchCNN(torch.nn.Module):
         self._optim = optim_ref[method](optim_params)
 
     def configure_network(self, loader: DataLoader):
-        # todo
-        self.batch_size = loader.batch_size
-        in_size = ()
+        self._dataloader = loader
+        batch_size = loader.batch_size  # for later
+        
+        # Get the first batch of data from the DataLoader (features, labels)
+        config_batch, _ = next(iter(loader))  # Unpack the features, ignore the labels
+
+        # config_batch has the shape [batch_size, height, width, channels]
+        height = config_batch.size()[1]  # Height of the image
+        width = config_batch.size()[2]   # Width of the image
+        
+        # You can now use the height and width for further configuration
+        print(f"Image Height: {height}, Image Width: {width}")
+
+
+
+        for lyr in range(len(self._conv_params)):
+            # awful segment of code that I should remove
+            if len(self._conv_params[lyr]['padding']) == 1:
+                padding = (self._conv_params[lyr]['padding'], self._conv_params[lyr]['padding'])
+            else:
+                padding = self._conv_params[lyr]['padding']
+            if len(self._conv_params[lyr]['dilation']) == 1:
+                dilation = (self._conv_params[lyr]['dilation'], self._conv_params[lyr]['dilation'])
+            else:
+                dilation = self._conv_params[lyr]['dilation']
+            if len(self._conv_params[lyr]['kernel_size']) == 1:
+                kernel_size = (self._conv_params[lyr]['kernel_size'], self._conv_params[lyr]['kernel_size'])
+            else:
+                kernel_size = self._conv_params[lyr]['kernel_size']
+            if len(self._conv_params[lyr]['stride']) == 1:
+                stride = (self._conv_params[lyr]['stride'], self._conv_params[lyr]['stride'])
+            else:
+                stride = self._conv_params[lyr]['stride']
+
+            if len(self._pool_params[lyr]['padding']) == 1:
+                pool_padding = (self._pool_params[lyr]['padding'], self._pool_params[lyr]['padding'])
+            else:
+                pool_padding = self._pool_params[lyr]['padding']
+            if len(self._pool_params[lyr]['dilation']) == 1:
+                pool_dilation = (self._pool_params[lyr]['dilation'], self._pool_params[lyr]['dilation'])
+            else:
+                pool_dilation = self._pool_params[lyr]['dilation']
+            if len(self._pool_params[lyr]['kernel_size']) == 1:
+                pool_kernel_size = (self._pool_params[lyr]['kernel_size'], self._pool_params[lyr]['kernel_size'])
+            else:
+                pool_kernel_size = self._pool_params[lyr]['kernel_size']
+            if self._pool_params[lyr]['stride'] is None:
+                pool_stride = pool_kernel_size
+            elif len(self._pool_params[lyr]['stride']) == 1:
+                pool_stride = (self._pool_params[lyr]['stride'], self._pool_params[lyr]['stride'])
+            else:
+                pool_stride = self._pool_params[lyr]['stride']
+
+            # height and width iteration
+            height = (height + 2 * padding[0] - dilation[0] * (kernel_size[0] - 1) - 1) / stride[0] + 1
+            width = (width + 2 * padding[1] - dilation[1] * (kernel_size[1] - 1) - 1) / stride[1] + 1
+            height = (height + 2 * pool_padding[0] - pool_dilation[0] * (pool_kernel_size[0] - 1) - 1) / pool_stride[0] + 1
+            width = (width + 2 * pool_padding[1] - pool_dilation[1] * (pool_kernel_size[1] - 1) - 1) / pool_stride[1] + 1
+
+        # real (this will not work)
+        self._dense_sizes[0] = height * width
+        self._conv_sizes[0] = 1  # make this batching soon
+        self._dense_Sizes[-1] = config_batch.size()[1]
 
     def forward(self, x):
         for cnv in range(len(self._conv)):
@@ -665,7 +728,7 @@ class TorchCNN(torch.nn.Module):
             x = self.acts[dns](self._dense[dns](x))
         return x
 
-    def fit(self, loader, *, parameters, **kwargs):
+    def fit(self, *, parameters, **kwargs):
         hyperparam_checker = ParamChecker(name='hyperparams', ikwiad=self._ikwiad)
         hyperparam_checker.set_types(
             default={
@@ -684,7 +747,7 @@ class TorchCNN(torch.nn.Module):
         params = hyperparam_checker.check_params(parameters, **kwargs)
         for epoch in range(params['epochs']):
             running_loss = 0.0
-            for batch, (image, labels) in enumerate(loader, 0):
+            for batch, (image, labels) in enumerate(self._dataloader, 0):
                 self._optim.zero_grad()
                 outputs = self.forward(batch)
                 loss = self._loss(outputs, labels)
@@ -692,3 +755,4 @@ class TorchCNN(torch.nn.Module):
                 self._optim.step()
                 running_loss += loss.item()
                 # todo: status bar
+            print(running_loss)

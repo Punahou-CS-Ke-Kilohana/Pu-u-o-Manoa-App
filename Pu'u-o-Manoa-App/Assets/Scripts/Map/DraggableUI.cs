@@ -5,10 +5,12 @@ using UnityEngine.UI;
 // these are the class thingys you need for drop and drag
 public class DraggableUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
-    public GameObject placementMarkerPrefab; // 3D object to place on the terrain
-    public Camera mainCamera;
     private RectTransform rectTransform;
     private Canvas canvas;
+    private Button[] buttons;
+    public Camera mainCamera;
+    public GameObject playerPrefab; 
+    private GameObject player;
 
 
     // just getting the position and the canvas button pos
@@ -16,6 +18,47 @@ public class DraggableUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
     {
         rectTransform = GetComponent<RectTransform>();
         canvas = GetComponentInParent<Canvas>();
+        //buttons = canvas.GetComponentsInChildren<Button>();
+
+        //foreach (Button btn in buttons)
+        //{
+        //    btn.onClick.AddListener(() => OnButtonClick(btn));
+        //}
+    }
+
+    private void OnButtonClick(Button clickedButton)
+    {
+        Debug.Log("Button " + clickedButton.name + " clicked!");
+        if (clickedButton.name.Equals("Exit"))
+        {
+            ExitMap();
+        }
+
+
+    }
+
+    void Update()
+    {
+        CheckPressedKeys();
+    }
+
+    private void CheckPressedKeys()
+    {
+        Debug.Log("ee");
+        if (Input.GetKeyDown(KeyCode.V))
+        {
+            Debug.Log("AAAA");
+            ExitMap();
+        }
+    }
+
+    private void ExitMap()
+    {
+        Debug.Log("AAAA");
+        if (player != null)
+        {
+            player.SetActive(false);
+        }
     }
 
     // begin draggin ui object
@@ -44,15 +87,18 @@ public class DraggableUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
             Vector3 hitPosition = new Vector3(hit.point.x, hit.point.y + 1, hit.point.z);
 
             // spawn 3d marker prefab
-            Instantiate(placementMarkerPrefab, hitPosition, Quaternion.identity);
+            player = Instantiate(playerPrefab, hitPosition, Quaternion.identity);
+            PlayerController playerController = player.GetComponent<PlayerController>();
+            playerController.mainCamera = this.mainCamera;
 
             // hide the marker after placing
             gameObject.SetActive(false);
+            mainCamera.enabled = false;
 
             // coords to console
             Debug.Log($"Placed at: X: {hitPosition.x}, Y: {hitPosition.y}, Z: {hitPosition.z}");
 
-            Destroy(mainCamera);
+            //Destroy(mainCamera);
         }
     }
 }

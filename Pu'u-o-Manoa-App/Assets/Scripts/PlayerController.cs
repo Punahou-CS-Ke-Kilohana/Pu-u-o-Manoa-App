@@ -11,6 +11,8 @@ public class PlayerController : MonoBehaviour
     public float maxSpeed = 2.5f;
     bool canJump;
     public Transform cameraTransform;
+    private GameObject player;
+    public Camera mainCamera;
 
     // Called before start
     private void Awake()
@@ -21,7 +23,7 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        player = GameObject.FindGameObjectWithTag("Player");
     }
 
     // Update is called once per frame
@@ -83,6 +85,12 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKey(KeyCode.D))
         {
             this.Move(moveDirection += cameraRight * speedMultiplier);
+        }
+
+        if (Input.GetKey(KeyCode.V))
+        {
+            Destroy(player);
+            mainCamera.enabled = true;
         }
     }
 
