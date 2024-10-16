@@ -1,5 +1,11 @@
-from ..core.cnn import TorchCNN
+import sys
+import os
 
+# Ensure the parent directory is in the Python path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from core.cnn import TorchCNN  # Importing TorchCNN with an absolute path
+from core.dataloader import train_dataloader, test_dataloader  # Importing the dataloaders with absolute path
 
 default_pool = {
     'kernel_size': 3,
@@ -55,7 +61,8 @@ rhcc_cnn = TorchCNN(status_bars=True)
 
 rhcc_cnn.set_sizes()  # 4 conv, 6 dense
 
-rhcc_cnn.configure_network(rhcc_loader)
+# Configure network using train_dataloader from dataloader.py
+rhcc_cnn.configure_network(train_dataloader)
 
 rhcc_cnn.set_conv(parameters=4 * [default_conv])
 rhcc_cnn.set_pool(parameters=4 * [default_pool])
