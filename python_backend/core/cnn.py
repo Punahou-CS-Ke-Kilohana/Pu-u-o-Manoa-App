@@ -2,8 +2,8 @@ import types
 
 import torch
 
-from utils import ParamChecker
-from dataloader import DataLoader
+from .utils import ParamChecker
+from .dataloader import DataLoader
 
 
 class TorchCNN(torch.nn.Module):
@@ -38,6 +38,7 @@ class TorchCNN(torch.nn.Module):
         # network features
         self._conv_sizes = None
         self._dense_sizes = None
+        self._dataloader = None
 
         # technical network elements
         # activations areas
@@ -655,6 +656,7 @@ class TorchCNN(torch.nn.Module):
         self._optim = optim_ref[method](optim_params)
 
     def configure_network(self, loader: DataLoader):
+        self._dataloader = loader
         batch_size = loader.batch_size  # for later
         config_batch = next(iter(loader))
         height = config_batch.size()[1]
@@ -717,7 +719,7 @@ class TorchCNN(torch.nn.Module):
             x = self.acts[dns](self._dense[dns](x))
         return x
 
-    def fit(self, loader, *, parameters, **kwargs):
+    def fit(self, *, parameters, **kwargs):
         hyperparam_checker = ParamChecker(name='hyperparams', ikwiad=self._ikwiad)
         hyperparam_checker.set_types(
             default={
@@ -736,7 +738,7 @@ class TorchCNN(torch.nn.Module):
         params = hyperparam_checker.check_params(parameters, **kwargs)
         for epoch in range(params['epochs']):
             running_loss = 0.0
-            for batch, (image, labels) in enumerate(loader, 0):
+            for batch, (image, labels) in enumerate(self._dataloader, 0):
                 self._optim.zero_grad()
                 outputs = self.forward(batch)
                 loss = self._loss(outputs, labels)
