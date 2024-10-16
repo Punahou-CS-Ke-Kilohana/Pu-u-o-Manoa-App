@@ -12,19 +12,18 @@ public class PlayerController : MonoBehaviour
     bool canJump;
     public Transform cameraTransform;
     private GameObject player;
-    public Camera mainCamera = Camera.main;
+    public Camera mainCamera;
 
     // Called before start
     private void Awake()
     {
-        player = GameObject.FindGameObjectWithTag("Player");
         rb = GetComponent<Rigidbody>();
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        player = GameObject.FindGameObjectWithTag("Player");
     }
 
     // Update is called once per frame
