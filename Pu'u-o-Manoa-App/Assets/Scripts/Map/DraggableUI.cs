@@ -18,12 +18,12 @@ public class DraggableUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
     {
         rectTransform = GetComponent<RectTransform>();
         canvas = GetComponentInParent<Canvas>();
-        buttons = canvas.GetComponentsInChildren<Button>();
+        //buttons = canvas.GetComponentsInChildren<Button>();
 
-        foreach (Button btn in buttons)
-        {
-            btn.onClick.AddListener(() => OnButtonClick(btn));
-        }
+        //foreach (Button btn in buttons)
+        //{
+        //    btn.onClick.AddListener(() => OnButtonClick(btn));
+        //}
     }
 
     private void OnButtonClick(Button clickedButton)
