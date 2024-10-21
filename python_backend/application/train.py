@@ -53,9 +53,13 @@ default_adam = {
 
 rhcc_cnn = TorchCNN(status_bars=True)
 
-rhcc_cnn.set_sizes()  # 4 conv, 6 dense
+rhcc_cnn.set_sizes()  # 4 conv, 6 dense, default should work here
+rhcc_cnn.set_optim()  # adam, default should work here
+rhcc_cnn.set_loss()  # centropy, default should work here
+rhcc_cnn.set_acts()  # relu and softmax, default should work here
+rhcc_cnn.set_conv()
 
-rhcc_cnn.configure_network(train_dataloader)
+rhcc_cnn.configure_network(train_dataloader)  # ok...
 
 rhcc_cnn.set_conv(parameters=4 * [default_conv])
 rhcc_cnn.set_pool(parameters=4 * [default_pool])

@@ -24,8 +24,9 @@ class TorchCNN(torch.nn.Module):
             'Mish'
         ]
         self.allowed_losses = [
-            'CrossEntropyLoss'
-            'MSELoss'
+            'CrossEntropyLoss',
+            'MSELoss',
+            'L1Loss'
         ]
         self.allowed_optims = [
             'Adam',
@@ -213,17 +214,7 @@ class TorchCNN(torch.nn.Module):
         for prms in range(len(dense_params)):
             self._dense.append(torch.nn.Linear(*self._dense_sizes[prms:prms + 1], **dense_params[prms]))
 
-    def set_acts(self, *, methods: list, parameters: list):
-        self._acts = []
-        if len(methods) != len(parameters):
-            raise RuntimeError("Not matching params and methods")
-            # progress
-        if not (isinstance(methods, list) or len(parameters) != len(self._dense_sizes) - 1):
-            # invalid parameter format
-            raise ValueError(f"Dense parameters were not formatted correctly: {parameters}")
-        if not all([mth in self.allowed_acts for mth in methods]):
-            raise ValueError("Not a valid activator")
-
+    def set_acts(self, *, methods: list = None, parameters: list = None):
         act_params = {
             'ReLU': {
                 'default': {
@@ -298,6 +289,22 @@ class TorchCNN(torch.nn.Module):
                 }
             }
         }
+
+        self._acts = []
+        if methods is not None:
+            if len(methods) != len(parameters):
+                raise RuntimeError("Not matching params and methods")
+                # progress
+            if not (isinstance(methods, list) or len(parameters) != len(self._dense_sizes) + len(self._conv_sizes) - 1):
+                # invalid parameter format
+                raise ValueError(f"Dense parameters were not formatted correctly: {parameters}")
+            if not all([mth in self.allowed_acts for mth in methods]):
+                raise ValueError("Not a valid activator")
+        else:
+            # :)
+            methods = ['relu'] * (len(self._dense_sizes) + len(self._conv_sizes) - 2)
+            methods.append('softmax')
+            parameters = [] * (len(self._dense_sizes) + len(self._conv_sizes) - 1)
 
         # make activations reference
         activation_ref = {
@@ -653,23 +660,19 @@ class TorchCNN(torch.nn.Module):
         optim_checker = ParamChecker(name='optimizer', ikwiad=self._ikwiad)
         optim_checker.set_types(**def_optim_params[method])
         optim_params = optim_checker.check_params(parameters, **kwargs)
-        self._optim = optim_ref[method](optim_params)
+        print(optim_params)
+        self._optim = optim_ref[method](**optim_params)
 
     def configure_network(self, loader: DataLoader):
         self._dataloader = loader
         batch_size = loader.batch_size  # for later
-        
-        # Get the first batch of data from the DataLoader (features, labels)
-        config_batch, _ = next(iter(loader))  # Unpack the features, ignore the labels
 
-        # config_batch has the shape [batch_size, height, width, channels]
-        height = config_batch.size()[1]  # Height of the image
-        width = config_batch.size()[2]   # Width of the image
-        
-        # You can now use the height and width for further configuration
-        print(f"Image Height: {height}, Image Width: {width}")
+        # config batch
+        config_batch, _ = next(iter(loader))
 
-
+        # height and width
+        height = config_batch.size()[1]
+        width = config_batch.size()[2]
 
         for lyr in range(len(self._conv_params)):
             # awful segment of code that I should remove

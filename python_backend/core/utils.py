@@ -109,7 +109,7 @@ class ParamChecker:
         >>> checker = ParamChecker(name='kernel checker')
         >>> checker.set_types(default={'size': 3}, dtypes={'size': int}, vtypes={'size': lambda x: x > 0}, ctypes={'size': lambda x: x})
         """
-        if not isinstance(default, (dict, types.NoneType)):
+        if default is not None or not isinstance(dtypes, dict):
             # set default
             if default is None or all(not callable(value) for value in default.values()):
                 # set types
@@ -118,7 +118,7 @@ class ParamChecker:
                 # invalid type
                 raise TypeError(f"Invalid datatype for '{self._name}'s default': '{default}'")
 
-        if not isinstance(dtypes, (dict, types.NoneType)):
+        if dtypes is not None or not isinstance(dtypes, dict):
             # set datatypes
             if dtypes is None or all(not callable(value) for value in default.values()):
                 # set types
@@ -127,7 +127,7 @@ class ParamChecker:
                 # invalid type
                 raise TypeError(f"Invalid datatype for '{self._name}'s dtypes': '{dtypes}'")
 
-        if not isinstance(vtypes, (dict, types.NoneType)):
+        if vtypes is not None or not isinstance(dtypes, dict):
             # set value types
             if vtypes is None or all(isinstance(value, types.LambdaType) for value in vtypes.values()):
                 # set types
@@ -136,7 +136,7 @@ class ParamChecker:
                 # invalid type
                 raise TypeError(f"Invalid datatype for '{self._name}'s vtypes': '{vtypes}'")
 
-        if not isinstance(ctypes, (dict, types.NoneType)):
+        if ctypes is not None or not isinstance(dtypes, dict):
             # set conversion types
             if ctypes is None or all(isinstance(value, types.LambdaType) for value in ctypes.values()):
                 # set types
