@@ -3,8 +3,13 @@ import requests
 import os
 import json
 
+# 1.remove the thumb subdirectory 
+# 2.remove everything after ... .svg/ 
+# 3.this will give you the actual image and not just the thumbnail image
+
 def get_soup(url, headers):
     response = requests.get(url, headers=headers)
+    print(response)
     if response.status_code == 200:
         return BeautifulSoup(response.text, 'html.parser')
     else:
@@ -15,7 +20,6 @@ query = "Ohia"  # You can change the query for the image here
 image_type = "Action"
 query = '+'.join(query.split())
 url = f"https://www.google.com/search?q={query}&source=lnms&tbm=isch"
-print(url)
 
 # Add the directory for your images here
 DIR = "Pictures"
@@ -34,6 +38,7 @@ ActualImages = []
 # Google's image result structure has changed, so use a more general class for divs
 for img_tag in soup.find_all("img"):
     img_url = img_tag.get("src")
+    print(img_url)
     if img_url and "http" in img_url:
         ActualImages.append((img_url, "jpg"))  # Assuming JPG for simplicity
 
