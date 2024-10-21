@@ -260,3 +260,4 @@ MonoBehaviour:
   speedMultiplier: 0.1
   maxSpeed: 2.5
   cameraTransform: {fileID: 1156997772150393550}
+  mainCamera: {fileID: 0}
