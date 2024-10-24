@@ -661,6 +661,7 @@ class TorchCNN(torch.nn.Module):
         optim_checker.set_types(**def_optim_params[method])
         optim_params = optim_checker.check_params(parameters, **kwargs)
         print(optim_params)
+        print(optim_ref['Adam'](params=..., **optim_params))
         self._optim = optim_ref[method](**optim_params)
 
     def configure_network(self, loader: DataLoader):
