@@ -11,14 +11,10 @@ public class DatabaseUIController : MonoBehaviour
     public float spacing = 100f;           // Space between each prefab
     public int itemsPerRow = 3;           // Number of prefabs per row
     public ScrollRect scrollRect;
-    
-    public RectTransform content;  // Reference to the ScrollRect component
 
     void Start()
     {
         PopulateScrollView();
-        // Set scroll position to top after populating
-        scrollRect.verticalNormalizedPosition = 1f;
     }
 
     void PopulateScrollView()
@@ -39,16 +35,13 @@ public class DatabaseUIController : MonoBehaviour
 
         // Calculate total number of rows needed
         int totalRows = Mathf.CeilToInt((float)plants.Count / itemsPerRow);
-
-        // Calculate the total height of all rows
-        float totalContentHeight = totalRows * cellHeight + (totalRows + 1) * verticalSpacing;
-
-        // Set minimum height for 4 cells (2 rows)
-        float minHeight = 210f;
-
-        // Adjust the content panel's height
-        float adjustedHeight = Mathf.Max(minHeight, totalContentHeight);
-        contentPanel.sizeDelta = new Vector2(contentWidth, adjustedHeight);
+        
+        // Calculate total height needed
+        float totalHeight = (totalRows * cellHeight) + ((totalRows + 1) * verticalSpacing) + 30;
+        
+        Debug.Log("Total height: " + totalHeight);
+        // Set the content panel height
+        contentPanel.sizeDelta = new Vector2(contentPanel.sizeDelta.x, totalHeight);
 
         // Loop through the plant list and create each prefab in the correct position
         for (int i = 0; i < plants.Count; i++)
@@ -76,19 +69,7 @@ public class DatabaseUIController : MonoBehaviour
             }
         }
 
-        // Get the height of the scroll rect's viewport or use the RectTransform if viewport is not assigned
-        float viewportHeight;
-        if (scrollRect.viewport != null)
-        {
-            viewportHeight = scrollRect.viewport.rect.height;
-        }
-        else
-        {
-            RectTransform scrollRectTransform = scrollRect.GetComponent<RectTransform>();
-            viewportHeight = scrollRectTransform.rect.height;
-        }
-
-        // Enable vertical scrolling if content exceeds viewport height
-        scrollRect.vertical = adjustedHeight > viewportHeight;
+        // After creating all cells, reset scroll position to top
+        scrollRect.normalizedPosition = new Vector2(0, 1);
     }
 }
