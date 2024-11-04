@@ -1,5 +1,5 @@
-from python_backend.core.cnn import TorchCNN
-from python_backend.core.dataloader import train_dataloader
+from cnn import TorchCNN
+from dataloader import train_dataloader
 
 default_pool = {
     'kernel_size': 3,
