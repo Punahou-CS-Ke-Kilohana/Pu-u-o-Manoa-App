@@ -14,6 +14,10 @@ public class PlayerController : MonoBehaviour
     private GameObject player;
     public Camera mainCamera;
 
+    // joystick
+    public Joystick joystick;
+
+
     // Called before start
     private void Awake()
     {
@@ -37,6 +41,8 @@ public class PlayerController : MonoBehaviour
         cameraRight.Normalize();
 
         CheckPressedKeys(cameraForward, cameraRight);
+        CheckJoystick(cameraForward, cameraRight);
+
         LimitSpeed();
 
     }
@@ -92,6 +98,21 @@ public class PlayerController : MonoBehaviour
             Destroy(player);
             mainCamera.enabled = true;
         }
+    }
+
+    private void CheckJoystick(Vector3 cameraForward, Vector3 cameraRight)
+    {
+        // Access the joystick input data
+        float horizontal = joystick.Horizontal;
+        float vertical = joystick.Vertical;
+
+        Debug.Log($"Joystick Horizontal: {horizontal}, Vertical: {vertical}");
+
+        // Create a movement direction based on the joystick input and camera orientation
+        Vector3 moveDirection = (cameraForward * vertical + cameraRight * horizontal).normalized;
+
+        // Use the move direction to move the player
+        this.Move(moveDirection * speedMultiplier);
     }
 
     private void LimitSpeed()

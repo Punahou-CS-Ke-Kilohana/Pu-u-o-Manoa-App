@@ -8,6 +8,10 @@ public class Joystick : MonoBehaviour, IDragHandler, IPointerUpHandler, IPointer
 
     private Vector2 inputVector;  // Stores the joystick's input direction
 
+    public float Horizontal => inputVector.x;
+    public float Vertical => inputVector.y;
+    public Vector2 Direction => inputVector;
+
     private void Start()
     {
         joystickBackground = GetComponent<RectTransform>();
@@ -43,12 +47,12 @@ public class Joystick : MonoBehaviour, IDragHandler, IPointerUpHandler, IPointer
         joystickHandle.anchoredPosition = Vector2.zero;  // Return the joystick to center
     }
 
-    public float Horizontal()
+    public float Horizontal_old()
     {
         return inputVector.x;
     }
 
-    public float Vertical()
+    public float Vertical_old()
     {
         return inputVector.y;
     }
