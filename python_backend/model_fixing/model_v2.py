@@ -16,7 +16,7 @@ class Net(nn.Module):
         self.conv2 = nn.Conv2d(6, 16, 5)
         self.fc1 = nn.Linear(16 * 5 * 5, 120)
         self.fc2 = nn.Linear(120, 84)
-        self.fc3 = nn.Linear(84, 15)  # Adjust output to 15 classes
+        self.fc3 = nn.Linear(84, 15)
 
     def forward(self, x):
         x = self.pool(F.relu(self.conv1(x)))
@@ -40,7 +40,7 @@ net = Net()
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
 
-for epoch in range(2):  # loop over the dataset multiple times
+for epoch in range(2):
 
     running_loss = 0.0
     for i, data in enumerate(trainloader, 0):
