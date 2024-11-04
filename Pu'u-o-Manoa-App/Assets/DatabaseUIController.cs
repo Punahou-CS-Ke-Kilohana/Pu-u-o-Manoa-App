@@ -5,46 +5,52 @@ using TMPro;
 
 public class DatabaseUIController : MonoBehaviour
 {
-    List<string> plants = new List<string>() { "Ohia", "Ti", "Koa", "Hau", "Ohia", "Ti", "Koa", "Hau", "Ti", "Koa", "Hau","Ti", "Koa", "Hau" };  // Add more plants if needed
+    List<string> cells = new List<string>() {};
     public GameObject speciesCellPrefab;  // Prefab for the species cell (plantCell)
     public RectTransform contentPanel;    // Reference to the Scroll View's content panel (content)
+
+    public Button AnimalButton;
+    public Button PlantButton;
+
     public float spacing = 100f;           // Space between each prefab
     public int itemsPerRow = 3;           // Number of prefabs per row
     public ScrollRect scrollRect;
 
     void Start()
     {
-        PopulateScrollView();
+        PopulatePlantsCells();
     }
 
-    void PopulateScrollView()
+    void PopulateScrollView(List<string> cellList)
     {
+        // Clear existing cells from the content panel
+        foreach (Transform child in contentPanel)
+        {
+            GameObject.Destroy(child.gameObject);
+        }
+
         // Get the width and height of each prefab (speciesCell)
         RectTransform cellRect = speciesCellPrefab.GetComponent<RectTransform>();
         float cellWidth = cellRect.rect.width;
         float cellHeight = cellRect.rect.height;
 
-        // Calculate the available width in the content panel
-        float contentWidth = contentPanel.rect.width;
-
-        // Calculate horizontal spacing based on screen width
-        float horizontalSpacing = (contentWidth - (cellWidth * itemsPerRow)) / (itemsPerRow + 1);
-
-        // Set vertical spacing to a smaller value, e.g., 5f
-        float verticalSpacing = 5f;
+        // Set a fixed width for the content panel
+        float fixedContentWidth = 0; // Fixed width
 
         // Calculate total number of rows needed
-        int totalRows = Mathf.CeilToInt((float)plants.Count / itemsPerRow);
+        int totalRows = Mathf.CeilToInt((float)cellList.Count / itemsPerRow);
         
         // Calculate total height needed
-        float totalHeight = (totalRows * cellHeight) + ((totalRows + 1) * verticalSpacing) + 30;
-        
-        Debug.Log("Total height: " + totalHeight);
-        // Set the content panel height
-        contentPanel.sizeDelta = new Vector2(contentPanel.sizeDelta.x, totalHeight);
+        float totalHeight = Mathf.Max((totalRows * 70), 200);
+
+        // Set the content panel size with fixed width and dynamic height
+        contentPanel.sizeDelta = new Vector2(fixedContentWidth, totalHeight);
+
+        // Enable or disable scrolling based on height
+        scrollRect.vertical = totalHeight > 200;
 
         // Loop through the plant list and create each prefab in the correct position
-        for (int i = 0; i < plants.Count; i++)
+        for (int i = 0; i < cellList.Count; i++)
         {
             // Instantiate the prefab
             GameObject newCell = Instantiate(speciesCellPrefab, contentPanel);
@@ -54,8 +60,8 @@ public class DatabaseUIController : MonoBehaviour
             int column = i % itemsPerRow;
 
             // Calculate the x and y position for this cell
-            float xPos = (column + 1) * horizontalSpacing + column * cellWidth;
-            float yPos = -(row + 1) * verticalSpacing - row * cellHeight - 30;  // Negative to move down
+            float xPos = (column + 1) * 100 + column * cellWidth; // Adjust spacing as needed
+            float yPos = -(row + 1) * 30 - row * cellHeight / 3; // Negative to move down
 
             // Set the position of the new cell
             RectTransform cellRectTransform = newCell.GetComponent<RectTransform>();
@@ -65,11 +71,23 @@ public class DatabaseUIController : MonoBehaviour
             TMPro.TextMeshProUGUI cellText = newCell.GetComponentInChildren<TMPro.TextMeshProUGUI>();
             if (cellText != null)
             {
-                cellText.text = plants[i];
+                cellText.text = cellList[i];
             }
         }
 
         // After creating all cells, reset scroll position to top
         scrollRect.normalizedPosition = new Vector2(0, 1);
+    }
+
+    public void PopulateAnimalCells()
+    {
+        List<string> cells = new List<string>() { "NENE" };  // Add more animals if needed
+        PopulateScrollView(cells);
+    }
+
+    public void PopulatePlantsCells()
+    {
+        List<string> cells = new List<string>() { "Ohia", "Ti", "Koa", "Hau", "Ohia", "Ti", "Koa", "Hau", "Ti", "Koa", "Hau", "Ti", "Koa", "Hau" };  // Add more plants if needed
+        PopulateScrollView(cells);
     }
 }
