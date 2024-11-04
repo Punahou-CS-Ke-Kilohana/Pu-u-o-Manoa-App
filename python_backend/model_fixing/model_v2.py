@@ -59,7 +59,8 @@ def main():
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
 
-    for epoch in range(2):
+    print('Starting Training...')
+    for epoch in range(10):
         running_loss = 0.0
         for i, data in enumerate(trainloader, 0):
             inputs, labels = data
@@ -70,11 +71,25 @@ def main():
             optimizer.step()
 
             running_loss += loss.item()
-            if i % 2000 == 1999:
-                print(f'[{epoch + 1}, {i + 1:5d}] loss: {running_loss / 2000:.3f}')
+            # Display loss every 10 batches
+            if i % 10 == 9:
+                print(f'Epoch: {epoch + 1}, Batch: {i + 1:5d}, Loss: {running_loss / 10:.3f}')
                 running_loss = 0.0
 
+        # Print average loss for the epoch
+        print(f'Epoch {epoch + 1} completed. Average loss: {running_loss / len(trainloader):.3f}')
+
     print('Finished Training')
+    
+    # Save the model
+    model_path = os.path.join(os.path.dirname(__file__), 'trained_model.pth')
+    torch.save({
+        'model_state_dict': net.state_dict(),
+        'optimizer_state_dict': optimizer.state_dict(),
+        'epoch': epoch,
+        'loss': loss,
+    }, model_path)
+    print(f'Model saved to {model_path}')
 
 if __name__ == "__main__":
     import torch.multiprocessing as mp
