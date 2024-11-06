@@ -10,7 +10,7 @@ public class FirstPersonCamera : MonoBehaviour
     void Start()
     {
         // Locks Cursor
-        Cursor.lockState = CursorLockMode.Locked;
+        // Cursor.lockState = CursorLockMode.Locked;
     }
 
     void Update()
