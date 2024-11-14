@@ -12,8 +12,7 @@ import torch.optim as optim
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 
-from python_backend.core.dataloader import train_dataloader, \
-    test_dataloader  # Assume you have a separate test_dataloader
+from python_backend.core.dataloader import train_dataloader, test_dataloader  # Assume you have a separate test_dataloader
 
 
 class Net(nn.Module):
