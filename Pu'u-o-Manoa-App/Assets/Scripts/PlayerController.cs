@@ -39,9 +39,14 @@ public class PlayerController : MonoBehaviour
         cameraRight.y = 0f;
         cameraForward.Normalize();
         cameraRight.Normalize();
+        Vector2 joystickDirection = joystick.Direction;
+
+
+        Vector2 vertical = joystickDirection.y;
+        Vector2 horizontal = joystickDirection.x;
 
         CheckPressedKeys(cameraForward, cameraRight);
-        CheckJoystick(cameraForward, cameraRight);
+        CheckJoystick(vertical, horizontal);
 
         LimitSpeed();
 
@@ -49,7 +54,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if(collision.gameObject.tag == "Ground")
+        if (collision.gameObject.tag == "Ground")
         {
             canJump = true;
         }
@@ -74,6 +79,7 @@ public class PlayerController : MonoBehaviour
         {
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         }
+
         Vector3 moveDirection = Vector3.zero;
 
         if (Input.GetKey(KeyCode.W))
@@ -100,19 +106,39 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void CheckJoystick(Vector3 cameraForward, Vector3 cameraRight)
+    private void CheckJoystick(Vector3 vertical, Vector3 horizontal)
     {
         // Access the joystick input data
-        float horizontal = joystick.Horizontal;
-        float vertical = joystick.Vertical;
 
-        Debug.Log($"Joystick Horizontal: {horizontal}, Vertical: {vertical}");
+        Vector3 moveDirection = Vector3.zero;
+
+        if (vertical.y > 0)
+        {
+            this.Move(moveDirection += vertical * speedMultiplier);
+        }
+        if (vertical.y < 0)
+        {
+            this.Move(moveDirection -= cameraForward * speedMultiplier);
+        }
+        if (horizontal < 0)
+        {
+            this.Move(moveDirection -= cameraRight * speedMultiplier);
+        }
+        if (horizontal > 0)
+        {
+            this.Move(moveDirection += cameraRight * speedMultiplier);
+        }
+
+
+
+
+        //Debug.Log($"Joystick Horizontal: {horizontal}, Vertical: {vertical}");
 
         // Create a movement direction based on the joystick input and camera orientation
-        Vector3 moveDirection = (cameraForward * vertical + cameraRight * horizontal).normalized;
+        //Vector3 moveDirection = (cameraForward * vertical + cameraRight * horizontal).normalized;
 
-        // Use the move direction to move the player
-        this.Move(moveDirection * speedMultiplier);
+        //// Use the move direction to move the player
+        //this.Move(moveDirection += cameraForward * speedMultiplier);
     }
 
     private void LimitSpeed()
