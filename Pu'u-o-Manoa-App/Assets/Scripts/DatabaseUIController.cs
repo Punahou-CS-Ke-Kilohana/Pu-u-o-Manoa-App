@@ -16,6 +16,8 @@ public class DatabaseUIController : MonoBehaviour
     public int itemsPerRow = 3;           // Number of prefabs per row
     public ScrollRect scrollRect;
 
+    PlantLoader plantLoader = new PlantLoader(); // Create an instance of PlantLoader
+
     void Start()
     {
         PopulatePlantsCells();
@@ -41,7 +43,7 @@ public class DatabaseUIController : MonoBehaviour
         int totalRows = Mathf.CeilToInt((float)cellList.Count / itemsPerRow);
         
         // Calculate total height needed
-        float totalHeight = Mathf.Max((totalRows * 70), 200);
+        float totalHeight = Mathf.Max((totalRows * 80), 200);
 
         // Set the content panel size with fixed width and dynamic height
         contentPanel.sizeDelta = new Vector2(fixedContentWidth, totalHeight);
@@ -60,8 +62,8 @@ public class DatabaseUIController : MonoBehaviour
             int column = i % itemsPerRow;
 
             // Calculate the x and y position for this cell
-            float xPos = (column + 1) * 100 + column * cellWidth; // Adjust spacing as needed
-            float yPos = -(row + 1) * 30 - row * cellHeight / 3; // Negative to move down
+            float xPos = (column + 1) * 85 + column * cellWidth; // Adjust spacing as needed
+            float yPos = -(row + 1) * 45 - row * cellHeight / 3; // Negative to move down
 
             // Set the position of the new cell
             RectTransform cellRectTransform = newCell.GetComponent<RectTransform>();
@@ -87,7 +89,7 @@ public class DatabaseUIController : MonoBehaviour
 
     public void PopulatePlantsCells()
     {
-        List<string> cells = new List<string>() { "Ohia", "Ti", "Koa", "Hau", "Ohia", "Ti", "Koa", "Hau", "Ti", "Koa", "Hau", "Ti", "Koa", "Hau" };  // Add more plants if needed
-        PopulateScrollView(cells);
+        List<string> plantNames = plantLoader.GetPlantNames();
+        PopulateScrollView(plantNames);
     }
 }
