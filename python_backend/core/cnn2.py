@@ -26,6 +26,9 @@ class TorchCNNCore(torch.nn.Module):
         self._ikwiad = ikwiad
         # proper setup checker
         self._instantiated = False
+        # initial dimensions
+        self._in_hgt = None
+        self._in_wth = None
         # activations
         self._acts = []
         # network features
@@ -40,7 +43,7 @@ class TorchCNNCore(torch.nn.Module):
         # dense
         self._dense = []
 
-    def transfer_training_params(self, batching: int, classes: int, *, loader: DataLoader = None):
+    def transfer_training_params(self, batching: int, classes: int, initial_height: int, initial_width: int, *, loader: DataLoader = None):
         if loader is not None:
             # transfer from loader
             raise RuntimeError("Direct transfer of training parameters from a dataloader is currently not implemented")
@@ -64,6 +67,26 @@ class TorchCNNCore(torch.nn.Module):
                 raise TypeError(
                     f"'classes' is invalid: {classes}",
                     f"'classes' must be a positive integer"
+                )
+
+            if isinstance(initial_height, int) and 0 < initial_height:
+                # set internal initial height
+                self._in_hgt = initial_height
+            else:
+                # invalid initial height
+                raise TypeError(
+                    f"'initial_height' is invalid: {initial_height}",
+                    f"'initial_height' must be a positive integer"
+                )
+
+            if isinstance(initial_width, int) and 0 < initial_width:
+                # set internal initial width
+                self._in_wth = initial_width
+            else:
+                # invalid initial width
+                raise TypeError(
+                    f"'initial_width' is invalid: {initial_width}",
+                    f"'initial_width' must be a positive integer"
                 )
 
     def set_int_sizes(self, *, conv_channels: list = None, dense_sizes: list = None):
@@ -286,7 +309,7 @@ class TorchCNNCore(torch.nn.Module):
 
         # set convolutional layers
         for prms in range(len(conv_params)):
-            # this doesn't work
+            # todo: this doesn't work  # why?
             self._conv.append(torch.nn.Conv2d(*self._conv_sizes[prms:prms + 1], **conv_params[prms]))
 
         # save calc conv params
@@ -335,12 +358,12 @@ class TorchCNNCore(torch.nn.Module):
         )
 
         # get each layer's parameters
-        self._pool_params = []
+        pool_params = []
         for prm in parameters:
-            self._pool_params.append(pool_checker.check_params(prm))
+            pool_params.append(pool_checker.check_params(prm))
 
         # set pooling layers
-        for prms in self._pool_params:
+        for prms in pool_params:
             self._pool.append(torch.nn.MaxPool2d(**prms))
 
     def set_dense(self, *, parameters: list):
@@ -382,14 +405,28 @@ class TorchCNNCore(torch.nn.Module):
         for prms in range(len(dense_params)):
             self._dense.append(torch.nn.Linear(*self._dense_sizes[prms:prms + 1], **dense_params[prms]))
 
-    def instantiate_model(self):
-        # todo: calculate flattened size
-        ...
+    @staticmethod
+    def _calc_lyr_size(h_in: int, w_in: int, params: dict):
+        # params = {
+        #     'padding': padding,
+        #     'dilation': dilation,
+        #     'kernel_size': kernel_size,
+        #     'stride': stride
+        # }
+        for key in params:
+            # reformat parameters
+            if len(params[key]) == 1:
+                params[key] = (params[key], params[key])
+            else:
+                params[key] = params[key]
+
+        # out size calculation
+        h_out = (h_in + 2 * params['padding'][0] - params['dilation'][0] * (params['kernel_size'][0] - 1) - 1) / params['stride'][0] + 1
+        w_out = (w_in + 2 * params['padding'][1] - params['dilation'][1] * (params['kernel_size'][1] - 1) - 1) / params['stride'][1] + 1
+        # return out size
+        return h_out, w_out
 
     def forward(self, x):
-        if not self._instantiated:
-            # check for instantiation (this isn't ideal but too bad)
-            raise RuntimeError("Model hasn't been instantiated")
         for cnv in range(len(self._conv)):
             # run through conv
             x = self.acts[cnv](self._dense[cnv](x))
