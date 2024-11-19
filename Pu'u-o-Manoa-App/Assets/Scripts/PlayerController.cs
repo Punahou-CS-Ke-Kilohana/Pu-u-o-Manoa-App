@@ -39,7 +39,7 @@ public class PlayerController : MonoBehaviour
         cameraRight.y = 0f;
         cameraForward.Normalize();
         cameraRight.Normalize();
-        Vector2 joystickDirection = joystick.Direction;
+        //Vector2 joystickDirection = joystick.Direction;
 
 
         //Vector2 vertical = joystickDirection.y;
