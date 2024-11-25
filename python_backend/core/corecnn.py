@@ -1,5 +1,3 @@
-import types
-
 import torch
 
 from application.utils import ParamChecker
@@ -44,6 +42,30 @@ class TorchCNNCore(torch.nn.Module):
         # dense
         self._dense = None
 
+    def set_int_sizes(self, *, conv_channels: list = None, dense_sizes: list = None):
+        # reset size lists
+        self._conv_sizes = []
+        self._dense_sizes = []
+        if conv_channels is None:
+            # default convolutional channels
+            conv_channels = [128, 64, 32]
+        if dense_sizes is None:
+            # default dense sizes
+            dense_sizes = [256, 128, 64, 32]
+        # unpack sizes
+        if not self._conv_sizes:
+            # reset conv sizes
+            self._conv_sizes = ['colors', *conv_channels]
+        else:
+            # add conv sizes
+            self._conv_sizes += conv_channels
+        if not self._dense_sizes:
+            # reset dense sizes
+            self._dense_sizes = ['flattened', *dense_sizes, 'classes']
+        else:
+            # add dense sizes
+            self._dense_sizes = ['flattened'] + dense_sizes + self._dense_sizes
+
     def transfer_training_params(self, color_channels: int = None, classes: int = None, initial_height: int = None, initial_width: int = None, *, loader: DataLoader = None):
         # todo: fix this instantiation
         if isinstance(loader, DataLoader):
@@ -54,7 +76,6 @@ class TorchCNNCore(torch.nn.Module):
             # manual set
             if isinstance(color_channels, int) and 0 < color_channels:
                 # set internal initial channel
-                print(self._conv_sizes)
                 self._conv_sizes[0] = color_channels
             else:
                 # invalid colors
@@ -65,7 +86,7 @@ class TorchCNNCore(torch.nn.Module):
 
             if isinstance(classes, int) and 0 < classes:
                 # set internal classes
-                self._dense_sizes[0] = classes
+                self._dense_sizes[-1] = classes
             else:
                 # invalid classes
                 raise TypeError(
@@ -92,30 +113,6 @@ class TorchCNNCore(torch.nn.Module):
                     f"'initial_width' is invalid: {initial_width}",
                     f"'initial_width' must be a positive integer"
                 )
-
-    def set_int_sizes(self, *, conv_channels: list = None, dense_sizes: list = None):
-        # reset size lists
-        self._conv_sizes = []
-        self._dense_sizes = []
-        if conv_channels is None:
-            # default convolutional channels
-            conv_channels = [128, 64, 32]
-        if dense_sizes is None:
-            # default dense sizes
-            dense_sizes = [256, 128, 64, 32]
-        # unpack sizes
-        if not self._conv_sizes:
-            # reset conv sizes
-            self._conv_sizes = ['colors', *conv_channels]
-        else:
-            # add conv sizes
-            self._conv_sizes += conv_channels
-        if not self._dense_sizes:
-            # reset dense sizes
-            self._dense_sizes = ['flattened', *dense_sizes, 'classes']
-        else:
-            # add dense sizes
-            self._dense_sizes = ['flattened'] + dense_sizes + self._dense_sizes
 
     def set_acts(self, *, methods: list = None, parameters: list = None):
         # activation parameter reference
@@ -157,7 +154,7 @@ class TorchCNNCore(torch.nn.Module):
                     'dim': None
                 },
                 'dtypes': {
-                    'dim': (types.NoneType, int)
+                    'dim': (type(None), int)
                 },
                 'vtypes': {
                     'dim': lambda x: True
@@ -241,8 +238,8 @@ class TorchCNNCore(torch.nn.Module):
                 )
         else:
             # set default activations
-            methods = ['relu'] * (len(self._dense_sizes) + len(self._conv_sizes) - 2)
-            methods.append('softmax')
+            methods = ['ReLU'] * (len(self._dense_sizes) + len(self._conv_sizes) - 2)
+            methods.append('Softmax')
             parameters = [{}] * (len(self._dense_sizes) + len(self._conv_sizes) - 1)
 
         # reset act list
@@ -352,7 +349,7 @@ class TorchCNNCore(torch.nn.Module):
         pool_checker.set_types(
             default={
                 'kernel_size': 3,
-                'stride': None,
+                'stride': 1,
                 'padding': 0,
                 'dilation': 1,
                 'return_indices': False,
@@ -360,7 +357,7 @@ class TorchCNNCore(torch.nn.Module):
             },
             dtypes={
                 'kernel_size': (int, tuple),
-                'stride': (types.NoneType, int, tuple),
+                'stride': (type(None), int, tuple),
                 'padding': (int, tuple),
                 'dilation': (int, tuple),
                 'return_indices': (bool, int),
@@ -368,7 +365,7 @@ class TorchCNNCore(torch.nn.Module):
             },
             vtypes={
                 'kernel_size': lambda x: (isinstance(x, int) and 0 < x) or (isinstance(x, tuple) and len(x) == 2 and all(isinstance(i, int) and 0 < i for i in x)),
-                'stride': lambda x: (isinstance(x, types.NoneType)) or (isinstance(x, int) and 0 < x) or (isinstance(x, tuple) and len(x) == 2 and all(isinstance(i, int) and 0 < i for i in x)),
+                'stride': lambda x: (isinstance(x, type(None))) or (isinstance(x, int) and 0 < x) or (isinstance(x, tuple) and len(x) == 2 and all(isinstance(i, int) and 0 < i for i in x)),
                 'padding': lambda x: (isinstance(x, int) and 0 <= x) or (isinstance(x, tuple) and len(x) == 2 and all(isinstance(i, int) and 0 <= i for i in x)),
                 'dilation': lambda x: (isinstance(x, int) and 0 < x) or (isinstance(x, tuple) and len(x) == 2 and all(isinstance(i, int) and 0 < i for i in x)),
                 'return_indices': lambda x: True,
@@ -417,23 +414,15 @@ class TorchCNNCore(torch.nn.Module):
         dense_checker = ParamChecker(name='Dense Parameters', ikwiad=self._ikwiad)
         dense_checker.set_types(
             default={
-                'in_features': None,
-                'out_features': None,
                 'bias': True
             },
             dtypes={
-                'in_features': int,
-                'out_features': int,
                 'bias': (bool, int)
             },
             vtypes={
-                'in_features': lambda x: 0 < x,
-                'out_features': lambda x: 0 < x,
                 'bias': lambda x: True
             },
             ctypes={
-                'in_features': lambda x: x,
-                'out_features': lambda x: x,
                 'bias': lambda x: bool(x)
             }
         )
@@ -472,21 +461,27 @@ class TorchCNNCore(torch.nn.Module):
                 'kernel_size': self._pool_params[lyr]['kernel_size'],
                 'stride': self._pool_params[lyr]['stride']
             }
-            final_hgt, final_wth = self._calc_lyr_sizes(final_hgt, final_wth, calc_conv_params)
-            final_hgt, final_wth = self._calc_lyr_sizes(final_hgt, final_wth, calc_pool_params)
+            if calc_pool_params['stride'] is None:
+                calc_pool_params['stride'] = calc_pool_params['kernel_size']
+            final_hgt, final_wth = self._calc_lyr_size(final_hgt, final_wth, calc_conv_params)
+            final_hgt, final_wth = self._calc_lyr_size(final_hgt, final_wth, calc_pool_params)
 
         # set flattened size
-        self._dense_sizes[0] = final_hgt * final_wth
+        self._dense_sizes[0] = int(final_hgt * final_wth)
 
-        # set conv layers
-        for prms in range(len(self._conv_params)):
-            self._conv.append(torch.nn.Conv2d(*self._conv_sizes[prms:prms + 1], **self._conv_params[prms]))
-        # set pooling
+        # reset layers
+        self._conv = []
+        self._pool = []
+        self._dense = []
+        for prms in range(len(self._conv_params) - 1):
+            # set conv layers
+            self._conv.append(torch.nn.Conv2d(*self._conv_sizes[prms:prms + 2], **self._conv_params[prms]))
         for prms in self._pool_params:
+            # set pooling
             self._pool.append(torch.nn.MaxPool2d(**prms))
-        # set dense layers
-        for prms in range(len(self._dense_params)):
-            self._dense.append(torch.nn.Linear(*self._dense_sizes[prms:prms + 1], **self._dense_params[prms]))
+        for prms in range(len(self._dense_params) - 1):
+            # set dense layers
+            self._dense.append(torch.nn.Linear(*self._dense_sizes[prms:prms + 2], **self._dense_params[prms]))
 
         # signal instantiation
         self._instantiated = True
@@ -495,12 +490,13 @@ class TorchCNNCore(torch.nn.Module):
     def _calc_lyr_size(h_in: int, w_in: int, params: dict):
         for key in params:
             # reformat parameters
-            if len(params[key]) == 1:
+            if not isinstance(params[key], list):
                 params[key] = (params[key], params[key])
             else:
                 params[key] = params[key]
 
         # out size calculation
+        # todo: this doesn't work somehow??
         h_out = (h_in + 2 * params['padding'][0] - params['dilation'][0] * (params['kernel_size'][0] - 1) - 1) / params['stride'][0] + 1
         w_out = (w_in + 2 * params['padding'][1] - params['dilation'][1] * (params['kernel_size'][1] - 1) - 1) / params['stride'][1] + 1
         # return out size
