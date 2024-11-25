@@ -117,15 +117,15 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BumpSpecMap:
-        m_Texture: {fileID: 2800000, guid: f84665785d3374a17888e7a18522c278, type: 3}
+        m_Texture: {fileID: 2800000, guid: 4099dd91d9b004a92a640ac9315627dc, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 7dd798ff1db5842eda2c537629b575b4, type: 3}
+        m_Texture: {fileID: 2800000, guid: 2d439b88889b04df5adb9ab42db0c568, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _TranslucencyMap:
-        m_Texture: {fileID: 2800000, guid: 27f201bbf436f449bb79aa24ae125cec, type: 3}
+        m_Texture: {fileID: 2800000, guid: ecfd3237e90584b8eb2464f513d6b66f, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
@@ -162,19 +162,19 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BumpSpecMap:
-        m_Texture: {fileID: 2800000, guid: f84665785d3374a17888e7a18522c278, type: 3}
+        m_Texture: {fileID: 2800000, guid: 4099dd91d9b004a92a640ac9315627dc, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 7dd798ff1db5842eda2c537629b575b4, type: 3}
+        m_Texture: {fileID: 2800000, guid: 2d439b88889b04df5adb9ab42db0c568, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ShadowTex:
-        m_Texture: {fileID: 2800000, guid: 9152b92d85b77476eb269a3d66b23491, type: 3}
+        m_Texture: {fileID: 2800000, guid: 66d00d933879e4cd0825c97a5dba6661, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _TranslucencyMap:
-        m_Texture: {fileID: 2800000, guid: 27f201bbf436f449bb79aa24ae125cec, type: 3}
+        m_Texture: {fileID: 2800000, guid: ecfd3237e90584b8eb2464f513d6b66f, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
@@ -378,7 +378,7 @@ MonoBehaviour:
   m_Name: Tree Data
   m_EditorClassIdentifier: 
   _uniqueID: 271
-  materialHash: f2a4cfab0c119f4f3ff3f5cb54ed088b-550813696
+  materialHash: 9d2dafc3291505fd70f76896b6257ebe-550813696
   root:
     _uniqueID: 1
     seed: 1234

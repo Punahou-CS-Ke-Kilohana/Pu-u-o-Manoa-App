@@ -2,6 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+
+Purpose: This is the PlayerController script. It handles keypresses, movement, physics, and camera. It also limits the player's speed.
+Date: 11/25/24
+Project: Pu'u-o-Manoa App
+By: Isaac Verbrugge
+
+*/
+
 public class PlayerController : MonoBehaviour
 {
 

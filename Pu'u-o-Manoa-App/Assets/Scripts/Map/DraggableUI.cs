@@ -2,6 +2,15 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
+/*
+
+Purpose: This is the draggable UI script. It's a UI used to drag and drop the player prefab on the map. Once "dropped," you enter the player's POV.
+Date: 11/25/24
+Project: Pu'u-o-Manoa App
+By: Rodney Fujiyama & Isaac Verbrugge
+
+*/
+
 // these are the class thingys you need for drop and drag
 public class DraggableUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
