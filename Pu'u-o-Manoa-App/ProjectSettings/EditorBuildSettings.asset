@@ -17,4 +17,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Camera.unity
     guid: 0493ee6d828c24669aeb57501d13bd26
-  m_configObjects: {}
+  m_configObjects:
+    com.unity.adaptiveperformance.simulator.provider_settings: {fileID: 11400000,
+      guid: 7699356afb7f149259e5a620c996dc23, type: 2}
