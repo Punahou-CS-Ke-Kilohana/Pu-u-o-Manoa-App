@@ -30,33 +30,37 @@ class TorchCNNCore(torch.nn.Module):
         self._in_hgt = None
         self._in_wth = None
         # activations
-        self._acts = []
+        self._acts = None
         # network features
-        self._conv_sizes = []
-        self._dense_sizes = []
+        self._conv_sizes = None
+        self._dense_sizes = None
+        self._conv_params = None
+        self._pool_params = None
+        self._dense_params = None
         # convolution
-        self._conv = []
-        self._conv_calcs = []
+        self._conv = None
         # pool
-        self._pool = []
-        self._pool_calcs = []
+        self._pool = None
         # dense
-        self._dense = []
+        self._dense = None
 
-    def transfer_training_params(self, batching: int, classes: int, initial_height: int, initial_width: int, *, loader: DataLoader = None):
-        if loader is not None:
+    def transfer_training_params(self, color_channels: int = None, classes: int = None, initial_height: int = None, initial_width: int = None, *, loader: DataLoader = None):
+        # todo: fix this instantiation
+        if isinstance(loader, DataLoader):
             # transfer from loader
+            # todo: add direct transferring of training parameters from dataloader
             raise RuntimeError("Direct transfer of training parameters from a dataloader is currently not implemented")
         else:
             # manual set
-            if isinstance(batching, int) and 0 < batching:
-                # set internal batching
-                self._conv_sizes[0] = batching
+            if isinstance(color_channels, int) and 0 < color_channels:
+                # set internal initial channel
+                print(self._conv_sizes)
+                self._conv_sizes[0] = color_channels
             else:
-                # invalid batching
+                # invalid colors
                 raise TypeError(
-                    f"'batching' is invalid: {batching}",
-                    f"'batching' must be a positive integer"
+                    f"'color_channels' is invalid: {color_channels}",
+                    f"'color_channels' must be a positive integer"
                 )
 
             if isinstance(classes, int) and 0 < classes:
@@ -90,6 +94,9 @@ class TorchCNNCore(torch.nn.Module):
                 )
 
     def set_int_sizes(self, *, conv_channels: list = None, dense_sizes: list = None):
+        # reset size lists
+        self._conv_sizes = []
+        self._dense_sizes = []
         if conv_channels is None:
             # default convolutional channels
             conv_channels = [128, 64, 32]
@@ -99,7 +106,7 @@ class TorchCNNCore(torch.nn.Module):
         # unpack sizes
         if not self._conv_sizes:
             # reset conv sizes
-            self._conv_sizes = ['batching', *conv_channels]
+            self._conv_sizes = ['colors', *conv_channels]
         else:
             # add conv sizes
             self._conv_sizes += conv_channels
@@ -236,8 +243,10 @@ class TorchCNNCore(torch.nn.Module):
             # set default activations
             methods = ['relu'] * (len(self._dense_sizes) + len(self._conv_sizes) - 2)
             methods.append('softmax')
-            parameters = [] * (len(self._dense_sizes) + len(self._conv_sizes) - 1)
+            parameters = [{}] * (len(self._dense_sizes) + len(self._conv_sizes) - 1)
 
+        # reset act list
+        self._acts = []
         for act_pair in zip(methods, parameters):
             # set activation objects
             act_checker = ParamChecker(name='activations', ikwiad=self._ikwiad)
@@ -245,21 +254,28 @@ class TorchCNNCore(torch.nn.Module):
             act_prms = act_checker.check_params(act_pair[1])
             self._acts.append(activation_ref[act_pair[0]](act_prms))
 
-    def set_conv(self, *, parameters: list):
-        if not (isinstance(parameters, list)) or (len(parameters) != len(self._conv_sizes)):
-            # invalid parameter format
-            if not isinstance(parameters, list):
-                # invalid type
-                raise TypeError(
-                    f"'parameters' were not formatted correctly: {parameters}"
-                    f"'parameters' must be a list"
-                )
-            if len(parameters) != len(self._conv_sizes):
-                # invalid length
-                raise ValueError(
-                    f"'parameters' were not formatted correctly: {parameters}"
-                    f"'parameters' don't match sizes ({len(parameters)} != {len(self._conv_sizes)})"
-                )
+    def set_conv(self, *, parameters: list = None):
+        if self._conv_sizes is None or not isinstance(self._conv_sizes[0], int):
+            # invalid conv sizes
+            raise RuntimeError(f"conv channels weren't set properly: {self._conv_sizes}")
+        if parameters is not None:
+            if not (isinstance(parameters, list)) or (len(parameters) != len(self._conv_sizes)):
+                # invalid parameter format
+                if not isinstance(parameters, list):
+                    # invalid type
+                    raise TypeError(
+                        f"'parameters' for conv were not formatted correctly: {parameters}"
+                        f"'parameters' must be a list"
+                    )
+                if len(parameters) != len(self._conv_sizes):
+                    # invalid length
+                    raise ValueError(
+                        f"'parameters' for conv were not formatted correctly: {parameters}"
+                        f"'parameters' don't match sizes ({len(parameters)} != {len(self._conv_sizes)})"
+                    )
+        else:
+            # set default conv parameters
+            parameters = [{}] * len(self._conv_sizes)
 
         # instantiate parameter checker
         conv_checker = ParamChecker(name='Convolutional Parameters', ikwiad=self._ikwiad)
@@ -302,26 +318,37 @@ class TorchCNNCore(torch.nn.Module):
             }
         )
 
-        # check conv params
-        conv_params = []
+        # reset conv params
+        self._conv_params = []
         for prm in parameters:
-            conv_params.append(conv_checker.check_params(prm))
+            # check conv params
+            self._conv_params.append(conv_checker.check_params(prm))
 
-        # set convolutional layers
-        for prms in range(len(conv_params)):
-            # todo: this doesn't work  # why?
-            self._conv.append(torch.nn.Conv2d(*self._conv_sizes[prms:prms + 1], **conv_params[prms]))
-
-        # save calc conv params
-        self._conv_calcs = []
-
-    def set_pool(self, *, parameters: list):
-        if not (isinstance(parameters, list)) or (len(parameters) != len(self._conv_sizes)):
-            # invalid parameter format
-            raise ValueError(f"Pooling parameters were not formatted correctly: {parameters}")
+    def set_pool(self, *, parameters: list = None):
+        if self._conv_sizes is None or not isinstance(self._conv_sizes[0], int):
+            # invalid conv sizes
+            raise RuntimeError(f"conv channels weren't set properly: {self._conv_sizes}")
+        if parameters is not None:
+            if not (isinstance(parameters, list)) or (len(parameters) != len(self._conv_sizes)):
+                # invalid parameter format
+                if not isinstance(parameters, list):
+                    # invalid type
+                    raise TypeError(
+                        f"'parameters' for pool were not formatted correctly: {parameters}"
+                        f"'parameters' must be a list"
+                    )
+                if len(parameters) != len(self._conv_sizes):
+                    # invalid length
+                    raise ValueError(
+                        f"'parameters' for pool were not formatted correctly: {parameters}"
+                        f"'parameters' don't match sizes ({len(parameters)} != {len(self._conv_sizes)})"
+                    )
+        else:
+            # set default pool parameters
+            parameters = [{}] * len(self._conv_sizes)
 
         # instantiate parameter checker
-        pool_checker = ParamChecker(name='pool', ikwiad=self._ikwiad)
+        pool_checker = ParamChecker(name='Pooling Parameters', ikwiad=self._ikwiad)
         pool_checker.set_types(
             default={
                 'kernel_size': 3,
@@ -357,22 +384,37 @@ class TorchCNNCore(torch.nn.Module):
             }
         )
 
-        # get each layer's parameters
-        pool_params = []
+        # reset pool params
+        self._pool_params = []
         for prm in parameters:
-            pool_params.append(pool_checker.check_params(prm))
+            # check pool params
+            self._pool_params.append(pool_checker.check_params(prm))
 
-        # set pooling layers
-        for prms in pool_params:
-            self._pool.append(torch.nn.MaxPool2d(**prms))
-
-    def set_dense(self, *, parameters: list):
-        if not (isinstance(parameters, list) or len(parameters) != len(self._dense_sizes) - 1):
-            # invalid parameter format
-            raise ValueError(f"Dense parameters were not formatted correctly: {parameters}")
+    def set_dense(self, *, parameters: list = None):
+        if self._dense_sizes is None:
+            # invalid dense sizes
+            raise RuntimeError(f"dense channels weren't set: {self._dense_sizes}")
+        if parameters is not None:
+            if not (isinstance(parameters, list)) or (len(parameters) != len(self._dense_sizes)):
+                # invalid parameter format
+                if not isinstance(parameters, list):
+                    # invalid type
+                    raise TypeError(
+                        f"'parameters' for dense were not formatted correctly: {parameters}"
+                        f"'parameters' must be a list"
+                    )
+                if len(parameters) != len(self._dense_sizes):
+                    # invalid length
+                    raise ValueError(
+                        f"'parameters' for dense were not formatted correctly: {parameters}"
+                        f"'parameters' don't match sizes ({len(parameters)} != {len(self._dense_sizes)})"
+                    )
+        else:
+            # set default dense parameters
+            parameters = [{}] * len(self._dense_sizes)
 
         # instantiate parameter checker
-        dense_checker = ParamChecker(name='dense', ikwiad=self._ikwiad)
+        dense_checker = ParamChecker(name='Dense Parameters', ikwiad=self._ikwiad)
         dense_checker.set_types(
             default={
                 'in_features': None,
@@ -396,23 +438,61 @@ class TorchCNNCore(torch.nn.Module):
             }
         )
 
-        # get each layer's parameters
-        dense_params = []
+        # reset dense params
+        self._dense_params = []
         for prm in parameters:
-            dense_params.append(dense_checker.check_params(prm))
+            # check dense params
+            self._dense_params.append(dense_checker.check_params(prm))
 
+    def instantiate_model(self):
+        if self._conv_params is None:
+            # invalid conv params
+            raise RuntimeError(f"'conv parameters' weren't set: {self._conv_params}")
+        if self._pool_params is None:
+            # invalid pool params
+            raise RuntimeError(f"'pool parameters' weren't set: {self._pool_params}")
+        if self._dense_params is None:
+            # invalid dense params
+            raise RuntimeError(f"'dense parameters' weren't set: {self._dense_params}")
+
+        # calculate flattened size
+        final_hgt = self._in_hgt
+        final_wth = self._in_wth
+        for lyr in range(len(self._conv_params)):
+            # grab necessary parameters
+            calc_conv_params = {
+                'padding': self._conv_params[lyr]['padding'],
+                'dilation': self._conv_params[lyr]['dilation'],
+                'kernel_size': self._conv_params[lyr]['kernel_size'],
+                'stride': self._conv_params[lyr]['stride']
+            }
+            calc_pool_params = {
+                'padding': self._pool_params[lyr]['padding'],
+                'dilation': self._pool_params[lyr]['dilation'],
+                'kernel_size': self._pool_params[lyr]['kernel_size'],
+                'stride': self._pool_params[lyr]['stride']
+            }
+            final_hgt, final_wth = self._calc_lyr_sizes(final_hgt, final_wth, calc_conv_params)
+            final_hgt, final_wth = self._calc_lyr_sizes(final_hgt, final_wth, calc_pool_params)
+
+        # set flattened size
+        self._dense_sizes[0] = final_hgt * final_wth
+
+        # set conv layers
+        for prms in range(len(self._conv_params)):
+            self._conv.append(torch.nn.Conv2d(*self._conv_sizes[prms:prms + 1], **self._conv_params[prms]))
+        # set pooling
+        for prms in self._pool_params:
+            self._pool.append(torch.nn.MaxPool2d(**prms))
         # set dense layers
-        for prms in range(len(dense_params)):
-            self._dense.append(torch.nn.Linear(*self._dense_sizes[prms:prms + 1], **dense_params[prms]))
+        for prms in range(len(self._dense_params)):
+            self._dense.append(torch.nn.Linear(*self._dense_sizes[prms:prms + 1], **self._dense_params[prms]))
+
+        # signal instantiation
+        self._instantiated = True
 
     @staticmethod
     def _calc_lyr_size(h_in: int, w_in: int, params: dict):
-        # params = {
-        #     'padding': padding,
-        #     'dilation': dilation,
-        #     'kernel_size': kernel_size,
-        #     'stride': stride
-        # }
         for key in params:
             # reformat parameters
             if len(params[key]) == 1:
@@ -427,6 +507,9 @@ class TorchCNNCore(torch.nn.Module):
         return h_out, w_out
 
     def forward(self, x):
+        if not self._instantiated:
+            # invalid instantiation (this a really stupid way to implement this. too bad!)
+            raise RuntimeError("Network was not fully instantiated")
         for cnv in range(len(self._conv)):
             # run through conv
             x = self.acts[cnv](self._dense[cnv](x))
