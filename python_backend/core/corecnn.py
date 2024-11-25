@@ -35,12 +35,10 @@ class TorchCNNCore(torch.nn.Module):
         self._conv_params = None
         self._pool_params = None
         self._dense_params = None
-        # convolution
-        self._conv = None
-        # pool
-        self._pool = None
-        # dense
-        self._dense = None
+        # initial layer containers
+        self._conv = torch.nn.ModuleList()
+        self._pool = torch.nn.ModuleList()
+        self._dense = torch.nn.ModuleList()
 
     def set_int_sizes(self, *, conv_channels: list = None, dense_sizes: list = None):
         # reset size lists
@@ -433,6 +431,22 @@ class TorchCNNCore(torch.nn.Module):
             # check dense params
             self._dense_params.append(dense_checker.check_params(prm))
 
+    @staticmethod
+    def _calc_lyr_size(h_in: int, w_in: int, params: dict):
+        for key in params:
+            # reformat parameters
+            if not isinstance(params[key], list):
+                params[key] = (params[key], params[key])
+            else:
+                params[key] = params[key]
+
+        # out size calculation
+        # todo: this doesn't work somehow??
+        h_out = (h_in + 2 * params['padding'][0] - params['dilation'][0] * (params['kernel_size'][0] - 1) - 1) / params['stride'][0] + 1
+        w_out = (w_in + 2 * params['padding'][1] - params['dilation'][1] * (params['kernel_size'][1] - 1) - 1) / params['stride'][1] + 1
+        # return out size
+        return h_out, w_out
+
     def instantiate_model(self):
         if self._conv_params is None:
             # invalid conv params
@@ -443,6 +457,8 @@ class TorchCNNCore(torch.nn.Module):
         if self._dense_params is None:
             # invalid dense params
             raise RuntimeError(f"'dense parameters' weren't set: {self._dense_params}")
+        if self._acts is None:
+            raise RuntimeError(f"'activation parameters' weren't set: {self._acts}")
 
         # calculate flattened size
         final_hgt = self._in_hgt
@@ -469,10 +485,6 @@ class TorchCNNCore(torch.nn.Module):
         # set flattened size
         self._dense_sizes[0] = int(final_hgt * final_wth)
 
-        # reset layers
-        self._conv = []
-        self._pool = []
-        self._dense = []
         for prms in range(len(self._conv_params) - 1):
             # set conv layers
             self._conv.append(torch.nn.Conv2d(*self._conv_sizes[prms:prms + 2], **self._conv_params[prms]))
@@ -486,33 +498,17 @@ class TorchCNNCore(torch.nn.Module):
         # signal instantiation
         self._instantiated = True
 
-    @staticmethod
-    def _calc_lyr_size(h_in: int, w_in: int, params: dict):
-        for key in params:
-            # reformat parameters
-            if not isinstance(params[key], list):
-                params[key] = (params[key], params[key])
-            else:
-                params[key] = params[key]
-
-        # out size calculation
-        # todo: this doesn't work somehow??
-        h_out = (h_in + 2 * params['padding'][0] - params['dilation'][0] * (params['kernel_size'][0] - 1) - 1) / params['stride'][0] + 1
-        w_out = (w_in + 2 * params['padding'][1] - params['dilation'][1] * (params['kernel_size'][1] - 1) - 1) / params['stride'][1] + 1
-        # return out size
-        return h_out, w_out
-
     def forward(self, x):
         if not self._instantiated:
             # invalid instantiation (this a really stupid way to implement this. too bad!)
             raise RuntimeError("Network was not fully instantiated")
         for cnv in range(len(self._conv)):
             # run through conv
-            x = self.acts[cnv](self._dense[cnv](x))
+            x = self._acts[cnv](self._dense[cnv](x))
         # flatten
         x.flatten()
         for dns in range(len(self._conv), len(self._dense)):
             # run through dense
-            x = self.acts[dns](self._dense[dns](x))
+            x = self._acts[dns](self._dense[dns](x))
         # return output
         return x
