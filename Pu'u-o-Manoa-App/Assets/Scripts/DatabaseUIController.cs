@@ -43,13 +43,13 @@ public class DatabaseUIController : MonoBehaviour
         int totalRows = Mathf.CeilToInt((float)cellList.Count / itemsPerRow);
         
         // Calculate total height needed
-        float totalHeight = Mathf.Max((totalRows * 80), 200);
+        float totalHeight = Mathf.Max((totalRows * 79), 175);
 
         // Set the content panel size with fixed width and dynamic height
         contentPanel.sizeDelta = new Vector2(fixedContentWidth, totalHeight);
 
         // Enable or disable scrolling based on height
-        scrollRect.vertical = totalHeight > 200;
+        scrollRect.vertical = totalHeight > 175;
 
         // Loop through the plant list and create each prefab in the correct position
         for (int i = 0; i < cellList.Count; i++)
