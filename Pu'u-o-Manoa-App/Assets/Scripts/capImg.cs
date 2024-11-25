@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement; // For scene navigation
 using System.IO; // For file handling
 using System; // For DateTime
 
@@ -19,11 +20,20 @@ public class CapImg : MonoBehaviour
         cameraDisplay.material.mainTexture = webcam;
         webcam.Play();
 
-        // Attach the CapturePhoto method to the button's onClick event
+        // Attach the CapturePhotoAndNavigate method to the button's onClick event
         if (captureButton != null)
         {
-            captureButton.onClick.AddListener(CapturePhoto);
+            captureButton.onClick.AddListener(CapturePhotoAndNavigate);
         }
+    }
+
+    void CapturePhotoAndNavigate()
+    {
+        // Perform photo capture functionality
+        CapturePhoto();
+
+        // Navigate to the specific scene (Scene index 4)
+        SceneManager.LoadScene(4);
     }
 
     void CapturePhoto()

@@ -7,12 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: New Material 1
-<<<<<<< Updated upstream
-  m_Shader: {fileID: 10750, guid: 0000000000000000f000000000000000, type: 0}
-=======
+  m_Name: metallic pole
   m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
->>>>>>> Stashed changes
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -48,11 +44,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-<<<<<<< Updated upstream
-        m_Texture: {fileID: 2800000, guid: eb567631c69fa4ac596cc72e4a571588, type: 3}
-=======
         m_Texture: {fileID: 0}
->>>>>>> Stashed changes
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -74,15 +66,9 @@ Material:
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _GlossMapScale: 1
-<<<<<<< Updated upstream
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _Metallic: 0
-=======
-    - _Glossiness: 0.933
-    - _GlossyReflections: 1
-    - _Metallic: 0.867
->>>>>>> Stashed changes
+    - _Metallic: 0.88
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02

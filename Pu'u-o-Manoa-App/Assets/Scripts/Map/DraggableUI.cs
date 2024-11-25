@@ -53,7 +53,6 @@ public class DraggableUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 
     private void CheckPressedKeys()
     {
-        Debug.Log("ee");
         if (Input.GetKeyDown(KeyCode.V))
         {
             Debug.Log("AAAA");
@@ -63,7 +62,6 @@ public class DraggableUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 
     private void ExitMap()
     {
-        Debug.Log("AAAA");
         if (player != null)
         {
             player.SetActive(false);
