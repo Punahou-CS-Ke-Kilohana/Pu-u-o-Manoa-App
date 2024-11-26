@@ -1,7 +1,7 @@
 import sys
 import os
 
-from python_backend.core.corecnn import TorchCNNCore
+from python_backend.core.corecnn import CNNCore
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 
@@ -47,7 +47,7 @@ def test_accuracy(net, testloader):
 
 
 def main():
-    net = TorchCNNCore()
+    net = CNNCore()
     net.set_int_sizes()
     net.transfer_training_params(3, 15, 256, 256)
     net.set_acts()
@@ -64,6 +64,9 @@ def main():
             inputs, labels = data
             optimizer.zero_grad()
             outputs = net(inputs)
+            # print(outputs)
+            # print('----------------------------------')
+            # print(labels)
             loss = criterion(outputs, labels)
             loss.backward()
             optimizer.step()

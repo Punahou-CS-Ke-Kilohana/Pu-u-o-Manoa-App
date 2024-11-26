@@ -1,15 +1,24 @@
+r"""
+**Core CNN.**
+
+Attributes:
+----------
+**CNNCore**:
+    Core CNN architecture.
+"""
+
 import torch
 
 from application.utils import ParamChecker
 from application.dataloader import DataLoader  # not sure what happened with this, but it's fine for now
 
 
-class TorchCNNCore(torch.nn.Module):
+class CNNCore(torch.nn.Module):
+    # todo: add only single-parse permissions
     def __init__(self, *, ikwiad: bool = False):
-        super(TorchCNNCore, self).__init__()
+        super(CNNCore, self).__init__()
 
-        # allowed methods
-        # activations
+        # allowed activations list
         self.allowed_acts = [
             'ReLU',
             'Softplus',
@@ -20,36 +29,38 @@ class TorchCNNCore(torch.nn.Module):
         ]
 
         # internals
-        # error messages
+        # internal checkers
         self._ikwiad = ikwiad
-        # proper setup checker
         self._instantiated = False
-        # initial dimensions
+        self._instantiations = {
+            ...  # todo: add this checker
+        }
+        # network features
         self._in_hgt = None
         self._in_wth = None
-        # activations
-        self._acts = None
-        # network features
         self._conv_sizes = None
         self._dense_sizes = None
         self._conv_params = None
         self._pool_params = None
         self._dense_params = None
-        # initial layer containers
+        # activation container
+        self._acts = torch.nn.ModuleList()
+        # layer containers
         self._conv = torch.nn.ModuleList()
         self._pool = torch.nn.ModuleList()
         self._dense = torch.nn.ModuleList()
 
     def set_int_sizes(self, *, conv_channels: list = None, dense_sizes: list = None):
         # reset size lists
+        # todo: check ordering
         self._conv_sizes = []
         self._dense_sizes = []
         if conv_channels is None:
             # default convolutional channels
-            conv_channels = [128, 64, 32]
+            conv_channels = [16, 32, 64, 64]
         if dense_sizes is None:
             # default dense sizes
-            dense_sizes = [256, 128, 64, 32]
+            dense_sizes = [128, 64, 32]
         # unpack sizes
         if not self._conv_sizes:
             # reset conv sizes
@@ -65,7 +76,6 @@ class TorchCNNCore(torch.nn.Module):
             self._dense_sizes = ['flattened'] + dense_sizes + self._dense_sizes
 
     def transfer_training_params(self, color_channels: int = None, classes: int = None, initial_height: int = None, initial_width: int = None, *, loader: DataLoader = None):
-        # todo: fix this instantiation
         if isinstance(loader, DataLoader):
             # transfer from loader
             # todo: add direct transferring of training parameters from dataloader
@@ -240,8 +250,6 @@ class TorchCNNCore(torch.nn.Module):
             methods.append('Softmax')
             parameters = [{}] * (len(self._dense_sizes) + len(self._conv_sizes) - 1)
 
-        # reset act list
-        self._acts = []
         for act_pair in zip(methods, parameters):
             # set activation objects
             act_checker = ParamChecker(name='activations', ikwiad=self._ikwiad)
@@ -441,9 +449,8 @@ class TorchCNNCore(torch.nn.Module):
                 params[key] = params[key]
 
         # out size calculation
-        # todo: this doesn't work somehow??
-        h_out = (h_in + 2 * params['padding'][0] - params['dilation'][0] * (params['kernel_size'][0] - 1) - 1) / params['stride'][0] + 1
-        w_out = (w_in + 2 * params['padding'][1] - params['dilation'][1] * (params['kernel_size'][1] - 1) - 1) / params['stride'][1] + 1
+        h_out = (h_in + 2 * params['padding'][0] - params['dilation'][0] * (params['kernel_size'][0] - 1) - 1) // params['stride'][0] + 1
+        w_out = (w_in + 2 * params['padding'][1] - params['dilation'][1] * (params['kernel_size'][1] - 1) - 1) // params['stride'][1] + 1
         # return out size
         return h_out, w_out
 
@@ -478,12 +485,19 @@ class TorchCNNCore(torch.nn.Module):
                 'stride': self._pool_params[lyr]['stride']
             }
             if calc_pool_params['stride'] is None:
+                # adjust stride for pool
                 calc_pool_params['stride'] = calc_pool_params['kernel_size']
             final_hgt, final_wth = self._calc_lyr_size(final_hgt, final_wth, calc_conv_params)
             final_hgt, final_wth = self._calc_lyr_size(final_hgt, final_wth, calc_pool_params)
+            print(final_hgt, final_wth)
 
+        if final_hgt * final_wth <= 0:
+            # check for zero instantiation
+            raise ValueError(f"flattened size cannot be 0: {final_hgt * final_wth}")
         # set flattened size
         self._dense_sizes[0] = int(final_hgt * final_wth)
+        # error reset rq
+        self._dense_sizes[0] = 63488
 
         for prms in range(len(self._conv_params) - 1):
             # set conv layers
@@ -498,17 +512,30 @@ class TorchCNNCore(torch.nn.Module):
         # signal instantiation
         self._instantiated = True
 
-    def forward(self, x):
+    def check_instantiation(self):
+        ...
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        print(self._acts)
+        print(self._conv)
+        print(self._pool)
+        print(self._dense)
+        print(x.shape)
         if not self._instantiated:
             # invalid instantiation (this a really stupid way to implement this. too bad!)
             raise RuntimeError("Network was not fully instantiated")
         for cnv in range(len(self._conv)):
+            print(self._acts[cnv])
+            print(self._conv[cnv])
             # run through conv
-            x = self._acts[cnv](self._dense[cnv](x))
+            x = self._acts[cnv](self._conv[cnv](x))
         # flatten
         x.flatten()
-        for dns in range(len(self._conv), len(self._dense)):
+        print(x.shape)
+        for dns in range(len(self._dense)):
             # run through dense
-            x = self._acts[dns](self._dense[dns](x))
+            print(self._acts[dns + len(self._conv)])
+            print(self._dense[dns])
+            x = self._acts[dns + len(self._conv)](self._dense[dns](x))
         # return output
         return x

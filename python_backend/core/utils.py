@@ -43,7 +43,7 @@ class ParamChecker:
     ----------
     - Used internally and externally to check parameters.
     """
-    def __init__(self, name: str = 'parameters', ikwiad: bool = False):
+    def __init__(self, name: str = 'Parameters', ikwiad: bool = False):
         r"""
         **Parameter checker initialization defined settings.**
 
