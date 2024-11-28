@@ -31,7 +31,6 @@ class CNNCore(torch.nn.Module):
         # internals
         # internal checkers
         self._ikwiad = ikwiad
-        self._instantiated = False
         self._instantiations = {
             ...  # todo: add this checker
         }
@@ -57,10 +56,10 @@ class CNNCore(torch.nn.Module):
         self._dense_sizes = []
         if conv_channels is None:
             # default convolutional channels
-            conv_channels = [16, 32, 64, 64]
+            conv_channels = [16, 32, 64, 128]
         if dense_sizes is None:
             # default dense sizes
-            dense_sizes = [128, 64, 32]
+            dense_sizes = [256, 128, 64, 32]
         # unpack sizes
         if not self._conv_sizes:
             # reset conv sizes
@@ -355,7 +354,7 @@ class CNNCore(torch.nn.Module):
         pool_checker.set_types(
             default={
                 'kernel_size': 3,
-                'stride': 1,
+                'stride': 2,
                 'padding': 0,
                 'dilation': 1,
                 'return_indices': False,
@@ -468,8 +467,7 @@ class CNNCore(torch.nn.Module):
             raise RuntimeError(f"'activation parameters' weren't set: {self._acts}")
 
         # calculate flattened size
-        final_hgt = self._in_hgt
-        final_wth = self._in_wth
+        final_hgt, final_wth = self._in_hgt, self._in_wth
         for lyr in range(len(self._conv_params)):
             # grab necessary parameters
             calc_conv_params = {
@@ -489,15 +487,16 @@ class CNNCore(torch.nn.Module):
                 calc_pool_params['stride'] = calc_pool_params['kernel_size']
             final_hgt, final_wth = self._calc_lyr_size(final_hgt, final_wth, calc_conv_params)
             final_hgt, final_wth = self._calc_lyr_size(final_hgt, final_wth, calc_pool_params)
-            print(final_hgt, final_wth)
 
-        if final_hgt * final_wth <= 0:
-            # check for zero instantiation
-            raise ValueError(f"flattened size cannot be 0: {final_hgt * final_wth}")
+        # if final_hgt * final_wth <= 0:
+        #     # check for zero instantiation
+        #     raise ValueError(f"flattened size cannot be 0: {final_hgt * final_wth}")
         # set flattened size
-        self._dense_sizes[0] = int(final_hgt * final_wth)
-        # error reset rq
-        self._dense_sizes[0] = 63488
+        self._dense_sizes[0] = int(final_hgt * final_wth * self._conv_sizes[-1])
+        # todo: fix this
+        print(int(final_hgt), int(final_wth), self._dense_sizes[0])
+        # manual set because something is breaking
+        # self._dense_sizes[0] = 3936256
 
         for prms in range(len(self._conv_params) - 1):
             # set conv layers
@@ -509,33 +508,23 @@ class CNNCore(torch.nn.Module):
             # set dense layers
             self._dense.append(torch.nn.Linear(*self._dense_sizes[prms:prms + 2], **self._dense_params[prms]))
 
-        # signal instantiation
-        self._instantiated = True
+    def _check_instantiation(self):
+        # todo
+        ...
 
-    def check_instantiation(self):
+    def _compile_forward(self):
         ...
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        print(self._acts)
-        print(self._conv)
-        print(self._pool)
-        print(self._dense)
-        print(x.shape)
-        if not self._instantiated:
-            # invalid instantiation (this a really stupid way to implement this. too bad!)
-            raise RuntimeError("Network was not fully instantiated")
+        # todo: preset forward pass
         for cnv in range(len(self._conv)):
-            print(self._acts[cnv])
-            print(self._conv[cnv])
-            # run through conv
-            x = self._acts[cnv](self._conv[cnv](x))
+            # run through conv and pool
+            x = self._pool[cnv](self._acts[cnv](self._conv[cnv](x)))
         # flatten
-        x.flatten()
-        print(x.shape)
-        for dns in range(len(self._dense)):
+        x = torch.flatten(x, 1)
+        for dns in range(len(self._dense) - 1):
             # run through dense
-            print(self._acts[dns + len(self._conv)])
-            print(self._dense[dns])
             x = self._acts[dns + len(self._conv)](self._dense[dns](x))
+        x = self._dense[-1](x)
         # return output
         return x
