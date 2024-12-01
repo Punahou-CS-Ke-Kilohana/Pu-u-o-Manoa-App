@@ -32,7 +32,12 @@ class CNNCore(torch.nn.Module):
         # internal checkers
         self._ikwiad = ikwiad
         self._instantiations = {
-            ...  # todo: add this checker
+            'channels': False,
+            'training_params': False,
+            'activations': False,
+            'convolutional': False,
+            'pooling': False,
+            'dense': False
         }
         # network features
         self._in_hgt = None
@@ -49,17 +54,16 @@ class CNNCore(torch.nn.Module):
         self._pool = torch.nn.ModuleList()
         self._dense = torch.nn.ModuleList()
 
-    def set_int_sizes(self, *, conv_channels: list = None, dense_sizes: list = None):
+    def set_channels(self, *, conv_channels: list = None, dense_channels: list = None):
         # reset size lists
-        # todo: check ordering
         self._conv_sizes = []
         self._dense_sizes = []
         if conv_channels is None:
             # default convolutional channels
             conv_channels = [16, 32, 64, 128]
-        if dense_sizes is None:
+        if dense_channels is None:
             # default dense sizes
-            dense_sizes = [256, 128, 64, 32]
+            dense_channels = [256, 128, 64, 32]
         # unpack sizes
         if not self._conv_sizes:
             # reset conv sizes
@@ -69,10 +73,10 @@ class CNNCore(torch.nn.Module):
             self._conv_sizes += conv_channels
         if not self._dense_sizes:
             # reset dense sizes
-            self._dense_sizes = ['flattened', *dense_sizes, 'classes']
+            self._dense_sizes = ['flattened', *dense_channels, 'classes']
         else:
             # add dense sizes
-            self._dense_sizes = ['flattened'] + dense_sizes + self._dense_sizes
+            self._dense_sizes = ['flattened'] + dense_channels + self._dense_sizes
 
     def transfer_training_params(self, color_channels: int = None, classes: int = None, initial_height: int = None, initial_width: int = None, *, loader: DataLoader = None):
         if isinstance(loader, DataLoader):
@@ -80,7 +84,7 @@ class CNNCore(torch.nn.Module):
             # todo: add direct transferring of training parameters from dataloader
             raise RuntimeError("Direct transfer of training parameters from a dataloader is currently not implemented")
         else:
-            # manual set
+            # manual set (done badly but hopefully will be improved)
             if isinstance(color_channels, int) and 0 < color_channels:
                 # set internal initial channel
                 self._conv_sizes[0] = color_channels
@@ -277,7 +281,7 @@ class CNNCore(torch.nn.Module):
                     )
         else:
             # set default conv parameters
-            parameters = [{}] * len(self._conv_sizes)
+            parameters = [{}] * (len(self._conv_sizes) - 1)
 
         # instantiate parameter checker
         conv_checker = ParamChecker(name='Convolutional Parameters', ikwiad=self._ikwiad)
@@ -347,7 +351,7 @@ class CNNCore(torch.nn.Module):
                     )
         else:
             # set default pool parameters
-            parameters = [{}] * len(self._conv_sizes)
+            parameters = [{}] * (len(self._conv_sizes) - 1)
 
         # instantiate parameter checker
         pool_checker = ParamChecker(name='Pooling Parameters', ikwiad=self._ikwiad)
@@ -413,7 +417,7 @@ class CNNCore(torch.nn.Module):
                     )
         else:
             # set default dense parameters
-            parameters = [{}] * len(self._dense_sizes)
+            parameters = [{}] * (len(self._dense_sizes) - 1)
 
         # instantiate parameter checker
         dense_checker = ParamChecker(name='Dense Parameters', ikwiad=self._ikwiad)
@@ -488,23 +492,19 @@ class CNNCore(torch.nn.Module):
             final_hgt, final_wth = self._calc_lyr_size(final_hgt, final_wth, calc_conv_params)
             final_hgt, final_wth = self._calc_lyr_size(final_hgt, final_wth, calc_pool_params)
 
-        # if final_hgt * final_wth <= 0:
-        #     # check for zero instantiation
-        #     raise ValueError(f"flattened size cannot be 0: {final_hgt * final_wth}")
+        if final_hgt * final_wth * self._conv_sizes[-1] <= 0:
+            # check for zero instantiation
+            raise ValueError(f"flattened size cannot be 0: {final_hgt * final_wth}")
         # set flattened size
         self._dense_sizes[0] = int(final_hgt * final_wth * self._conv_sizes[-1])
-        # todo: fix this
-        print(int(final_hgt), int(final_wth), self._dense_sizes[0])
-        # manual set because something is breaking
-        # self._dense_sizes[0] = 3936256
 
-        for prms in range(len(self._conv_params) - 1):
+        for prms in range(len(self._conv_params)):
             # set conv layers
             self._conv.append(torch.nn.Conv2d(*self._conv_sizes[prms:prms + 2], **self._conv_params[prms]))
         for prms in self._pool_params:
             # set pooling
             self._pool.append(torch.nn.MaxPool2d(**prms))
-        for prms in range(len(self._dense_params) - 1):
+        for prms in range(len(self._dense_params)):
             # set dense layers
             self._dense.append(torch.nn.Linear(*self._dense_sizes[prms:prms + 2], **self._dense_params[prms]))
 
@@ -513,6 +513,7 @@ class CNNCore(torch.nn.Module):
         ...
 
     def _compile_forward(self):
+        # todo
         ...
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
