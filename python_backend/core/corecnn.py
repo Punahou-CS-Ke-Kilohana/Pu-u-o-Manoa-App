@@ -7,6 +7,8 @@ Attributes:
     Core CNN architecture.
 """
 
+from typing import Union
+
 import torch
 
 from application.utils import ParamChecker
@@ -34,14 +36,13 @@ class CNNCore(torch.nn.Module):
         self._instantiations = {
             'channels': False,
             'training_params': False,
-            'activations': False,
+            'activators': False,
             'convolutional': False,
             'pooling': False,
             'dense': False
         }
         # network features
-        self._in_hgt = None
-        self._in_wth = None
+        self._in_dims = None
         self._conv_sizes = None
         self._dense_sizes = None
         self._conv_params = None
@@ -54,31 +55,26 @@ class CNNCore(torch.nn.Module):
         self._pool = torch.nn.ModuleList()
         self._dense = torch.nn.ModuleList()
 
-    def set_channels(self, *, conv_channels: list = None, dense_channels: list = None):
-        # reset size lists
-        self._conv_sizes = []
-        self._dense_sizes = []
-        if conv_channels is None:
-            # default convolutional channels
-            conv_channels = [16, 32, 64, 128]
-        if dense_channels is None:
-            # default dense sizes
-            dense_channels = [256, 128, 64, 32]
-        # unpack sizes
-        if not self._conv_sizes:
-            # reset conv sizes
-            self._conv_sizes = ['colors', *conv_channels]
-        else:
-            # add conv sizes
-            self._conv_sizes += conv_channels
-        if not self._dense_sizes:
-            # reset dense sizes
-            self._dense_sizes = ['flattened', *dense_channels, 'classes']
-        else:
-            # add dense sizes
-            self._dense_sizes = ['flattened'] + dense_channels + self._dense_sizes
+    def set_channels(self, *, conv_channels: list = None, dense_channels: list = None) -> None:
+        # check channel types
+        assert ((isinstance(conv_channels, list) and all(isinstance(itm, int) for itm in conv_channels))
+                or conv_channels is None), \
+            "'conv_channels' weren't set correctly (list of integers or None)"
+        assert ((isinstance(dense_channels, list) and all(isinstance(itm, int) for itm in dense_channels))
+                or dense_channels is None), \
+            "'dense_channels' weren't set correctly (list of integers or None)"
+
+        # set channels
+        conv_channels = conv_channels or [16, 32, 64, 128]
+        dense_channels = dense_channels or [256, 128, 64, 32]
+        # set internal channels
+        self._conv_sizes = ['colors', *conv_channels]
+        self._dense_sizes = ['flattened', *dense_channels, 'classes']
+        self._instantiations['channels'] = True
+        return None
 
     def transfer_training_params(self, color_channels: int = None, classes: int = None, initial_height: int = None, initial_width: int = None, *, loader: DataLoader = None):
+        # todo: this segment of code is an absolute mess, and should eventually be nearly completely rewritten
         if isinstance(loader, DataLoader):
             # transfer from loader
             # todo: add direct transferring of training parameters from dataloader
@@ -107,7 +103,7 @@ class CNNCore(torch.nn.Module):
 
             if isinstance(initial_height, int) and 0 < initial_height:
                 # set internal initial height
-                self._in_hgt = initial_height
+                in_hgt = initial_height
             else:
                 # invalid initial height
                 raise TypeError(
@@ -117,7 +113,7 @@ class CNNCore(torch.nn.Module):
 
             if isinstance(initial_width, int) and 0 < initial_width:
                 # set internal initial width
-                self._in_wth = initial_width
+                in_wth = initial_width
             else:
                 # invalid initial width
                 raise TypeError(
@@ -125,22 +121,27 @@ class CNNCore(torch.nn.Module):
                     f"'initial_width' must be a positive integer"
                 )
 
+            self._in_dims = (in_hgt, in_wth)
+        self._instantiations['training_params'] = True
+
     def set_acts(self, *, methods: list = None, parameters: list = None):
+        # torch activation reference
+        activation_ref = {
+            'ReLU': torch.nn.ReLU,
+            'Softplus': torch.nn.Softplus,
+            'Softmax': torch.nn.Softmax,
+            'Tanh': torch.nn.Tanh,
+            'Sigmoid': torch.nn.Sigmoid,
+            'Mish': torch.nn.Mish
+        }
+
         # activation parameter reference
         act_params = {
             'ReLU': {
-                'default': {
-                    'inplace': False
-                },
-                'dtypes': {
-                    'inplace': (bool, int)
-                },
-                'vtypes': {
-                    'inplace': lambda x: True
-                },
-                'ctypes': {
-                    'inplace': lambda x: bool(x)
-                }
+                'default': {'inplace': False},
+                'dtypes': {'inplace': (bool, int)},
+                'vtypes': {'inplace': lambda x: True},
+                'ctypes': {'inplace': lambda x: bool(x)}
             },
             'Softplus': {
                 'default': {
@@ -161,18 +162,10 @@ class CNNCore(torch.nn.Module):
                 }
             },
             'Softmax': {
-                'default': {
-                    'dim': None
-                },
-                'dtypes': {
-                    'dim': (type(None), int)
-                },
-                'vtypes': {
-                    'dim': lambda x: True
-                },
-                'ctypes': {
-                    'dim': lambda x: x
-                }
+                'default': {'dim': None},
+                'dtypes': {'dim': (type(None), int)},
+                'vtypes': {'dim': lambda x: True},
+                'ctypes': {'dim': lambda x: x}
             },
             'Tanh': {
                 'default': None,
@@ -187,101 +180,54 @@ class CNNCore(torch.nn.Module):
                 'ctypes': None
             },
             'Mish': {
-                'default': {
-                    'inplace': False
-                },
-                'dtypes': {
-                    'inplace': (bool, int)
-                },
-                'vtypes': {
-                    'inplace': lambda x: True
-                },
-                'ctypes': {
-                    'inplace': lambda x: bool(x)
-                }
+                'default': {'inplace': False},
+                'dtypes': {'inplace': (bool, int)},
+                'vtypes': {'inplace': lambda x: True},
+                'ctypes': {'inplace': lambda x: bool(x)}
             }
         }
 
-        # torch activation reference
-        activation_ref = {
-            'ReLU': torch.nn.ReLU,
-            'Softplus': torch.nn.Softplus,
-            'Softmax': torch.nn.Softmax,
-            'Tanh': torch.nn.Tanh,
-            'Sigmoid': torch.nn.Sigmoid,
-            'Mish': torch.nn.Mish
-        }
-
-        if methods is not None:
-            # set activations
-            if len(methods) != len(parameters):
-                # invalid match
-                raise RuntimeError(
-                    f"Invalid matching of 'params' and 'methods' ({len(methods)} != {len(parameters)})"
-                    f"methods: {methods}"
-                    f"parameters: {parameters}"
-                )
-
-            if not ((isinstance(methods, list) and isinstance(parameters, list)) and (len(parameters) != len(self._dense_sizes) + len(self._conv_sizes) - 1)):
-                # invalid parameter format
-                if not (isinstance(methods, list) and isinstance(parameters, list)):
-                    # invalid type
-                    raise ValueError(
-                        f"'methods' and/or 'parameters' were not formatted correctly: {parameters}"
-                        f"'methods' and/or 'parameters' must be a list"
-                    )
-                if not len(parameters) != len(self._dense_sizes) + len(self._conv_sizes) - 1:
-                    # invalid length
-                    raise ValueError(
-                        f"'methods' and/or 'parameters' were not formatted correctly: {parameters}"
-                        f"'methods' and/or 'parameters' must correspond with the amount of layers in the network ({len(self._dense_sizes) + len(self._conv_sizes) - 1})"
-                    )
-
-            if not all([mth in self.allowed_acts for mth in methods]):
-                # invalid activator
-                detected_invalid = []
-                for mth in methods:
-                    if mth not in self.allowed_acts:
-                        detected_invalid.append(mth)
-                raise ValueError(
-                    f"Invalid methods detected: {detected_invalid}"
-                    f"Choose from: {self.allowed_acts}"
-                )
-        else:
-            # set default activations
+        if methods is None:
+            # set default activators
             methods = ['ReLU'] * (len(self._dense_sizes) + len(self._conv_sizes) - 2)
             methods.append('Softmax')
             parameters = [{}] * (len(self._dense_sizes) + len(self._conv_sizes) - 1)
+        else:
+            # check for errors
+            assert len(methods) == len(parameters), \
+                f"Invalid matching of 'params' and 'methods' ({len(methods)} != {len(parameters)})"
+            assert all([mth in self.allowed_acts for mth in methods]), \
+                (f"Invalid methods detected in {methods}\n"
+                 f"Choose from: {self.allowed_acts}")
+            assert isinstance(methods, list), f"'methods' must be a list"
+            assert isinstance(parameters, list), f"'parameters' must be a list"
+            assert len(parameters) == len(self._dense_sizes) + len(self._conv_sizes) - 1, \
+                (f"'methods' and/or 'parameters' must correspond with the amount of layers in the network\n"
+                 f"({len(self._dense_sizes) + len(self._conv_sizes) - 1})")
 
-        for act_pair in zip(methods, parameters):
+        for i, (mthd, prms) in enumerate(zip(methods, parameters)):
             # set activation objects
-            act_checker = ParamChecker(name='activations', ikwiad=self._ikwiad)
-            act_checker.set_types(**act_params[act_pair[0]])
-            act_prms = act_checker.check_params(act_pair[1])
-            self._acts.append(activation_ref[act_pair[0]](act_prms))
+            act_checker = ParamChecker(name=f'Activator Parameters ({i})', ikwiad=self._ikwiad)
+            act_checker.set_types(**act_params[mthd])
+            act_prms = act_checker.check_params(prms)
+            self._acts.append(activation_ref[mthd](act_prms))
+
+        self._instantiations['activators'] = True
+        return None
 
     def set_conv(self, *, parameters: list = None):
-        if self._conv_sizes is None or not isinstance(self._conv_sizes[0], int):
-            # invalid conv sizes
-            raise RuntimeError(f"conv channels weren't set properly: {self._conv_sizes}")
-        if parameters is not None:
-            if not (isinstance(parameters, list)) or (len(parameters) != len(self._conv_sizes)):
-                # invalid parameter format
-                if not isinstance(parameters, list):
-                    # invalid type
-                    raise TypeError(
-                        f"'parameters' for conv were not formatted correctly: {parameters}"
-                        f"'parameters' must be a list"
-                    )
-                if len(parameters) != len(self._conv_sizes):
-                    # invalid length
-                    raise ValueError(
-                        f"'parameters' for conv were not formatted correctly: {parameters}"
-                        f"'parameters' don't match sizes ({len(parameters)} != {len(self._conv_sizes)})"
-                    )
-        else:
-            # set default conv parameters
+        # check for channel set
+        assert self._instantiations['channels'], "channels weren't set"
+
+        if parameters is None:
+            # form parameter list
             parameters = [{}] * (len(self._conv_sizes) - 1)
+        else:
+            # check parameter list
+            assert isinstance(parameters, list), f"'parameters' must be a list ({type(parameters)} != list)"
+            assert len(parameters) == len(self._conv_sizes), \
+                ("'parameters' length must match conv layers\n"
+                 f"({len(parameters)} != {len(self._conv_sizes)})")
 
         # instantiate parameter checker
         conv_checker = ParamChecker(name='Convolutional Parameters', ikwiad=self._ikwiad)
@@ -324,34 +270,24 @@ class CNNCore(torch.nn.Module):
             }
         )
 
-        # reset conv params
-        self._conv_params = []
-        for prm in parameters:
-            # check conv params
-            self._conv_params.append(conv_checker.check_params(prm))
+        # validate conv params
+        self._conv_params = [conv_checker.check_params(prm) for prm in parameters]
+        self._instantiations['convolutional'] = True
+        return None
 
-    def set_pool(self, *, parameters: list = None):
-        if self._conv_sizes is None or not isinstance(self._conv_sizes[0], int):
-            # invalid conv sizes
-            raise RuntimeError(f"conv channels weren't set properly: {self._conv_sizes}")
-        if parameters is not None:
-            if not (isinstance(parameters, list)) or (len(parameters) != len(self._conv_sizes)):
-                # invalid parameter format
-                if not isinstance(parameters, list):
-                    # invalid type
-                    raise TypeError(
-                        f"'parameters' for pool were not formatted correctly: {parameters}"
-                        f"'parameters' must be a list"
-                    )
-                if len(parameters) != len(self._conv_sizes):
-                    # invalid length
-                    raise ValueError(
-                        f"'parameters' for pool were not formatted correctly: {parameters}"
-                        f"'parameters' don't match sizes ({len(parameters)} != {len(self._conv_sizes)})"
-                    )
-        else:
-            # set default pool parameters
+    def set_pool(self, *, parameters: Union[list, None] = None) -> None:
+        # check for channel set
+        assert self._instantiations['channels'], "channels weren't set"
+
+        if parameters is None:
+            # form parameter list
             parameters = [{}] * (len(self._conv_sizes) - 1)
+        else:
+            # check parameter list
+            assert isinstance(parameters, list), f"'parameters' must be a list ({type(parameters)} != list)"
+            assert len(parameters) == len(self._conv_sizes), \
+                ("'parameters' length must match conv layers\n"
+                 f"({len(parameters)} != {len(self._conv_sizes)})")
 
         # instantiate parameter checker
         pool_checker = ParamChecker(name='Pooling Parameters', ikwiad=self._ikwiad)
@@ -390,142 +326,110 @@ class CNNCore(torch.nn.Module):
             }
         )
 
-        # reset pool params
-        self._pool_params = []
-        for prm in parameters:
-            # check pool params
-            self._pool_params.append(pool_checker.check_params(prm))
+        # validate pool params
+        self._pool_params = [pool_checker.check_params(prm) for prm in parameters]
+        self._instantiations['pooling'] = True
+        return None
 
-    def set_dense(self, *, parameters: list = None):
-        if self._dense_sizes is None:
-            # invalid dense sizes
-            raise RuntimeError(f"dense channels weren't set: {self._dense_sizes}")
-        if parameters is not None:
-            if not (isinstance(parameters, list)) or (len(parameters) != len(self._dense_sizes)):
-                # invalid parameter format
-                if not isinstance(parameters, list):
-                    # invalid type
-                    raise TypeError(
-                        f"'parameters' for dense were not formatted correctly: {parameters}"
-                        f"'parameters' must be a list"
-                    )
-                if len(parameters) != len(self._dense_sizes):
-                    # invalid length
-                    raise ValueError(
-                        f"'parameters' for dense were not formatted correctly: {parameters}"
-                        f"'parameters' don't match sizes ({len(parameters)} != {len(self._dense_sizes)})"
-                    )
-        else:
-            # set default dense parameters
+    def set_dense(self, *, parameters: Union[list, None] = None) -> None:
+        # check for channel set
+        assert self._instantiations['channels'], "channels weren't set"
+
+        if parameters is None:
+            # form parameter list
             parameters = [{}] * (len(self._dense_sizes) - 1)
+        else:
+            # check parameter list
+            assert isinstance(parameters, list), f"'parameters' must be a list ({type(parameters)} != list)"
+            assert len(parameters) == len(self._dense_sizes), \
+                ("'parameters' length must match dense layers\n"
+                 f"({len(parameters)} != {len(self._dense_sizes)})")
 
-        # instantiate parameter checker
+        # initialize parameter checker
         dense_checker = ParamChecker(name='Dense Parameters', ikwiad=self._ikwiad)
         dense_checker.set_types(
-            default={
-                'bias': True
-            },
-            dtypes={
-                'bias': (bool, int)
-            },
-            vtypes={
-                'bias': lambda x: True
-            },
-            ctypes={
-                'bias': lambda x: bool(x)
-            }
+            default={'bias': True},
+            dtypes={'bias': (bool, int)},
+            vtypes={'bias': lambda x: True},
+            ctypes={'bias': lambda x: bool(x)}
         )
 
-        # reset dense params
-        self._dense_params = []
-        for prm in parameters:
-            # check dense params
-            self._dense_params.append(dense_checker.check_params(prm))
+        # validate dense params
+        self._dense_params = [dense_checker.check_params(prm) for prm in parameters]
+        self._instantiations['dense'] = True
+        return None
 
     @staticmethod
-    def _calc_lyr_size(h_in: int, w_in: int, params: dict):
-        for key in params:
-            # reformat parameters
-            if not isinstance(params[key], list):
-                params[key] = (params[key], params[key])
-            else:
-                params[key] = params[key]
-
+    def _calc_lyr_size(dims: tuple, params: dict):
+        # parameter reformatting
+        params = {key: (val, val) if not isinstance(val, list) else val for key, val in params.items()}
         # out size calculation
+        h_in, w_in = dims
         h_out = (h_in + 2 * params['padding'][0] - params['dilation'][0] * (params['kernel_size'][0] - 1) - 1) // params['stride'][0] + 1
         w_out = (w_in + 2 * params['padding'][1] - params['dilation'][1] * (params['kernel_size'][1] - 1) - 1) // params['stride'][1] + 1
         # return out size
         return h_out, w_out
 
-    def instantiate_model(self):
-        if self._conv_params is None:
-            # invalid conv params
-            raise RuntimeError(f"'conv parameters' weren't set: {self._conv_params}")
-        if self._pool_params is None:
-            # invalid pool params
-            raise RuntimeError(f"'pool parameters' weren't set: {self._pool_params}")
-        if self._dense_params is None:
-            # invalid dense params
-            raise RuntimeError(f"'dense parameters' weren't set: {self._dense_params}")
-        if self._acts is None:
-            raise RuntimeError(f"'activation parameters' weren't set: {self._acts}")
+    def instantiate_model(self) -> None:
+        # check for proper instantiation
+        assert all(self._instantiations.values()), \
+            (f"model wasn't fully instantiated:\n"
+             f"{self._instantiations}")
 
-        # calculate flattened size
-        final_hgt, final_wth = self._in_hgt, self._in_wth
-        for lyr in range(len(self._conv_params)):
+        dims = self._in_dims
+        for conv, pool in zip(self._conv_params, self._pool_params):
             # grab necessary parameters
             calc_conv_params = {
-                'padding': self._conv_params[lyr]['padding'],
-                'dilation': self._conv_params[lyr]['dilation'],
-                'kernel_size': self._conv_params[lyr]['kernel_size'],
-                'stride': self._conv_params[lyr]['stride']
+                'padding': conv['padding'],
+                'dilation': conv['dilation'],
+                'kernel_size': conv['kernel_size'],
+                'stride': conv['stride']
             }
             calc_pool_params = {
-                'padding': self._pool_params[lyr]['padding'],
-                'dilation': self._pool_params[lyr]['dilation'],
-                'kernel_size': self._pool_params[lyr]['kernel_size'],
-                'stride': self._pool_params[lyr]['stride']
+                'padding': pool['padding'],
+                'dilation': pool['dilation'],
+                'kernel_size': pool['kernel_size'],
+                'stride': pool['kernel_size'] if pool['stride'] is None else pool['stride']
             }
-            if calc_pool_params['stride'] is None:
-                # adjust stride for pool
-                calc_pool_params['stride'] = calc_pool_params['kernel_size']
-            final_hgt, final_wth = self._calc_lyr_size(final_hgt, final_wth, calc_conv_params)
-            final_hgt, final_wth = self._calc_lyr_size(final_hgt, final_wth, calc_pool_params)
+            dims = self._calc_lyr_size(dims, calc_conv_params)
+            dims = self._calc_lyr_size(dims, calc_pool_params)
 
-        if final_hgt * final_wth * self._conv_sizes[-1] <= 0:
-            # check for zero instantiation
-            raise ValueError(f"flattened size cannot be 0: {final_hgt * final_wth}")
         # set flattened size
-        self._dense_sizes[0] = int(final_hgt * final_wth * self._conv_sizes[-1])
+        h, w = dims
+        final_size = int(h * w * self._conv_sizes[-1])
+        assert 0 < final_size, "flattened size cannot be 0"
+        self._dense_sizes[0] = final_size
 
-        for prms in range(len(self._conv_params)):
-            # set conv layers
-            self._conv.append(torch.nn.Conv2d(*self._conv_sizes[prms:prms + 2], **self._conv_params[prms]))
-        for prms in self._pool_params:
-            # set pooling
-            self._pool.append(torch.nn.MaxPool2d(**prms))
-        for prms in range(len(self._dense_params)):
+        for i, (conv, pool) in enumerate(zip(self._conv_params, self._pool_params)):
+            # set conv and pool layers
+            self._conv.append(torch.nn.Conv2d(*self._conv_sizes[i:i + 2], **conv))
+            self._pool.append(torch.nn.MaxPool2d(**pool))
+        for i, prms in enumerate(self._dense_params):
             # set dense layers
-            self._dense.append(torch.nn.Linear(*self._dense_sizes[prms:prms + 2], **self._dense_params[prms]))
+            self._dense.append(torch.nn.Linear(*self._dense_sizes[i:i + 2], **prms))
+        return None
 
-    def _check_instantiation(self):
-        # todo
-        ...
-
-    def _compile_forward(self):
-        # todo
-        ...
+    # def _compile_forward(self):
+    #     # todo
+    #     def _conv(acts, convs, pools, x):
+    #         for act, conv, pool in zip(acts, convs, pools):
+    #             x = pool(act(conv(x)))
+    #         return x
+    #
+    #     def _dense(acts, denses, x):
+    #         for act, dense in zip(acts, denses):
+    #             x = act(dense(x))
+    #         return x
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        # todo: preset forward pass
-        for cnv in range(len(self._conv)):
+        for i, (conv, pool) in enumerate(zip(self._conv, self._pool)):
             # run through conv and pool
-            x = self._pool[cnv](self._acts[cnv](self._conv[cnv](x)))
+            x = pool(self._acts[i](conv(x)))
         # flatten
         x = torch.flatten(x, 1)
-        for dns in range(len(self._dense) - 1):
+        for i, dense in enumerate(self._dense[:-1]):
             # run through dense
-            x = self._acts[dns + len(self._conv)](self._dense[dns](x))
+            x = self._acts[i + len(self._conv)](dense(x))
         x = self._dense[-1](x)
         # return output
         return x
