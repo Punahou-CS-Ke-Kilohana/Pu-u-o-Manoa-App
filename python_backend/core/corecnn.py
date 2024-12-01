@@ -16,7 +16,6 @@ from application.dataloader import DataLoader  # not sure what happened with thi
 
 
 class CNNCore(torch.nn.Module):
-    # todo: add only single-parse permissions
     def __init__(self, *, ikwiad: bool = False):
         super(CNNCore, self).__init__()
 
@@ -73,58 +72,35 @@ class CNNCore(torch.nn.Module):
         self._instantiations['channels'] = True
         return None
 
-    def transfer_training_params(self, color_channels: int = None, classes: int = None, initial_height: int = None, initial_width: int = None, *, loader: DataLoader = None):
-        # todo: this segment of code is an absolute mess, and should eventually be nearly completely rewritten
+    def transfer_training_params(self,
+                                 color_channels: Union[int, None] = None,
+                                 classes: Union[int, None] = None,
+                                 initial_dims: Union[tuple, None] = None,
+                                 *,
+                                 loader: Union[DataLoader, None] = None) -> None:
+        # check for channel set
+        assert self._instantiations['channels'], "Channels weren't set"
+        # check for duplicate initialization attempts
+        assert not self._instantiations['training_params'], "Training parameters can't be set twice"
+
         if isinstance(loader, DataLoader):
-            # transfer from loader
             # todo: add direct transferring of training parameters from dataloader
             raise RuntimeError("Direct transfer of training parameters from a dataloader is currently not implemented")
         else:
-            # manual set (done badly but hopefully will be improved)
-            if isinstance(color_channels, int) and 0 < color_channels:
-                # set internal initial channel
-                self._conv_sizes[0] = color_channels
-            else:
-                # invalid colors
-                raise TypeError(
-                    f"'color_channels' is invalid: {color_channels}",
-                    f"'color_channels' must be a positive integer"
-                )
+            assert isinstance(color_channels, int) and 0 < color_channels, "'color_channels' must be a positive integer"
+            self._conv_sizes[0] = color_channels
+            assert isinstance(classes, int) and 0 < classes, "'classes' must be a positive integer"
+            self._dense_sizes[-1] = classes
+            assert (isinstance(initial_dims, tuple) and
+                    all([isinstance(itm, int) and itm for itm in initial_dims])
+                    and len(initial_dims) == 2), \
+                'initial dims must be a tuple of two positive integers'
+            self._in_dims = initial_dims
 
-            if isinstance(classes, int) and 0 < classes:
-                # set internal classes
-                self._dense_sizes[-1] = classes
-            else:
-                # invalid classes
-                raise TypeError(
-                    f"'classes' is invalid: {classes}",
-                    f"'classes' must be a positive integer"
-                )
-
-            if isinstance(initial_height, int) and 0 < initial_height:
-                # set internal initial height
-                in_hgt = initial_height
-            else:
-                # invalid initial height
-                raise TypeError(
-                    f"'initial_height' is invalid: {initial_height}",
-                    f"'initial_height' must be a positive integer"
-                )
-
-            if isinstance(initial_width, int) and 0 < initial_width:
-                # set internal initial width
-                in_wth = initial_width
-            else:
-                # invalid initial width
-                raise TypeError(
-                    f"'initial_width' is invalid: {initial_width}",
-                    f"'initial_width' must be a positive integer"
-                )
-
-            self._in_dims = (in_hgt, in_wth)
         self._instantiations['training_params'] = True
+        return None
 
-    def set_acts(self, *, methods: list = None, parameters: list = None):
+    def set_acts(self, *, methods: Union[list, None] = None, parameters: Union[list, None] = None) -> None:
         # torch activation reference
         activation_ref = {
             'ReLU': torch.nn.ReLU,
@@ -187,6 +163,11 @@ class CNNCore(torch.nn.Module):
             }
         }
 
+        # check for channel set
+        assert self._instantiations['channels'], "Channels weren't set"
+        # check for duplicate initialization attempts
+        assert not self._instantiations['activators'], "Activators can't be set twice"
+
         if methods is None:
             # set default activators
             methods = ['ReLU'] * (len(self._dense_sizes) + len(self._conv_sizes) - 2)
@@ -194,8 +175,9 @@ class CNNCore(torch.nn.Module):
             parameters = [{}] * (len(self._dense_sizes) + len(self._conv_sizes) - 1)
         else:
             # check for errors
-            assert len(methods) == len(parameters), \
-                f"Invalid matching of 'params' and 'methods' ({len(methods)} != {len(parameters)})"
+            assert len(methods) == len(parameters) == (len(self._conv_sizes) + len(self._dense_sizes)), \
+                (f"Invalid matching of 'params', 'methods', and channels\n"
+                 f"({len(methods)} != {len(parameters)} != {len(self._conv_sizes) + len(self._dense_sizes)})")
             assert all([mth in self.allowed_acts for mth in methods]), \
                 (f"Invalid methods detected in {methods}\n"
                  f"Choose from: {self.allowed_acts}")
@@ -215,20 +197,7 @@ class CNNCore(torch.nn.Module):
         self._instantiations['activators'] = True
         return None
 
-    def set_conv(self, *, parameters: list = None):
-        # check for channel set
-        assert self._instantiations['channels'], "channels weren't set"
-
-        if parameters is None:
-            # form parameter list
-            parameters = [{}] * (len(self._conv_sizes) - 1)
-        else:
-            # check parameter list
-            assert isinstance(parameters, list), f"'parameters' must be a list ({type(parameters)} != list)"
-            assert len(parameters) == len(self._conv_sizes), \
-                ("'parameters' length must match conv layers\n"
-                 f"({len(parameters)} != {len(self._conv_sizes)})")
-
+    def set_conv(self, *, parameters: Union[list, None] = None) -> None:
         # instantiate parameter checker
         conv_checker = ParamChecker(name='Convolutional Parameters', ikwiad=self._ikwiad)
         conv_checker.set_types(
@@ -270,14 +239,10 @@ class CNNCore(torch.nn.Module):
             }
         )
 
-        # validate conv params
-        self._conv_params = [conv_checker.check_params(prm) for prm in parameters]
-        self._instantiations['convolutional'] = True
-        return None
-
-    def set_pool(self, *, parameters: Union[list, None] = None) -> None:
         # check for channel set
-        assert self._instantiations['channels'], "channels weren't set"
+        assert self._instantiations['channels'], "Channels weren't set"
+        # check for duplicate initialization attempts
+        assert not self._instantiations['convolutional'], "Convolutional layers can't be set twice"
 
         if parameters is None:
             # form parameter list
@@ -289,6 +254,12 @@ class CNNCore(torch.nn.Module):
                 ("'parameters' length must match conv layers\n"
                  f"({len(parameters)} != {len(self._conv_sizes)})")
 
+        # validate conv params
+        self._conv_params = [conv_checker.check_params(prm) for prm in parameters]
+        self._instantiations['convolutional'] = True
+        return None
+
+    def set_pool(self, *, parameters: Union[list, None] = None) -> None:
         # instantiate parameter checker
         pool_checker = ParamChecker(name='Pooling Parameters', ikwiad=self._ikwiad)
         pool_checker.set_types(
@@ -326,14 +297,40 @@ class CNNCore(torch.nn.Module):
             }
         )
 
+        # check for channel set
+        assert self._instantiations['channels'], "Channels weren't set"
+        # check for duplicate initialization attempts
+        assert not self._instantiations['pooling'], "Pooling layers can't be set twice"
+
+        if parameters is None:
+            # form parameter list
+            parameters = [{}] * (len(self._conv_sizes) - 1)
+        else:
+            # check parameter list
+            assert isinstance(parameters, list), f"'parameters' must be a list ({type(parameters)} != list)"
+            assert len(parameters) == len(self._conv_sizes), \
+                ("'parameters' length must match conv layers\n"
+                 f"({len(parameters)} != {len(self._conv_sizes)})")
+
         # validate pool params
         self._pool_params = [pool_checker.check_params(prm) for prm in parameters]
         self._instantiations['pooling'] = True
         return None
 
     def set_dense(self, *, parameters: Union[list, None] = None) -> None:
+        # initialize parameter checker
+        dense_checker = ParamChecker(name='Dense Parameters', ikwiad=self._ikwiad)
+        dense_checker.set_types(
+            default={'bias': True},
+            dtypes={'bias': (bool, int)},
+            vtypes={'bias': lambda x: True},
+            ctypes={'bias': lambda x: bool(x)}
+        )
+
         # check for channel set
-        assert self._instantiations['channels'], "channels weren't set"
+        assert self._instantiations['channels'], "Channels weren't set"
+        # check for duplicate initialization attempts
+        assert not self._instantiations['dense'], "Dense layers can't be set twice"
 
         if parameters is None:
             # form parameter list
@@ -344,15 +341,6 @@ class CNNCore(torch.nn.Module):
             assert len(parameters) == len(self._dense_sizes), \
                 ("'parameters' length must match dense layers\n"
                  f"({len(parameters)} != {len(self._dense_sizes)})")
-
-        # initialize parameter checker
-        dense_checker = ParamChecker(name='Dense Parameters', ikwiad=self._ikwiad)
-        dense_checker.set_types(
-            default={'bias': True},
-            dtypes={'bias': (bool, int)},
-            vtypes={'bias': lambda x: True},
-            ctypes={'bias': lambda x: bool(x)}
-        )
 
         # validate dense params
         self._dense_params = [dense_checker.check_params(prm) for prm in parameters]
@@ -373,7 +361,7 @@ class CNNCore(torch.nn.Module):
     def instantiate_model(self) -> None:
         # check for proper instantiation
         assert all(self._instantiations.values()), \
-            (f"model wasn't fully instantiated:\n"
+            (f"Model wasn't fully instantiated:\n"
              f"{self._instantiations}")
 
         dims = self._in_dims
@@ -397,7 +385,7 @@ class CNNCore(torch.nn.Module):
         # set flattened size
         h, w = dims
         final_size = int(h * w * self._conv_sizes[-1])
-        assert 0 < final_size, "flattened size cannot be 0"
+        assert 0 < final_size, "Flattened size cannot be 0"
         self._dense_sizes[0] = final_size
 
         for i, (conv, pool) in enumerate(zip(self._conv_params, self._pool_params)):

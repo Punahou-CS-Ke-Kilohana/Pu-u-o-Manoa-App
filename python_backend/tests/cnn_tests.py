@@ -49,7 +49,7 @@ def test_accuracy(net, testloader):
 def main():
     net = CNNCore()
     net.set_channels()
-    net.transfer_training_params(3, 15, 256, 256)
+    net.transfer_training_params(3, 15, (256, 256))
     net.set_acts()
     net.set_conv()
     net.set_pool()
