@@ -811,6 +811,7 @@ GameObject:
   - component: {fileID: 1300073484}
   - component: {fileID: 1300073486}
   - component: {fileID: 1300073485}
+  - component: {fileID: 1300073487}
   m_Layer: 5
   m_Name: Species Name Text
   m_TagString: Untagged
@@ -884,10 +885,10 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
+  m_fontSize: 39.1
   m_fontSizeBase: 36
   m_fontWeight: 400
-  m_enableAutoSizing: 0
+  m_enableAutoSizing: 1
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
@@ -934,6 +935,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1300073483}
   m_CullTransparentMesh: 1
+--- !u!114 &1300073487
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1300073483}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f87b739552044df8ac3108a3ded0539, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  plantNameText: {fileID: 1300073485}
 --- !u!1 &1770488920
 GameObject:
   m_ObjectHideFlags: 0
