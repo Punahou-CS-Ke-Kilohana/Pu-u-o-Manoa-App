@@ -26,5 +26,10 @@ public class UISceneManager : MonoBehaviour
     {
         SceneManager.LoadScene(1);
     }
+
+    public void StartMoreSpeciesScene()
+    {
+        SceneManager.LoadScene(4);
+    }
 }
 
