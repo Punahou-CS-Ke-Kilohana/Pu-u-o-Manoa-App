@@ -1,18 +1,9 @@
-r"""
-**Core CNN.**
-
-Attributes:
-----------
-**CNNCore**:
-    Core CNN architecture.
-"""
-
 from typing import Union
 
 import torch
 
-from application.utils import ParamChecker
-from application.dataloader import DataLoader  # not sure what happened with this, but it's fine for now
+from ..utils.utils import ParamChecker
+from ..utils.dataloader import DataLoader  # not sure what happened with this, but it's fine for now
 
 
 class CNNCore(torch.nn.Module):
@@ -20,7 +11,7 @@ class CNNCore(torch.nn.Module):
         super(CNNCore, self).__init__()
 
         # allowed activations list
-        self.allowed_acts = [
+        self._allowed_acts = [
             'ReLU',
             'Softplus',
             'Softmax',
@@ -38,7 +29,8 @@ class CNNCore(torch.nn.Module):
             'activators': False,
             'convolutional': False,
             'pooling': False,
-            'dense': False
+            'dense': False,
+            'fully_instantiated': False
         }
         # network features
         self._in_dims = None
@@ -48,13 +40,26 @@ class CNNCore(torch.nn.Module):
         self._pool_params = None
         self._dense_params = None
         # activation container
-        self._acts = torch.nn.ModuleList()
+        self._act_params = None
+        self._conv_acts = torch.nn.ModuleList()
+        self._dense_acts = torch.nn.ModuleList()
         # layer containers
         self._conv = torch.nn.ModuleList()
         self._pool = torch.nn.ModuleList()
         self._dense = torch.nn.ModuleList()
 
+    @classmethod
+    def get_allowed_acts(cls):
+        return cls._allowed_acts
+
+    @property
+    def instantiations(self):
+        return self._instantiations
+
     def set_channels(self, *, conv_channels: list = None, dense_channels: list = None) -> None:
+        # check for duplicate initialization attempts
+        assert not self._instantiations['channels'], "Channels can't be set twice"
+
         # check channel types
         assert ((isinstance(conv_channels, list) and all(isinstance(itm, int) for itm in conv_channels))
                 or conv_channels is None), \
@@ -101,16 +106,6 @@ class CNNCore(torch.nn.Module):
         return None
 
     def set_acts(self, *, methods: Union[list, None] = None, parameters: Union[list, None] = None) -> None:
-        # torch activation reference
-        activation_ref = {
-            'ReLU': torch.nn.ReLU,
-            'Softplus': torch.nn.Softplus,
-            'Softmax': torch.nn.Softmax,
-            'Tanh': torch.nn.Tanh,
-            'Sigmoid': torch.nn.Sigmoid,
-            'Mish': torch.nn.Mish
-        }
-
         # activation parameter reference
         act_params = {
             'ReLU': {
@@ -178,21 +173,24 @@ class CNNCore(torch.nn.Module):
             assert len(methods) == len(parameters) == (len(self._conv_sizes) + len(self._dense_sizes)), \
                 (f"Invalid matching of 'params', 'methods', and channels\n"
                  f"({len(methods)} != {len(parameters)} != {len(self._conv_sizes) + len(self._dense_sizes)})")
-            assert all([mth in self.allowed_acts for mth in methods]), \
+            assert all([mth in self._allowed_acts for mth in methods]), \
                 (f"Invalid methods detected in {methods}\n"
-                 f"Choose from: {self.allowed_acts}")
+                 f"Choose from: {self._allowed_acts}")
             assert isinstance(methods, list), f"'methods' must be a list"
             assert isinstance(parameters, list), f"'parameters' must be a list"
             assert len(parameters) == len(self._dense_sizes) + len(self._conv_sizes) - 1, \
                 (f"'methods' and/or 'parameters' must correspond with the amount of layers in the network\n"
                  f"({len(self._dense_sizes) + len(self._conv_sizes) - 1})")
 
-        for i, (mthd, prms) in enumerate(zip(methods, parameters)):
+        self._act_params = []
+        for mthd, prms in zip(methods, parameters):
             # set activation objects
-            act_checker = ParamChecker(name=f'Activator Parameters ({i})', ikwiad=self._ikwiad)
+            act_checker = ParamChecker(name=f'Activator Parameters ({mthd})', ikwiad=self._ikwiad)
             act_checker.set_types(**act_params[mthd])
-            act_prms = act_checker.check_params(prms)
-            self._acts.append(activation_ref[mthd](act_prms))
+            self._act_params.append({
+                'mthd': mthd,
+                'prms': act_checker.check_params(prms)
+            })
 
         self._instantiations['activators'] = True
         return None
@@ -265,7 +263,7 @@ class CNNCore(torch.nn.Module):
         pool_checker.set_types(
             default={
                 'kernel_size': 3,
-                'stride': 2,
+                'stride': None,
                 'padding': 0,
                 'dilation': 1,
                 'return_indices': False,
@@ -313,7 +311,7 @@ class CNNCore(torch.nn.Module):
                  f"({len(parameters)} != {len(self._conv_sizes)})")
 
         # validate pool params
-        self._pool_params = [pool_checker.check_params(prm) for prm in parameters]
+        self._pool_params = [pool_checker.check_params(prm) if prm is not False else None for prm in parameters]
         self._instantiations['pooling'] = True
         return None
 
@@ -350,7 +348,7 @@ class CNNCore(torch.nn.Module):
     @staticmethod
     def _calc_lyr_size(dims: tuple, params: dict):
         # parameter reformatting
-        params = {key: (val, val) if not isinstance(val, list) else val for key, val in params.items()}
+        params = {key: (val, val) if isinstance(val, int) else val for key, val in params.items()}
         # out size calculation
         h_in, w_in = dims
         h_out = (h_in + 2 * params['padding'][0] - params['dilation'][0] * (params['kernel_size'][0] - 1) - 1) // params['stride'][0] + 1
@@ -358,11 +356,13 @@ class CNNCore(torch.nn.Module):
         # return out size
         return h_out, w_out
 
-    def instantiate_model(self) -> None:
+    def instantiate_model(self, *, crossentropy: bool = True) -> None:
         # check for proper instantiation
-        assert all(self._instantiations.values()), \
-            (f"Model wasn't fully instantiated:\n"
-             f"{self._instantiations}")
+        nec_instantiations = self._instantiations.copy()
+        nec_instantiations.pop('fully_instantiated')
+        assert all(nec_instantiations.values()), \
+            (f"Necessary settings weren't fully instantiated:\n"
+             f"{nec_instantiations}")
 
         dims = self._in_dims
         for conv, pool in zip(self._conv_params, self._pool_params):
@@ -391,33 +391,57 @@ class CNNCore(torch.nn.Module):
         for i, (conv, pool) in enumerate(zip(self._conv_params, self._pool_params)):
             # set conv and pool layers
             self._conv.append(torch.nn.Conv2d(*self._conv_sizes[i:i + 2], **conv))
-            self._pool.append(torch.nn.MaxPool2d(**pool))
+            if pool is not None:
+                self._pool.append(torch.nn.MaxPool2d(**pool))
+            else:
+                self._pool.append(torch.nn.Identity())
         for i, prms in enumerate(self._dense_params):
             # set dense layers
             self._dense.append(torch.nn.Linear(*self._dense_sizes[i:i + 2], **prms))
+
+        # set forward method
+        self.forward = self._compile_forward(crossentropy)
+        self._instantiations['fully_instantiated'] = True
         return None
 
-    # def _compile_forward(self):
-    #     # todo
-    #     def _conv(acts, convs, pools, x):
-    #         for act, conv, pool in zip(acts, convs, pools):
-    #             x = pool(act(conv(x)))
-    #         return x
-    #
-    #     def _dense(acts, denses, x):
-    #         for act, dense in zip(acts, denses):
-    #             x = act(dense(x))
-    #         return x
+    def _compile_forward(self, crossentropy):
+        # torch activation reference
+        activation_ref = {
+            'ReLU': torch.nn.ReLU,
+            'Softplus': torch.nn.Softplus,
+            'Softmax': torch.nn.Softmax,
+            'Tanh': torch.nn.Tanh,
+            'Sigmoid': torch.nn.Sigmoid,
+            'Mish': torch.nn.Mish
+        }
+
+        # set act lists
+        for conv in self._act_params[:len(self._conv) + 1]:
+            self._conv_acts.append(activation_ref[conv['mthd']](conv['prms']))
+        for dens in self._act_params[len(self._conv):]:
+            self._dense_acts.append(activation_ref[dens['mthd']](dens['prms']))
+
+        if crossentropy:
+            def _forward(x: torch.Tensor) -> torch.Tensor:
+                # set forward
+                for act, conv, pool in zip(self._conv_acts, self._conv, self._pool):
+                    x = pool(act(conv(x)))
+                x = torch.flatten(x, 1)
+                for act, dense in zip(self._dense_acts[:-1], self._dense[:-1]):
+                    x = act(dense(x))
+                return self._dense[-1](x)
+        else:
+            def _forward(x: torch.Tensor) -> torch.Tensor:
+                # set forward
+                for act, conv, pool in zip(self._conv_acts, self._conv, self._pool):
+                    x = pool(act(conv(x)))
+                x = torch.flatten(x, 1)
+                for act, dense in zip(self._dense_acts, self._dense):
+                    x = act(dense(x))
+                return x
+
+        return _forward
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        for i, (conv, pool) in enumerate(zip(self._conv, self._pool)):
-            # run through conv and pool
-            x = pool(self._acts[i](conv(x)))
-        # flatten
-        x = torch.flatten(x, 1)
-        for i, dense in enumerate(self._dense[:-1]):
-            # run through dense
-            x = self._acts[i + len(self._conv)](dense(x))
-        x = self._dense[-1](x)
-        # return output
-        return x
+        # model not fully instantiated
+        raise RuntimeError(f"Model wasn't fully instantiated\n({self._instantiations})")

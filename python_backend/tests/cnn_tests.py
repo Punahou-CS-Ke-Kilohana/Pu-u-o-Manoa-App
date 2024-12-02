@@ -1,20 +1,18 @@
 import sys
 import os
 
-from python_backend.core.corecnn import CNNCore
+from core.network.corecnn import CNNCore
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 
 import torch
 import torchvision.transforms as transforms
 import torch.nn as nn
-import torch.nn.functional as F
 import torch.optim as optim
 
-from tqdm import tqdm
 import matplotlib.pyplot as plt
 
-from python_backend.core.dataloader import train_dataloader, test_dataloader  # Assume you have a separate test_dataloader
+from core.utils.dataloader import train_dataloader, test_dataloader  # Assume you have a separate test_dataloader
 
 
 transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
@@ -54,7 +52,7 @@ def main():
     net.set_conv()
     net.set_pool()
     net.set_dense()
-    net.instantiate_model()
+    net.instantiate_model(crossentropy=True)
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(net.parameters(), lr=0.005)
 

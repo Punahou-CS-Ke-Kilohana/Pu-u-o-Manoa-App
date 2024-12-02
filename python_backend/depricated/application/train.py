@@ -1,5 +1,5 @@
-from cnn import TorchCNN
-from dataloader import train_dataloader
+from depricated.application.cnn import TorchCNN
+from depricated.application.dataloader import train_dataloader
 
 default_pool = {
     'kernel_size': 3,

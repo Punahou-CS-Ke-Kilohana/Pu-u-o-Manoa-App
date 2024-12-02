@@ -18,13 +18,13 @@ class ParamChecker:
         self._vtypes = None
         self._ctypes = None
 
-    def _validate_dict(self, param_dict, name, check_lambda=False):
+    def _validate_dict(self, param_dict, name, check_callable=False, check_lambda=False):
         assert isinstance(param_dict, dict), \
             f"'{name}' must be a dictionary ({type(param_dict)} != dict)"
         if check_lambda:
             assert all(isinstance(value, LambdaType) for value in param_dict.values()), \
                 f"Invalid datatype for '{self._name}'s {name}': '{param_dict}'"
-        else:
+        elif check_callable:
             assert all(not callable(value) for value in param_dict.values()), \
                 f"Invalid datatype for '{self._name}'s {name}': '{param_dict}'"
 
@@ -38,7 +38,7 @@ class ParamChecker:
             return None
 
         # validate dicts
-        self._validate_dict(default, 'default')
+        self._validate_dict(default, 'default', check_callable=True)
         self._validate_dict(dtypes, 'dtypes')
         self._validate_dict(vtypes, 'vtypes', check_lambda=True)
         self._validate_dict(ctypes, 'ctypes', check_lambda=True)
