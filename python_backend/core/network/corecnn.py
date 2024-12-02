@@ -416,10 +416,10 @@ class CNNCore(torch.nn.Module):
         }
 
         # set act lists
-        for conv in self._act_params[:len(self._conv) + 1]:
-            self._conv_acts.append(activation_ref[conv['mthd']](conv['prms']))
-        for dens in self._act_params[len(self._conv):]:
-            self._dense_acts.append(activation_ref[dens['mthd']](dens['prms']))
+        for pair in self._act_params[:len(self._conv) + 1]:
+            self._conv_acts.append(activation_ref[pair['mthd']](pair['prms']))
+        for pair in self._act_params[len(self._conv):]:
+            self._dense_acts.append(activation_ref[pair['mthd']](pair['prms']))
 
         if crossentropy:
             def _forward(x: torch.Tensor) -> torch.Tensor:

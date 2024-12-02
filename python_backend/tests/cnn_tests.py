@@ -1,7 +1,9 @@
 import sys
 import os
+import time
 
 from core.network.corecnn import CNNCore
+from core.utils.visuals import progress, convert_time
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 
@@ -56,7 +58,10 @@ def main():
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(net.parameters(), lr=0.005)
 
+    start = time.time()
+
     for epoch in range(5):
+        print(f"\nEpoch {epoch + 1}")
         running_loss = 0.0
         for i, data in enumerate(trainloader, 0):
             inputs, labels = data
@@ -70,14 +75,18 @@ def main():
             optimizer.step()
 
             running_loss += loss.item()
-            if i % 1 == 0:
-                iter_nums.append(i + epoch * len(trainloader))
-                logged_losses.append(running_loss)
-                print(f'[{epoch + 1}, {i + 1:5d}] loss: {running_loss:.3f}')
-                running_loss = 0.0
 
-        # Print average loss for the epoch
-        print(f'Epoch {epoch + 1} completed. Average loss: {running_loss / len(trainloader):.3f}')
+            elapsed = time.time() - start
+            desc = (
+                f"{str(i + 1).zfill(len(str(len(trainloader))))}it/{len(trainloader)}it  "
+                f"{(100 * (i + 1) / len(trainloader)):05.1f}%  "
+                f"{running_loss / (i + 1):.3}loss  "
+                f"{convert_time(elapsed)}et  "
+                f"{convert_time(elapsed * len(trainloader) / (i + 1) - elapsed)}eta  "
+                f"{round((i + 1) / elapsed, 1)}it/s"
+            )
+            progress(i, len(trainloader), desc=desc)
+
 
     print('Finished Training')
     # test_accuracy(net, testloader)  # Evaluate test accuracy after training

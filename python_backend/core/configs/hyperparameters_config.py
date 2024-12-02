@@ -1,4 +1,4 @@
-# do not touch this unless you REALLY REALLY REALLY know what you're doing
+# do NOT touch this unless you REALLY know what you're doing
 
 from easydict import EasyDict as Edict
 
