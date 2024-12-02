@@ -8,6 +8,7 @@ public class PlantInfo
     public string Genus;
     public string Species;
     public List<string> CommonNames;
+    public List<string> HawaiianNameswithDiacritics;
     public List<string> Synonyms;
     public string DidYouKnow;
     public string DistributionStatus;

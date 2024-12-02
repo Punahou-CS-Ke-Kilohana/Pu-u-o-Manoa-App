@@ -338,9 +338,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 485567658}
+      - m_Target: {fileID: 485567657}
         m_TargetAssemblyTypeName: UISceneManager, Assembly-CSharp
-        m_MethodName: StartMainScene
+        m_MethodName: 
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -673,7 +673,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cameraDisplay: {fileID: 1286122939}
   captureButton: {fileID: 778175700}
-  savePath: Application.persistentDataPath
 --- !u!1 &845343851
 GameObject:
   m_ObjectHideFlags: 0
