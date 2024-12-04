@@ -6,7 +6,7 @@ hyperparameters_config = Edict()
 
 hyperparameters_config.loss = Edict()
 hyperparameters_config.loss.method = 'CrossEntropyLoss'
-hyperparameters_config.loss.params = {
+hyperparameters_config.loss.hyperparams = {
     'weight': None,
     'size_average': None,
     'ignore_index': -100,
@@ -17,7 +17,7 @@ hyperparameters_config.loss.params = {
 
 hyperparameters_config.optimizer = Edict()
 hyperparameters_config.optimizer.method = 'Adam'
-hyperparameters_config.optimizer.params = {
+hyperparameters_config.optimizer.hyperparams = {
     'lr': 0.001,
     'betas': (0.9, 0.999),
     'eps': 1e-08,

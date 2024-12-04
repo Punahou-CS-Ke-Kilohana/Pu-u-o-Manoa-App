@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Iterator, Optional, Union
 
 import torch.optim
 import torch.optim as optim
@@ -18,8 +18,11 @@ class OptimSetter:
     ]
 
     def __init__(self, *, ikwiad: bool = False):
-        self._ikwiad = bool(ikwiad)
+        # allowed optim list
         self._allowed_optims = self.get_allowed_optims
+
+        # internals
+        self._ikwiad = bool(ikwiad)
         self._method = None
         self._hyperparameters = None
 
@@ -27,7 +30,7 @@ class OptimSetter:
     def get_allowed_optims(cls):
         return cls._allowed_optims
 
-    def set_hyperparameters(self, method: Optional[str] = None, *, parameters: Optional[dict] = None, **kwargs) -> None:
+    def set_hyperparameters(self, method: Optional[str] = None, *, hyperparameters: Optional[dict] = None, **kwargs) -> None:
         # optim hyperparameter reference
         optim_hyperparams = {
             'Adagrad': {
@@ -284,9 +287,10 @@ class OptimSetter:
 
         # set internal hyperparameters
         self._method = method
-        self._hyperparameters = optim_checker.check_params(parameters, **kwargs)
+        self._hyperparameters = optim_checker.check_params(hyperparameters, **kwargs)
+        return None
 
-    def set_parameters(self, parameters: torch.nn.Parameter) -> torch.optim.Optimizer:
+    def get_optim(self, parameters: Union[Iterator[torch.nn.Parameter], torch.nn.Parameter]) -> torch.optim.Optimizer:
         # torch optim reference
         optim_ref = {
             'Adagrad': torch.optim.Adagrad,
@@ -301,4 +305,127 @@ class OptimSetter:
 
 
 class LossSetter:
-    ...
+    _allowed_losses = [
+        'CrossEntropyLoss',
+        'MSELoss',
+        'L1Loss'
+    ]
+
+    def __init__(self, *, ikwiad: bool = False):
+        # allowed loss list
+        self._allowed_losses = self.get_allowed_losses
+
+        # internals
+        self._ikwiad = bool(ikwiad)
+        self._method = None
+        self._hyperparameters = None
+
+    @classmethod
+    def get_allowed_losses(cls):
+        return cls._allowed_losses
+
+    def set_hyperparameters(self, method: Optional[str] = None, *, hyperparameters: Optional[dict] = None, **kwargs) -> None:
+        # loss hyperparameter reference
+        loss_hyperparams = {
+            'CrossEntropyLoss': {
+                'default': {
+                    'weight': None,
+                    'size_average': None,
+                    'ignore_index': -100,
+                    'reduce': None,
+                    'reduction': 'mean',
+                    'label_smoothing': 0.0
+                },
+                'dtypes': {
+                    'weight': torch.Tensor,
+                    'size_average': (type(None), bool, int),
+                    'ignore_index': int,
+                    'reduce': (type(None), bool, int),
+                    'reduction': str,
+                    'label_smoothing': (float, int)
+                },
+                'vtypes': {
+                    'weight': lambda x: True,
+                    'size_average': lambda x: True,
+                    'ignore_index': lambda x: True,
+                    'reduce': lambda x: True,
+                    'reduction': lambda x: x in ['none', 'mean', 'sum'],
+                    'label_smoothing': lambda x: 0 <= x <= 1
+                },
+                'ctypes': {
+                    'weight:': lambda x: x,
+                    'size_average': lambda x: bool(x) if x is not None else None,
+                    'ignore_index': lambda x: x,
+                    'reduce': lambda x: bool(x) if x is not None else None,
+                    'reduction': lambda x: x,
+                    'label_smoothing': lambda x: float(x)
+                }
+            },
+            'MSELoss': {
+                'default': {
+                    'size_average': None,
+                    'reduce': None,
+                    'reduction': 'mean'
+                },
+                'dtypes': {
+                    'size_average': (type(None), bool, int),
+                    'reduce': (type(None), bool, int),
+                    'reduction': str
+                },
+                'vtypes': {
+                    'size_average': lambda x: True,
+                    'reduce': lambda x: True,
+                    'reduction': lambda x: x in ['none', 'mean', 'sum']
+                },
+                'ctypes': {
+                    'size_average': lambda x: bool(x) if x is not None else None,
+                    'reduce': lambda x: bool(x) if x is not None else None,
+                    'reduction': lambda x: x
+                }
+            },
+            'L1Loss': {
+                'default': {
+                    'size_average': None,
+                    'reduce': None,
+                    'reduction': 'mean'
+                },
+                'dtypes': {
+                    'size_average': (type(None), bool, int),
+                    'reduce': (type(None), bool, int),
+                    'reduction': str
+                },
+                'vtypes': {
+                    'size_average': lambda x: True,
+                    'reduce': lambda x: True,
+                    'reduction': lambda x: x in ['none', 'mean', 'sum']
+                },
+                'ctypes': {
+                    'size_average': lambda x: bool(x) if x is not None else None,
+                    'reduce': lambda x: bool(x) if x is not None else None,
+                    'reduction': lambda x: x
+                }
+            }
+        }
+
+        # check types and methods
+        assert isinstance(method, str), "'method' must be a string"
+        assert method in self._allowed_losses, f"Invalid method: {method}\nChoose from: {self._allowed_losses}"
+
+        # check hyperparameters
+        loss_checker = ParamChecker(name=f'{method} Parameters', ikwiad=self._ikwiad)
+        loss_checker.set_types(**loss_hyperparams[method])
+
+        # set internal hyperparameters
+        self._method = method
+        self._hyperparameters = loss_checker.check_params(hyperparameters, **kwargs)
+        return None
+
+    def get_loss(self) -> torch.nn.Module:
+        # torch loss reference
+        loss_ref = {
+            'CrossEntropyLoss': torch.nn.CrossEntropyLoss,
+            'MSELoss': torch.nn.MSELoss,
+            'L1Loss': torch.nn.L1Loss
+        }
+        # return loss object
+        return loss_ref[self._method](**self._hyperparameters)

@@ -1,4 +1,4 @@
-from typing import Union, Optional
+from typing import Optional, Union
 
 
 def progress(idx: int, max_idx: int, *, desc: Optional[str] = None, b_len: int = 50) -> None:

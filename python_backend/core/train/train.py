@@ -4,14 +4,12 @@ import time
 
 import torch
 import torchvision.transforms as transforms
-import torch.nn as nn
-import torch.optim as optim
 
 from ..network.corecnn import CNNCore
 
 from ..utils.algorithm import (
     OptimSetter,
-    Loss
+    LossSetter
 )
 from ..utils.visuals import (
     convert_time,
@@ -34,15 +32,23 @@ def train(ikwiad: bool = False):
     model.set_dense(parameters=model_config.dense.params)
     model.instantiate_model(crossentropy=(hyperparameters_config.loss.method == 'CrossEntropyLoss'))
 
-    #
-    criterion = nn.CrossEntropyLoss(**hyperparameters_config.loss.params)
+    # set loss
+    loss_setter = LossSetter(ikwiad=ikwiad)
+    loss_setter.set_hyperparameters(
+        hyperparameters_config.loss.method,
+        hyperparameters=hyperparameters_config.loss.hyperparams
+    )
+    criterion = loss_setter.get_loss()
+
+    # set optimizer
     optim_setter = OptimSetter(ikwiad=ikwiad)
-    optim_setter.set_hyperparameters(hyperparameters_config.optimizer.method,
-                                     hyperparameters=hyperparameters_config.optimizer.params)
-    optimizer = optim.Adam(model.parameters(), **hyperparameters_config.optimizer.params)
+    optim_setter.set_hyperparameters(
+        hyperparameters_config.optimizer.method,
+        hyperparameters=hyperparameters_config.optimizer.params)
+    optimizer = optim_setter.get_optim(model.parameters())
 
+    # training
     start_time = time.perf_counter()
-
     for epoch in range(training_config.training_params['epochs']):
         print(f"\nEpoch {epoch + 1}")
         running_loss = 0.0
