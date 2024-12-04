@@ -1,7 +1,7 @@
-from typing import Union
+from typing import Union, Optional
 
 
-def progress(idx: int, max_idx: int, *, desc: str = Union[str, None], b_len: int = 50) -> None:
+def progress(idx: int, max_idx: int, *, desc: Optional[str] = None, b_len: int = 50) -> None:
     assert isinstance(b_len, int), "'b_len' is not an integer"
     # completed progress
     completed = (idx + 1) / max_idx

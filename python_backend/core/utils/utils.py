@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, Optional
 from types import LambdaType
 import warnings
 
@@ -29,10 +29,10 @@ class ParamChecker:
                 f"Invalid datatype for '{self._name}'s {name}': '{param_dict}'"
 
     def set_types(self,
-                  default: Union[dict, None] = None,
-                  dtypes: Union[dict, None] = None,
-                  vtypes: Union[dict, None] = None,
-                  ctypes: Union[dict, None] = None) -> None:
+                  default: Optional[dict] = None,
+                  dtypes: Optional[dict] = None,
+                  vtypes: Optional[dict] = None,
+                  ctypes: Optional[dict] = None) -> None:
         if default is None:
             # default none
             return None
@@ -55,7 +55,7 @@ class ParamChecker:
         self._is_set = True
         return None
 
-    def check_params(self, params: Union[dict, None] = None, **kwargs) -> Union[dict, None]:
+    def check_params(self, params: Optional[dict] = None, **kwargs) -> Union[dict, None]:
         # check for default parameters
         assert self._is_set, f"Default parameters not set for '{self._name}'"
 
@@ -71,7 +71,7 @@ class ParamChecker:
         if kwargs:
             params.update(kwargs)
 
-        for key, prm in params:
+        for key, prm in params.keys():
             if key not in self._default:
                 # invalid key
                 if not self._ikwiad:

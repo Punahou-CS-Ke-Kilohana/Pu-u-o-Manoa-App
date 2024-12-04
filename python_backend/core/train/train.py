@@ -7,10 +7,12 @@ import torchvision.transforms as transforms
 import torch.nn as nn
 import torch.optim as optim
 
-import matplotlib.pyplot as plt
-
 from ..network.corecnn import CNNCore
 
+from ..utils.algorithm import (
+    OptimSetter,
+    Loss
+)
 from ..utils.visuals import (
     convert_time,
     progress
@@ -32,7 +34,11 @@ def train(ikwiad: bool = False):
     model.set_dense(parameters=model_config.dense.params)
     model.instantiate_model(crossentropy=(hyperparameters_config.loss.method == 'CrossEntropyLoss'))
 
+    #
     criterion = nn.CrossEntropyLoss(**hyperparameters_config.loss.params)
+    optim_setter = OptimSetter(ikwiad=ikwiad)
+    optim_setter.set_hyperparameters(hyperparameters_config.optimizer.method,
+                                     hyperparameters=hyperparameters_config.optimizer.params)
     optimizer = optim.Adam(model.parameters(), **hyperparameters_config.optimizer.params)
 
     start_time = time.perf_counter()

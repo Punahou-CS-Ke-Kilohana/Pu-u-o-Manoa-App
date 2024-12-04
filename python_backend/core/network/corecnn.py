@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Optional
 
 import torch
 
@@ -7,18 +7,21 @@ from ..utils.dataloader import DataLoader  # not sure what happened with this, b
 
 
 class CNNCore(torch.nn.Module):
+    # allowed activations list
+    _allowed_acts = [
+        'ReLU',
+        'Softplus',
+        'Softmax',
+        'Tanh',
+        'Sigmoid',
+        'Mish'
+    ]
+
     def __init__(self, *, ikwiad: bool = False):
         super(CNNCore, self).__init__()
 
         # allowed activations list
-        self._allowed_acts = [
-            'ReLU',
-            'Softplus',
-            'Softmax',
-            'Tanh',
-            'Sigmoid',
-            'Mish'
-        ]
+        self._allowed_acts = self.get_allowed_acts()
 
         # internals
         # internal checkers
@@ -78,11 +81,11 @@ class CNNCore(torch.nn.Module):
         return None
 
     def transfer_training_params(self,
-                                 color_channels: Union[int, None] = None,
-                                 classes: Union[int, None] = None,
-                                 initial_dims: Union[tuple, None] = None,
+                                 color_channels: Optional[int] = None,
+                                 classes: Optional[int] = None,
+                                 initial_dims: Optional[tuple] = None,
                                  *,
-                                 loader: Union[DataLoader, None] = None) -> None:
+                                 loader: Optional[DataLoader] = None) -> None:
         # check for channel set
         assert self._instantiations['channels'], "Channels weren't set"
         # check for duplicate initialization attempts
@@ -105,7 +108,7 @@ class CNNCore(torch.nn.Module):
         self._instantiations['training_params'] = True
         return None
 
-    def set_acts(self, *, methods: Union[list, None] = None, parameters: Union[list, None] = None) -> None:
+    def set_acts(self, *, methods: Optional[list] = None, parameters: Optional[list] = None) -> None:
         # activation parameter reference
         act_params = {
             'ReLU': {
@@ -195,7 +198,7 @@ class CNNCore(torch.nn.Module):
         self._instantiations['activators'] = True
         return None
 
-    def set_conv(self, *, parameters: Union[list, None] = None) -> None:
+    def set_conv(self, *, parameters: Optional[list] = None) -> None:
         # instantiate parameter checker
         conv_checker = ParamChecker(name='Convolutional Parameters', ikwiad=self._ikwiad)
         conv_checker.set_types(
@@ -257,7 +260,7 @@ class CNNCore(torch.nn.Module):
         self._instantiations['convolutional'] = True
         return None
 
-    def set_pool(self, *, parameters: Union[list, None] = None) -> None:
+    def set_pool(self, *, parameters: Optional[list] = None) -> None:
         # instantiate parameter checker
         pool_checker = ParamChecker(name='Pooling Parameters', ikwiad=self._ikwiad)
         pool_checker.set_types(
@@ -315,7 +318,7 @@ class CNNCore(torch.nn.Module):
         self._instantiations['pooling'] = True
         return None
 
-    def set_dense(self, *, parameters: Union[list, None] = None) -> None:
+    def set_dense(self, *, parameters: Optional[list] = None) -> None:
         # initialize parameter checker
         dense_checker = ParamChecker(name='Dense Parameters', ikwiad=self._ikwiad)
         dense_checker.set_types(
