@@ -33,8 +33,8 @@ model_config.conv.conv_params = [
     {'kernel_size': 3, 'stride': 1, 'padding': 0, 'dilation': 1, 'groups': 1, 'bias': True, 'padding_mode': 'zeros'}
 ]
 model_config.conv.pool_params = [
-    False,
-    False,
+    None,
+    None,
     {'kernel_size': 3, 'stride': None, 'padding': 0, 'dilation': 1, 'return_indices': False, 'ceil_mode': False},
     {'kernel_size': 3, 'stride': None, 'padding': 0, 'dilation': 1, 'return_indices': False, 'ceil_mode': False}
 ]

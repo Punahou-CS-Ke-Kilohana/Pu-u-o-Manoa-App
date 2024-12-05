@@ -1,4 +1,4 @@
-from core.utils.visuals import progress, convert_time
+from application import progress, convert_time
 import time
 
 max_iter = 100

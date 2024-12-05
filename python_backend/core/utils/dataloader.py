@@ -1,3 +1,5 @@
+# todo: I have absolutely no idea what's happening with this file
+
 import torch
 from torch.utils.data import Dataset, DataLoader
 from torchvision import datasets, transforms

@@ -1,17 +1,12 @@
-import os
-import sys
 import time
 
-import torch
-import torchvision.transforms as transforms
+from core.network.corecnn import CNNCore
 
-from ..network.corecnn import CNNCore
-
-from ..utils.algorithm import (
+from core.utils.algorithms import (
     OptimSetter,
     LossSetter
 )
-from ..utils.visuals import (
+from core.utils.utils import (
     convert_time,
     progress
 )
@@ -22,8 +17,17 @@ from ..configs.training_config import training_config
 
 
 def train(ikwiad: bool = False):
+    r"""
+    Trains the model using the
+
+    Args:
+        ikwiad:
+
+    Returns:
+
+    """
     # initialize model
-    model = CNNCore(ikwiad=ikwiad)
+    model = CNNCore(ikwiad=bool(ikwiad))
     model.set_channels(conv_channels=model_config.conv.sizes, dense_channels=model_config.dense.sizes)
     model.transfer_training_params(**model_config.training_params)
     model.set_acts(methods=model_config.acts.methods, parameters=model_config.acts.params)
@@ -35,7 +39,7 @@ def train(ikwiad: bool = False):
     # set loss
     loss_setter = LossSetter(ikwiad=ikwiad)
     loss_setter.set_hyperparameters(
-        hyperparameters_config.loss.method,
+        method=hyperparameters_config.loss.method,
         hyperparameters=hyperparameters_config.loss.hyperparams
     )
     criterion = loss_setter.get_loss()
@@ -43,9 +47,9 @@ def train(ikwiad: bool = False):
     # set optimizer
     optim_setter = OptimSetter(ikwiad=ikwiad)
     optim_setter.set_hyperparameters(
-        hyperparameters_config.optimizer.method,
+        method=hyperparameters_config.optimizer.method,
         hyperparameters=hyperparameters_config.optimizer.params)
-    optimizer = optim_setter.get_optim(model.parameters())
+    optimizer = optim_setter.get_optim(parameters=model.parameters())
 
     # training
     start_time = time.perf_counter()

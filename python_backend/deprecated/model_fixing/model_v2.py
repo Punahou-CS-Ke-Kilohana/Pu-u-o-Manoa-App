@@ -11,7 +11,7 @@ import torch.optim as optim
 
 import matplotlib.pyplot as plt
 
-from core.utils.dataloader import train_dataloader, test_dataloader  # Assume you have a separate test_dataloader
+from application import train_dataloader, test_dataloader  # Assume you have a separate test_dataloader
 
 
 class Net(nn.Module):

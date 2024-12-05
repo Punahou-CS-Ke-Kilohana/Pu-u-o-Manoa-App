@@ -2,8 +2,8 @@ import sys
 import os
 import time
 
-from core.network.corecnn import CNNCore
-from core.utils.visuals import progress, convert_time
+from application import CNNCore
+from application import progress, convert_time
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 
@@ -14,7 +14,7 @@ import torch.optim as optim
 
 import matplotlib.pyplot as plt
 
-from core.utils.dataloader import train_dataloader, test_dataloader  # Assume you have a separate test_dataloader
+from application import train_dataloader, test_dataloader  # Assume you have a separate test_dataloader
 
 
 transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])

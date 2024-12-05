@@ -1,5 +1,12 @@
-from typing import Iterator, Optional, Union
+r"""
+This module consists of algorithms for the Pu-u-o-Manoa-App.
+It contains an optimizer setter and loss setter.
 
+For any questions or issues regarding this file, contact one of the Pu-u-o-Manoa-App developers.
+"""
+# todo: clean up some code and add docstrings to this file
+
+from typing import Iterator, Optional, Union
 import torch.optim
 import torch.optim as optim
 import torch.nn as nn
@@ -8,6 +15,14 @@ from .utils import ParamChecker
 
 
 class OptimSetter:
+    r"""
+    OptimSetter is the optimizer setter for a PyTorch model.
+
+    This class allows for the ease of setting and verification of an optimizer. It's mainly
+    used due to its ease of integration with configs. Any internal components that are
+    restricted, such as activations, can be altered with relative ease.
+    """
+
     _allowed_optims = [
         'Adagrad',
         'Adam',
@@ -18,8 +33,17 @@ class OptimSetter:
     ]
 
     def __init__(self, *, ikwiad: bool = False):
+        r"""
+        Initializes the OptimSetter class.
+
+        Args:
+            ikwiad (bool, optional):
+                "I know what I am doing" (ikwiad).
+                If True, removes all warning messages.
+                Defaults to False.
+        """
         # allowed optim list
-        self._allowed_optims = self.get_allowed_optims
+        self._allowed_optims = self.allowed_optims
 
         # internals
         self._ikwiad = bool(ikwiad)
@@ -27,10 +51,16 @@ class OptimSetter:
         self._hyperparameters = None
 
     @classmethod
-    def get_allowed_optims(cls):
+    def allowed_optims(cls):
         return cls._allowed_optims
 
-    def set_hyperparameters(self, method: Optional[str] = None, *, hyperparameters: Optional[dict] = None, **kwargs) -> None:
+    def set_hyperparameters(
+            self,
+            method: Optional[str] = None,
+            *,
+            hyperparameters: Optional[dict] = None,
+            **kwargs
+    ) -> None:
         # optim hyperparameter reference
         optim_hyperparams = {
             'Adagrad': {
@@ -278,8 +308,11 @@ class OptimSetter:
         }
 
         # check types and methods
-        assert isinstance(method, str), "'method' must be a string"
-        assert method in self._allowed_optims, f"Invalid method: {method}\nChoose from: {self._allowed_optims}"
+        assert isinstance(method, str),\
+            "'method' must be a string"
+        assert method in self._allowed_optims,\
+            (f"Invalid method: {method}\n"
+             f"Choose from: {self._allowed_optims}")
 
         # check hyperparameters
         optim_checker = ParamChecker(name=f'{method} Parameters', ikwiad=self._ikwiad)
@@ -290,15 +323,15 @@ class OptimSetter:
         self._hyperparameters = optim_checker.check_params(hyperparameters, **kwargs)
         return None
 
-    def get_optim(self, parameters: Union[Iterator[torch.nn.Parameter], torch.nn.Parameter]) -> torch.optim.Optimizer:
+    def get_optim(self, parameters: Union[Iterator[nn.Parameter], nn.Parameter]) -> optim.Optimizer:
         # torch optim reference
         optim_ref = {
-            'Adagrad': torch.optim.Adagrad,
-            'Adam': torch.optim.Adam,
-            'AdamW': torch.optim.AdamW,
-            'LBFGS': torch.optim.LBFGS,
-            'RMSprop': torch.optim.RMSprop,
-            'SGD': torch.optim.SGD
+            'Adagrad': optim.Adagrad,
+            'Adam': optim.Adam,
+            'AdamW': optim.AdamW,
+            'LBFGS': optim.LBFGS,
+            'RMSprop': optim.RMSprop,
+            'SGD': optim.SGD
         }
         # return optim object
         return optim_ref[self._method](parameters, **self._hyperparameters)
@@ -313,7 +346,7 @@ class LossSetter:
 
     def __init__(self, *, ikwiad: bool = False):
         # allowed loss list
-        self._allowed_losses = self.get_allowed_losses
+        self._allowed_losses = self.allowed_losses
 
         # internals
         self._ikwiad = bool(ikwiad)
@@ -321,10 +354,16 @@ class LossSetter:
         self._hyperparameters = None
 
     @classmethod
-    def get_allowed_losses(cls):
+    def allowed_losses(cls):
         return cls._allowed_losses
 
-    def set_hyperparameters(self, method: Optional[str] = None, *, hyperparameters: Optional[dict] = None, **kwargs) -> None:
+    def set_hyperparameters(
+            self,
+            method: Optional[str] = None,
+            *,
+            hyperparameters: Optional[dict] = None,
+            **kwargs
+    ) -> None:
         # loss hyperparameter reference
         loss_hyperparams = {
             'CrossEntropyLoss': {
@@ -408,8 +447,11 @@ class LossSetter:
         }
 
         # check types and methods
-        assert isinstance(method, str), "'method' must be a string"
-        assert method in self._allowed_losses, f"Invalid method: {method}\nChoose from: {self._allowed_losses}"
+        assert isinstance(method, str),\
+            "'method' must be a string"
+        assert method in self._allowed_losses, \
+            (f"Invalid method: {method}\n"
+             f"Choose from: {self._allowed_losses}")
 
         # check hyperparameters
         loss_checker = ParamChecker(name=f'{method} Parameters', ikwiad=self._ikwiad)
@@ -420,12 +462,12 @@ class LossSetter:
         self._hyperparameters = loss_checker.check_params(hyperparameters, **kwargs)
         return None
 
-    def get_loss(self) -> torch.nn.Module:
+    def get_loss(self) -> nn.Module:
         # torch loss reference
         loss_ref = {
-            'CrossEntropyLoss': torch.nn.CrossEntropyLoss,
-            'MSELoss': torch.nn.MSELoss,
-            'L1Loss': torch.nn.L1Loss
+            'CrossEntropyLoss': nn.CrossEntropyLoss,
+            'MSELoss': nn.MSELoss,
+            'L1Loss': nn.L1Loss
         }
         # return loss object
         return loss_ref[self._method](**self._hyperparameters)
