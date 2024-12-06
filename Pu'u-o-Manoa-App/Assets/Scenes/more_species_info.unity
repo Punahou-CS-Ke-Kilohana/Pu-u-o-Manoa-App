@@ -392,6 +392,53 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 442358739}
   m_CullTransparentMesh: 1
+--- !u!1 &562326203
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 562326205}
+  - component: {fileID: 562326204}
+  m_Layer: 0
+  m_Name: MoreSpeciesDisplayManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &562326204
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 562326203}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87ce1abfb91874ed197277d712af807f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speciesNameText: {fileID: 1300073485}
+  hawaiianNameText: {fileID: 1135648025}
+  speciesStatusText: {fileID: 1027426640}
+--- !u!4 &562326205
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 562326203}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 30, y: 387, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &666639057
 GameObject:
   m_ObjectHideFlags: 0
@@ -811,7 +858,6 @@ GameObject:
   - component: {fileID: 1300073484}
   - component: {fileID: 1300073486}
   - component: {fileID: 1300073485}
-  - component: {fileID: 1300073487}
   m_Layer: 5
   m_Name: Species Name Text
   m_TagString: Untagged
@@ -935,19 +981,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1300073483}
   m_CullTransparentMesh: 1
---- !u!114 &1300073487
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1300073483}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4f87b739552044df8ac3108a3ded0539, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  plantNameText: {fileID: 1300073485}
 --- !u!1 &1770488920
 GameObject:
   m_ObjectHideFlags: 0
@@ -1290,3 +1323,4 @@ SceneRoots:
   - {fileID: 1927481608}
   - {fileID: 131497015}
   - {fileID: 1064558076}
+  - {fileID: 562326205}

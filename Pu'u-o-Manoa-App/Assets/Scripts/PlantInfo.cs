@@ -1,5 +1,8 @@
+// creates framework to read json file
+
 using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using UnityEngine;
 
 [Serializable]
@@ -8,10 +11,14 @@ public class PlantInfo
     public string Genus;
     public string Species;
     public List<string> CommonNames;
+
+    // note that this line is require because there are spaces in the json key values
+    [JsonProperty("Hawaiian Names with Diacritics")]
     public List<string> HawaiianNameswithDiacritics;
     public List<string> Synonyms;
     public string DidYouKnow;
     public string DistributionStatus;
+    [JsonProperty("Endangered Species Status")]
     public string EndangeredSpeciesStatus;
     public List<string> PlantFormGrowthHabit;
     public List<string> MatureSizeHeight;
@@ -46,6 +53,7 @@ public class PlantInfo
     public string BackgroundInfo;
     public string ModernUse;
     public string AdditionalReferences;
+    public string Bio;
 }
 
 [Serializable]

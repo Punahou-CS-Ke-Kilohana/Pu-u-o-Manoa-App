@@ -1,3 +1,5 @@
+// passes data from UI database scene into more species page
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
