@@ -4,7 +4,6 @@ It contains an optimizer setter and loss setter.
 
 For any questions or issues regarding this file, contact one of the Pu-u-o-Manoa-App developers.
 """
-# todo: clean up some code and add docstrings to this file
 
 from typing import Iterator, Optional, Union
 import torch.optim
@@ -12,6 +11,7 @@ import torch.optim as optim
 import torch.nn as nn
 
 from .utils import ParamChecker
+from ..errors import MissingMethodError
 
 
 class OptimSetter:
@@ -20,9 +20,9 @@ class OptimSetter:
 
     This class allows for the ease of setting and verification of an optimizer. It's mainly
     used due to its ease of integration with configs. Any internal components that are
-    restricted, such as activations, can be altered with relative ease.
+    restricted, such as optimizer methods, can be altered with relative ease.
     """
-
+    # allowed optims list
     _allowed_optims = [
         'Adagrad',
         'Adam',
@@ -56,24 +56,31 @@ class OptimSetter:
 
     def set_hyperparameters(
             self,
-            method: Optional[str] = None,
+            method: [str] = None,
             *,
             hyperparameters: Optional[dict] = None,
             **kwargs
     ) -> None:
         r"""
-        ...
+        Sets the optimizer's hyperparameters.
 
         Args:
-            method:
-            hyperparameters:
+            method (str, optional):
+                Optimizer name.
+                Defaults to Adam.
+            hyperparameters (dict, optional):
+                Hyperparameters for specified method.
+                Defaults to PyTorch's default hyperparameters.
             **kwargs:
+                Hyperparameters for specified method as kwargs.
+                Defaults to PyTorch's default hyperparameters.
 
         Returns:
             None
 
         Raises:
-            ...
+            TypeError: If the method or any hyperparameters were of the wrong type.
+            ValueError: If invalid values were passed for the method or any of the parameters.
         """
         # optim hyperparameter reference
         optim_hyperparams = {
@@ -340,6 +347,20 @@ class OptimSetter:
         return None
 
     def get_optim(self, parameters: Union[Iterator[nn.Parameter], nn.Parameter]) -> optim.Optimizer:
+        r"""
+        Gets the optimizer from PyTorch.
+
+        Args:
+            parameters (Iterator[nn.Parameter], nn.Parameter):
+                The parameters to be optimized by the optimizer.
+
+        Returns:
+            optim.Optimizer:
+                The optimizer from PyTorch.
+
+        Raises:
+            MissingMethodError: If the method and hyperparameters weren't set.
+        """
         # torch optim reference
         optim_ref = {
             'Adagrad': optim.Adagrad,
@@ -349,11 +370,24 @@ class OptimSetter:
             'RMSprop': optim.RMSprop,
             'SGD': optim.SGD
         }
+
+        # check for errors
+        if not (self._method and self._hyperparameters):
+            raise MissingMethodError("Method and hyperparameters weren't set")
+
         # return optim object
         return optim_ref[self._method](parameters, **self._hyperparameters)
 
 
 class LossSetter:
+    r"""
+    LossSetter is the loss setter for a PyTorch model.
+
+    This class allows for the ease of setting and verification of a loss method.
+    It's mainly used due to its ease of integration with configs. Any internal components
+    that are restricted, such as loss methods, can be altered with relative ease.
+    """
+    # allowed losses
     _allowed_losses = [
         'CrossEntropyLoss',
         'MSELoss',
@@ -361,6 +395,15 @@ class LossSetter:
     ]
 
     def __init__(self, *, ikwiad: bool = False):
+        r"""
+        Initializes the LossSetter class.
+
+        Args:
+            ikwiad (bool, optional):
+                "I know what I am doing" (ikwiad).
+                If True, removes all warning messages.
+                Defaults to False.
+        """
         # allowed loss list
         self._allowed_losses = self.allowed_losses
 
@@ -380,6 +423,27 @@ class LossSetter:
             hyperparameters: Optional[dict] = None,
             **kwargs
     ) -> None:
+        r"""
+        Sets the loss's hyperparameters.
+
+        Args:
+            method (str, optional):
+                Loss name.
+                Defaults to CrossEntropy.
+            hyperparameters (dict, optional):
+                Hyperparameters for specified method.
+                Defaults to PyTorch's default hyperparameters.
+            **kwargs:
+                Hyperparameters for specified method as kwargs.
+                Defaults to PyTorch's default hyperparameters.
+
+        Returns:
+            None
+
+        Raises:
+            TypeError: If the method or any hyperparameters were of the wrong type.
+            ValueError: If invalid values were passed for the method or any of the parameters.
+        """
         # loss hyperparameter reference
         loss_hyperparams = {
             'CrossEntropyLoss': {
@@ -463,11 +527,13 @@ class LossSetter:
         }
 
         # check types and methods
-        assert isinstance(method, str),\
-            "'method' must be a string"
-        assert method in self._allowed_losses, \
-            (f"Invalid method: {method}\n"
-             f"Choose from: {self._allowed_losses}")
+        if not isinstance(method, str):
+            raise TypeError("'method' must be a string")
+        if method not in self._allowed_losses:
+            raise ValueError(
+                f"Invalid method: {method}\n"
+                f"Choose from: {self._allowed_losses}"
+            )
 
         # check hyperparameters
         loss_checker = ParamChecker(name=f'{method} Parameters', ikwiad=self._ikwiad)
@@ -479,11 +545,26 @@ class LossSetter:
         return None
 
     def get_loss(self) -> nn.Module:
+        r"""
+        Gets the loss method from PyTorch.
+
+        Returns:
+            nn.Module:
+                The loss method from PyTorch.
+
+        Raises:
+            MissingMethodError: If the method and hyperparameters weren't set.
+        """
         # torch loss reference
         loss_ref = {
             'CrossEntropyLoss': nn.CrossEntropyLoss,
             'MSELoss': nn.MSELoss,
             'L1Loss': nn.L1Loss
         }
+
+        # check for errors
+        if not (self._method and self._hyperparameters):
+            raise MissingMethodError("Method and hyperparameters weren't set")
+
         # return loss object
         return loss_ref[self._method](**self._hyperparameters)
