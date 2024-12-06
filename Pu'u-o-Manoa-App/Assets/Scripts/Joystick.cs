@@ -8,8 +8,6 @@ public class Joystick : MonoBehaviour, IDragHandler, IPointerUpHandler, IPointer
 
     private Vector2 inputVector;  // Stores the joystick's input direction
 
-    public float Horizontal => inputVector.x;
-    public float Vertical => inputVector.y;
     public Vector2 Direction => inputVector;
 
     private void Start()
@@ -17,6 +15,12 @@ public class Joystick : MonoBehaviour, IDragHandler, IPointerUpHandler, IPointer
         joystickBackground = GetComponent<RectTransform>();
         joystickHandle = transform.GetChild(0).GetComponent<RectTransform>();  // First child is the handle
     }
+
+    //private void Update()
+    //{
+    //    Debug.Log($"Horizontal: {inputVector.x}, Vertical: {inputVector.y}");
+    //}
+
 
     public void OnDrag(PointerEventData eventData)
     {
@@ -45,15 +49,5 @@ public class Joystick : MonoBehaviour, IDragHandler, IPointerUpHandler, IPointer
     {
         inputVector = Vector2.zero;  // Reset input when pointer is lifted
         joystickHandle.anchoredPosition = Vector2.zero;  // Return the joystick to center
-    }
-
-    public float Horizontal_old()
-    {
-        return inputVector.x;
-    }
-
-    public float Vertical_old()
-    {
-        return inputVector.y;
     }
 }
