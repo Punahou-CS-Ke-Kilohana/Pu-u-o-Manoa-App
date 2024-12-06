@@ -12,6 +12,10 @@ import torch.nn as nn
 from torch.utils.data import DataLoader
 
 from ..utils.utils import ParamChecker
+from ..errors import (
+    AlreadySetError,
+    MissingMethodError
+)
 
 
 class CNNCore(nn.Module):
@@ -102,24 +106,24 @@ class CNNCore(nn.Module):
             None
 
         Raises:
-            RuntimeError: If the channels have already been set.
+            AlreadySetError: If the channels have already been set.
             ValueError: If invalid values were passed for either of the channels.
         """
         # check for duplicate initialization attempts
         if self._instantiations['channels']:
-            raise RuntimeError("Channels can't be set twice")
+            raise AlreadySetError("Channels can't be set twice")
 
         # check channel types
         if not (
             (isinstance(conv_channels, list) and all(isinstance(itm, int) and 0 < itm for itm in conv_channels))
             or conv_channels is None
         ):
-            raise ValueError("'conv_channels' weren't set correctly (list of positive integers or None)")
+            raise ValueError("'conv_channels' must be a list of positive integers or None")
         if not (
             (isinstance(dense_channels, list) and all(isinstance(itm, int) and 0 < itm for itm in dense_channels))
             or dense_channels is None
         ):
-            raise ValueError("'dense_channels' weren't set correctly (list of positive integers or None)")
+            raise ValueError("'dense_channels' must be a list of positive integers or None")
 
         # set channels
         conv_channels = conv_channels or [16, 32, 64, 128]
@@ -154,15 +158,16 @@ class CNNCore(nn.Module):
             None
 
         Raises:
-            RuntimeError: If channels weren't set or training parameters were already set.
+            MissingMethodError: If channels weren't set.
+            AlreadySetError: If training parameters were already set.
             ValueError: If invalid values were passed for any of the parameters.
         """
         # check for channel set
         if not self._instantiations['channels']:
-            raise RuntimeError("Channels weren't set")
+            raise MissingMethodError("Channels weren't set")
         # check for duplicate initialization attempts
         if self._instantiations['training_params']:
-            raise RuntimeError("Training parameters can't be set twice")
+            raise AlreadySetError("Training parameters can't be set twice")
 
         if isinstance(loader, DataLoader):
             # transfer from the dataloader
@@ -174,7 +179,7 @@ class CNNCore(nn.Module):
             # loader provided, but not as the correct object
             if not self._ikwiad:
                 print()
-                warnings.warn("A loader was in, but wasn't a torch dataloader and was ignored", UserWarning)
+                warnings.warn("A loader was set, but wasn't a torch dataloader and was ignored", UserWarning)
         else:
             # check for errors
             if not (isinstance(color_channels, int) and 0 < color_channels,):
@@ -211,8 +216,9 @@ class CNNCore(nn.Module):
             None
 
         Raises:
-            RuntimeError: If channels weren't set or activations were already set.
-            TypeError: If any parameters were of the wrong type.
+            MissingMethodError: If channels weren't set.
+            AlreadySetError: If activations were already set.
+            TypeError: If any methods or parameters were of the wrong type.
             ValueError: If invalid values were passed for any of the methods or parameters.
         """
         # activation parameter reference
@@ -269,10 +275,10 @@ class CNNCore(nn.Module):
 
         # check for channel set
         if not self._instantiations['channels']:
-            raise RuntimeError("Channels weren't set")
+            raise MissingMethodError("Channels weren't set")
         # check for duplicate initialization attempts
         if self._instantiations['activators']:
-            raise RuntimeError("Activators can't be set twice")
+            raise AlreadySetError("Activators can't be set twice")
 
         if methods is None:
             # set default activators
@@ -327,7 +333,8 @@ class CNNCore(nn.Module):
             None
 
         Raises:
-            RuntimeError: If channels weren't set or convolutional layers were already set.
+            MissingMethodError: If channels weren't set.
+            AlreadySetError: If convolutional layers were already set.
             TypeError: If any parameters were of the wrong type.
             ValueError: If invalid values were passed for any of the parameters.
         """
@@ -386,10 +393,10 @@ class CNNCore(nn.Module):
 
         # check for channel set
         if not self._instantiations['channels']:
-            raise RuntimeError("Channels weren't set")
+            raise MissingMethodError("Channels weren't set")
         # check for duplicate initialization attempts
         if self._instantiations['convolutional']:
-            raise RuntimeError("Convolutional layers can't be set twice")
+            raise AlreadySetError("Convolutional layers can't be set twice")
 
         if parameters is None:
             # form parameter list
@@ -422,7 +429,8 @@ class CNNCore(nn.Module):
                 None
 
             Raises:
-                RuntimeError: If channels weren't set or pooling layers were already set.
+                MissingMethodError: If channels weren't set.
+                AlreadySetError: If pooling layers were already set.
                 TypeError: If any parameters were of the wrong type.
                 ValueError: If invalid values were passed for any of the parameters.
             """
@@ -477,10 +485,10 @@ class CNNCore(nn.Module):
 
         # check for channel set
         if not self._instantiations['channels']:
-            raise RuntimeError("Channels weren't set")
+            raise MissingMethodError("Channels weren't set")
         # check for duplicate initialization attempts
         if self._instantiations['pooling']:
-            raise RuntimeError("Pooling layers can't be set twice")
+            raise AlreadySetError("Pooling layers can't be set twice")
 
         if parameters is None:
             # form parameter list
@@ -513,7 +521,8 @@ class CNNCore(nn.Module):
             None
 
         Raises:
-            RuntimeError: If channels weren't set or pooling layers were already set.
+            MissingMethodError: If channels weren't set.
+            AlreadySetError: If dense layers were already set.
             TypeError: If any parameters were of the wrong type.
             ValueError: If invalid values were passed for any of the parameters.
         """
@@ -528,10 +537,10 @@ class CNNCore(nn.Module):
 
         # check for channel set
         if not self._instantiations['channels']:
-            raise RuntimeError("Channels weren't set")
+            raise MissingMethodError("Channels weren't set")
         # check for duplicate initialization attempts
         if self._instantiations['dense']:
-            raise RuntimeError("Dense layers can't be set twice")
+            raise AlreadySetError("Dense layers can't be set twice")
 
         if parameters is None:
             # form parameter list
@@ -583,13 +592,13 @@ class CNNCore(nn.Module):
             None
 
         Raises:
-            RuntimeError: If all the necessary components weren't set.
+            MissingMethodError: If all the necessary components weren't set.
         """
         # check for proper instantiation
         nec_instantiations = self._instantiations.copy()
         nec_instantiations.pop('fully_instantiated')
         if not all(nec_instantiations.values()):
-            raise RuntimeError(
+            raise MissingMethodError(
                 "Necessary settings weren't fully instantiated:\n"
                 f"{nec_instantiations}"
             )
@@ -692,10 +701,10 @@ class CNNCore(nn.Module):
                 Outputs to the model.
 
         Raises:
-            RuntimeError: If the model hasn't been fully instantiated.
+            MissingMethodError: If the model hasn't been fully instantiated.
         """
         # model not fully instantiated
-        raise RuntimeError(
+        raise MissingMethodError(
             "Model wasn't fully instantiated\n"
             f"({self._instantiations})"
         )
