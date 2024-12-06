@@ -10,6 +10,10 @@ from typing import Optional, Union
 from types import LambdaType
 import warnings
 
+from ..errors import (
+    MissingMethodError
+)
+
 
 class ParamChecker:
     r"""
@@ -122,13 +126,13 @@ class ParamChecker:
                 The checked parameters.
 
         Raises:
-            RuntimeError: If default values weren't set.
+            MissingMethodError: If default values weren't set.
             TypeError: If any parameters were of the wrong type.
             ValueError: If invalid values were passed for any of the parameters.
         """
         # check for default parameters
         if not self._is_set:
-            raise RuntimeError(f"Default parameters not set for '{self._name}'")
+            raise MissingMethodError(f"Default parameters not set for '{self._name}'")
 
         # initialize as default
         final = self._default.copy()

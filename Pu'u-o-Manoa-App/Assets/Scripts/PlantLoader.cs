@@ -5,11 +5,18 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using System.Linq;
 
+
+// loads the plant names from the Json file
 public class PlantLoader : MonoBehaviour
 {
+    // creates a list of strings by calling the GetPlantNames() method
     public List<string> GetPlantNames()
     {
         List<string> plantNames = new List<string>();
+        // declares a new list
+        List <string> plantNames = new List<string>();
+
+        // load a TextAsset from the json file in "Resources" directory
         TextAsset jsonFile = Resources.Load<TextAsset>("plant_data");
         if (jsonFile != null)
         {

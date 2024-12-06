@@ -1,6 +1,15 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+/*
+
+Purpose: This is the Joystick script. It allows the user to move around using a joystick, particularly useful for mobile use where the WASD keys are not available.
+Date: 12/06/24
+Project: Pu'u-o-Manoa App
+By: Mark Chen
+
+*/
+
 public class Joystick : MonoBehaviour, IDragHandler, IPointerUpHandler, IPointerDownHandler
 {
     private RectTransform joystickBackground;
