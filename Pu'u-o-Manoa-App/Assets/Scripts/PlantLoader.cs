@@ -12,7 +12,6 @@ public class PlantLoader : MonoBehaviour
     // creates a list of strings by calling the GetPlantNames() method
     public List<string> GetPlantNames()
     {
-        List<string> plantNames = new List<string>();
         // declares a new list
         List <string> plantNames = new List<string>();
 
