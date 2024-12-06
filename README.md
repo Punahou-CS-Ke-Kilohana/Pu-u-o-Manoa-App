@@ -36,7 +36,7 @@ Will primarily be on mobile devices, iOS, etc.
 
 ## Dependencies:
 
-Map is primarily coded on Unity and C#. 
+Map is primarily coded on Unity 2022.3.46f1 and C#. 
 
 ## Packages:
 
