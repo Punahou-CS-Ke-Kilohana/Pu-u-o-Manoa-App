@@ -180,7 +180,7 @@ class CNNCore(nn.Module):
             if not self._ikwiad:
                 print()
                 warnings.warn("A loader was set, but wasn't a torch dataloader and was ignored", UserWarning)
-        else:
+        if not isinstance(loader, DataLoader):
             # check for errors
             if not (isinstance(color_channels, int) and 0 < color_channels,):
                 raise ValueError("'color_channels' must be a positive integer")
