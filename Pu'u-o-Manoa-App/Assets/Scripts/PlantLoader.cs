@@ -120,7 +120,7 @@ public class PlantLoader : MonoBehaviour
         // Check if the plant exists in the dictionary
         if (plantData.Plants.TryGetValue(newInputPlantName, out PlantInfo plantInfo))
         {
-            var bio = plantInfo.Bio;
+            var bio = plantInfo.bio;
             if (bio != null)
             {
                 return bio;
