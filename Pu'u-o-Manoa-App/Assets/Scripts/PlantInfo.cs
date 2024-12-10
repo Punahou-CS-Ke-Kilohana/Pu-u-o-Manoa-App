@@ -53,7 +53,7 @@ public class PlantInfo
     public string BackgroundInfo;
     public string ModernUse;
     public string AdditionalReferences;
-    public string Bio;
+    public string bio;
 }
 
 [Serializable]

@@ -9,9 +9,10 @@ public class MoreSpeciesDisplay : MonoBehaviour
 {
     // Assuming PlantLoader loads and manages PlantData
     private PlantLoader plantLoader = new PlantLoader();
-    public TMP_Text speciesNameText; // TextMeshPro element for displaying species name
-    public TMP_Text hawaiianNameText; // TextMeshPro element for displaying Hawaiian name
-    public TMP_Text speciesStatusText; // TextMeshPro element for displaying Species Statu name
+    public TMP_Text speciesNameText;
+    public TMP_Text hawaiianNameText;
+    public TMP_Text speciesStatusText;
+    public TMP_Text BioText; 
 
     // Start is called before the first frame update
     void Start()
@@ -33,9 +34,11 @@ public class MoreSpeciesDisplay : MonoBehaviour
             List<string> hawaiianNames = plantLoader.GetHawaiianNames(speciesNameText.text);
 
             string speciesStatus = plantLoader.GetConservationStatus(speciesNameText.text);
+            string bio = plantLoader.GetPlantBio(speciesNameText.text);
 
             hawaiianNameText.text = string.Join(", ", hawaiianNames);
             speciesStatusText.text = speciesStatus;
+            BioText.text = bio;
         }
     }
 }
