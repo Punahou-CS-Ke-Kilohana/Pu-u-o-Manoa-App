@@ -28,6 +28,11 @@ def main(name: str, *, ikwiad=False) -> None:
         'validate': ...,
         'execute': ...
     }
+    method_titles = {
+        'train': 'Training',
+        'validate': 'Validating',
+        'execute': 'Executing'
+    }
     if name not in methods.keys():
         # invalid method
         raise ValueError(
@@ -36,6 +41,7 @@ def main(name: str, *, ikwiad=False) -> None:
         )
 
     # method execution
+    print(f"{method_titles[name]}\n")
     methods[name](ikwiad=ikwiad)
     return None
 

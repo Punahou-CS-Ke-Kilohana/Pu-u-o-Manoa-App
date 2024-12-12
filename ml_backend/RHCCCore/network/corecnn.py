@@ -282,9 +282,9 @@ class CNNCore(nn.Module):
 
         if methods is None:
             # set default activators
-            methods = ['ReLU'] * (len(self._dense_sizes) + len(self._conv_sizes) - 2)
+            methods = ['ReLU'] * (len(self._dense_sizes) + len(self._conv_sizes) - 3)
             methods.append('Softmax')
-            parameters = [{}] * (len(self._dense_sizes) + len(self._conv_sizes) - 1)
+            parameters = [{}] * (len(self._dense_sizes) + len(self._conv_sizes) - 2)
         else:
             # check for errors
             if not (len(methods) == len(parameters) == (len(self._conv_sizes) + len(self._dense_sizes) - 2)):
@@ -635,7 +635,7 @@ class CNNCore(nn.Module):
                 self._pool.append(nn.MaxPool2d(**pool))
             else:
                 self._pool.append(nn.Identity())
-        for i, prms in enumerate(self._dense_params[:-1]):
+        for i, prms in enumerate(self._dense_params):
             # set dense layers
             self._dense.append(nn.Linear(*self._dense_sizes[i:i + 2], **prms))
 
@@ -679,9 +679,6 @@ class CNNCore(nn.Module):
                 for act, dense in zip(self._dense_acts, self._dense):
                     x = act(dense(x))
                 return x
-
-        # todo: fix this!!!!!
-        print(self._dense_sizes)
 
         return _forward
 

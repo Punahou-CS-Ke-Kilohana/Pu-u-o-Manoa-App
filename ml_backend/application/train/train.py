@@ -62,20 +62,27 @@ def train(ikwiad: bool = False) -> None:
     max_idx = len(loader)
     start_time = time.perf_counter()
     for epoch in range(training_config.epochs):
-        print(f"\nEpoch {epoch + 1}")
+        print(f"Epoch {epoch + 1} / {training_config.epochs}")
+        desc = (
+            f"{str(0).zfill(len(str(max_idx)))}it/{max_idx}it  "
+            f"{0:05.1f}%  "
+            "?loss  "
+            "?et  "
+            "?eta  "
+            "?it/s"
+        )
+        progress(-1, max_idx, desc=desc)
         running_loss = 0.0
         for i, data in enumerate(loader):
             inputs, labels = data
             optimizer.zero_grad()
             outputs = model(inputs)
-            print(outputs.shape)
-            print(labels.shape)
             loss = criterion(outputs, labels)
             loss.backward()
             optimizer.step()
 
             running_loss += loss.item()
-            elapsed = time.time() - start_time
+            elapsed = time.perf_counter() - start_time
             desc = (
                 f"{str(i + 1).zfill(len(str(max_idx)))}it/{max_idx}it  "
                 f"{(100 * (i + 1) / max_idx):05.1f}%  "
