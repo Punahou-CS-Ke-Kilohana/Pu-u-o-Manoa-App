@@ -43,7 +43,7 @@ class OptimSetter:
                 Defaults to False.
         """
         # allowed optim list
-        self._allowed_optims = self.allowed_optims
+        self._allowed_optims = self.allowed_optims()
 
         # internals
         self._ikwiad = bool(ikwiad)
@@ -109,9 +109,9 @@ class OptimSetter:
                 },
                 'vtypes': {
                     'lr': lambda x: 0 < x,
-                    'lr_decay': lambda x: 0 < x,
-                    'weight_decay': lambda x: 0 < x,
-                    'initial_accumulator_value': lambda x: 0 < x,
+                    'lr_decay': lambda x: 0 <= x,
+                    'weight_decay': lambda x: 0 <= x,
+                    'initial_accumulator_value': lambda x: 0 <= x,
                     'eps': lambda x: 0 < x < 1,
                     'foreach': lambda x: True,
                     'maximize': lambda x: True,
@@ -159,7 +159,7 @@ class OptimSetter:
                     'lr': lambda x: 0 < x,
                     'betas': lambda x: len(x) == 2 and (isinstance(itm, float) and 0 < itm < 1 for itm in x),
                     'eps': lambda x: 0 < x < 1,
-                    'weight_decay': lambda x: 0 < x,
+                    'weight_decay': lambda x: 0 <= x,
                     'amsgrad': lambda x: True,
                     'foreach': lambda x: True,
                     'maximize': lambda x: True,
@@ -209,7 +209,7 @@ class OptimSetter:
                     'lr': lambda x: 0 < x,
                     'betas': lambda x: len(x) == 2 and (isinstance(itm, float) and 0 < itm < 1 for itm in x),
                     'eps': lambda x: 0 < x < 1,
-                    'weight_decay': lambda x: 0 < x,
+                    'weight_decay': lambda x: 0 <= x,
                     'amsgrad': lambda x: True,
                     'maximize': lambda x: True,
                     'foreach': lambda x: True,
@@ -259,8 +259,8 @@ class OptimSetter:
                     'lr': lambda x: 0 < x,
                     'alpha': lambda x: 0 < x < 1,
                     'eps': lambda x: 0 < x < 1,
-                    'weight_decay': lambda x: 0 < x,
-                    'momentum': lambda x: 0 < x < 1,
+                    'weight_decay': lambda x: 0 <= x,
+                    'momentum': lambda x: 0 <= x < 1,
                     'centered': lambda x: True,
                     'capturable': lambda x: True,
                     'foreach': lambda x: True,
@@ -305,9 +305,9 @@ class OptimSetter:
                 },
                 'vtypes': {
                     'lr': lambda x: 0 < x,
-                    'momentum': lambda x: 0 < x < 1,
+                    'momentum': lambda x: 0 <= x < 1,
                     'dampening': lambda x: 0 < x < 1,
-                    'weight_decay': lambda x: 0 < x,
+                    'weight_decay': lambda x: 0 <= x,
                     'nesterov': lambda x: True,
                     'maximize': lambda x: True,
                     'foreach': lambda x: True,
@@ -405,7 +405,7 @@ class LossSetter:
                 Defaults to False.
         """
         # allowed loss list
-        self._allowed_losses = self.allowed_losses
+        self._allowed_losses = self.allowed_losses()
 
         # internals
         self._ikwiad = bool(ikwiad)
@@ -456,7 +456,7 @@ class LossSetter:
                     'label_smoothing': 0.0
                 },
                 'dtypes': {
-                    'weight': torch.Tensor,
+                    'weight': (type(None), torch.Tensor),
                     'size_average': (type(None), bool, int),
                     'ignore_index': int,
                     'reduce': (type(None), bool, int),
@@ -472,7 +472,7 @@ class LossSetter:
                     'label_smoothing': lambda x: 0 <= x <= 1
                 },
                 'ctypes': {
-                    'weight:': lambda x: x,
+                    'weight': lambda x: x,
                     'size_average': lambda x: bool(x) if x is not None else None,
                     'ignore_index': lambda x: x,
                     'reduce': lambda x: bool(x) if x is not None else None,

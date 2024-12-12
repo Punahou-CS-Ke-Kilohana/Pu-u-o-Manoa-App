@@ -18,7 +18,7 @@ training_config.save_params = {
     'save_name': f"model_{datetime.datetime.now().year}_{datetime.datetime.now().month}_{datetime.datetime.now().day}"
 }
 
-training_config.epochs = 1_000
+training_config.epochs = 100
 
 # expose to import
 __all__ = ['training_config']

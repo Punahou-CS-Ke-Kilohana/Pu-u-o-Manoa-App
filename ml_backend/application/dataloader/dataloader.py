@@ -1,3 +1,10 @@
+r"""
+This module consists of the dataloader for the Pu-u-o-Manoa-App.
+It accesses the images folder in the ml_backend directory for its data.
+
+For any questions or issues regarding this file, contact one of the Pu-u-o-Manoa-App developers.
+"""
+
 import torch
 from torch.utils.data import DataLoader
 from torchvision import datasets
@@ -6,7 +13,19 @@ from ..configs.loader_config import loader_config
 classes = loader_config.dataloader_params['classes']
 
 
-def one_hot(y) -> torch.Tensor:
+def one_hot(y: torch.Tensor) -> torch.Tensor:
+    r"""
+    Args:
+        y (torch.Tensor):
+            The outputs.
+
+    Returns:
+        torch.Tensor:
+            The one hot encoded outputs.
+
+    Raises:
+        ValueError: If invalid values were passed for classes.
+    """
     if not isinstance(classes, int) or classes < 1:
         raise ValueError("'classes' must be a positive integer")
     one = torch.zeros(classes, dtype=torch.float)

@@ -165,13 +165,13 @@ class ParamChecker:
             # datatype check
             if not isinstance(prm, self._dtypes[key]):
                 raise ValueError(
-                    f"Invalid datatype for '{self._name}': '{prm}'\n"
-                    f"Choose from: {self._dtypes[prm]}"
+                    f"Invalid datatype for '{self._name}' '{key}': '{prm}'\n"
+                    f"Choose from: {self._dtypes[key]}"
                 )
             if not self._vtypes[key](prm):
                 raise ValueError(
-                    f"Invalid value for '{self._name}': '{prm}'\n"
-                    f"Failed conditional: {self._vtypes[prm]}"
+                    f"Invalid value for '{self._name}' '{key}': '{prm}'\n"
+                    f"Failed conditional: {self._vtypes[key]}"
                 )
             # set parameter
             final[key] = self._ctypes[key](prm)

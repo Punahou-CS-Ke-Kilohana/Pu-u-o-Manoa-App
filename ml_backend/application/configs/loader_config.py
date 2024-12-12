@@ -14,11 +14,11 @@ loader_config = Edict()
 
 loader_config.root = os.path.join(os.path.join((os.path.dirname(os.path.dirname(os.path.dirname(__file__)))), 'images', 'local'))
 
-loader_config.transform = {
+loader_config.transform = transforms.Compose([
     transforms.Resize((256, 256)),
     transforms.ToTensor(),
     transforms.ConvertImageDtype(torch.float)
-}
+])
 
 loader_config.dataloader_params = {
     'classes': 15,

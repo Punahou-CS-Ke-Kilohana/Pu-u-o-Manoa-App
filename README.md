@@ -67,7 +67,7 @@ Making to-scale with a GPS tracker (ONLY DO AT END, IF TIME ALLOWS)
 
 Info for plants and animals 
 
-Pavillion Prop
+Pavilion Prop
 
 
 # NEED TO KNOW:

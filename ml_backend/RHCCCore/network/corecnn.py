@@ -51,7 +51,7 @@ class CNNCore(nn.Module):
         super(CNNCore, self).__init__()
 
         # allowed activations list
-        self._allowed_acts = self.allowed_acts
+        self._allowed_acts = self.allowed_acts()
 
         # internals
         # internal checkers
@@ -287,7 +287,7 @@ class CNNCore(nn.Module):
             parameters = [{}] * (len(self._dense_sizes) + len(self._conv_sizes) - 1)
         else:
             # check for errors
-            if not (len(methods) == len(parameters) == (len(self._conv_sizes) + len(self._dense_sizes))):
+            if not (len(methods) == len(parameters) == (len(self._conv_sizes) + len(self._dense_sizes) - 1)):
                 raise ValueError(
                     "Invalid matching of 'params', 'methods', and channels\n"
                     f"({len(methods)} != {len(parameters)} != {len(self._conv_sizes) + len(self._dense_sizes)})"
@@ -369,7 +369,7 @@ class CNNCore(nn.Module):
                         or (isinstance(x, tuple) and len(x) == 2 and all(isinstance(i, int) and 0 < i for i in x))
                 ),
                 'padding': lambda x: (
-                        (isinstance(x, int) and 0 < x)
+                        (isinstance(x, int) and 0 <= x)
                         or (isinstance(x, tuple) and len(x) == 2 and all(isinstance(i, int) and 0 < i for i in x))
                 ),
                 'dilation': lambda x: (
@@ -458,12 +458,12 @@ class CNNCore(nn.Module):
                         (isinstance(x, int) and 0 < x)
                         or (isinstance(x, tuple) and len(x) == 2 and all(isinstance(i, int) and 0 < i for i in x))
                 ),
-                'stride': lambda x: (
+                'stride': lambda x: x is None or (
                         (isinstance(x, int) and 0 < x)
                         or (isinstance(x, tuple) and len(x) == 2 and all(isinstance(i, int) and 0 < i for i in x))
                 ),
                 'padding': lambda x: (
-                        (isinstance(x, int) and 0 < x)
+                        (isinstance(x, int) and 0 <= x)
                         or (isinstance(x, tuple) and len(x) == 2 and all(isinstance(i, int) and 0 < i for i in x))
                 ),
                 'dilation': lambda x: (
@@ -552,7 +552,7 @@ class CNNCore(nn.Module):
             if len(parameters) != len(self._dense_sizes):
                 raise ValueError(
                     "'parameters' length must match dense layers\n"
-                    f"({len(parameters)} != {len(self._conv_sizes)})"
+                    f"({len(parameters)} != {len(self._dense_sizes)})"
                 )
 
         # validate dense params
@@ -633,14 +633,14 @@ class CNNCore(nn.Module):
             )
         self._dense_sizes[0] = final_size
 
-        for i, (conv, pool) in enumerate(zip(self._conv_params, self._pool_params)):
+        for i, (conv, pool) in enumerate(zip(self._conv_params[:-1], self._pool_params[:-1])):
             # set conv and pool layers
             self._conv.append(nn.Conv2d(*self._conv_sizes[i:i + 2], **conv))
             if pool is not None:
                 self._pool.append(nn.MaxPool2d(**pool))
             else:
                 self._pool.append(nn.Identity())
-        for i, prms in enumerate(self._dense_params):
+        for i, prms in enumerate(self._dense_params[:-1]):
             # set dense layers
             self._dense.append(nn.Linear(*self._dense_sizes[i:i + 2], **prms))
 
