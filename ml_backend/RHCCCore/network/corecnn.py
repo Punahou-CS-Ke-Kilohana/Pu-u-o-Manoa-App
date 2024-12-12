@@ -12,7 +12,7 @@ import torch.nn as nn
 from torch.utils.data import DataLoader
 
 from ..utils.utils import ParamChecker
-from ..errors import (
+from ..utils.errors import (
     AlreadySetError,
     MissingMethodError
 )

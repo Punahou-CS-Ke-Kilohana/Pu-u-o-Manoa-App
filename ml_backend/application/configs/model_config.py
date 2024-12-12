@@ -47,3 +47,6 @@ model_config.dense.params = [
     {'bias': True},
     {'bias': True}
 ]
+
+# expose to import
+__all__ = ['model_config']

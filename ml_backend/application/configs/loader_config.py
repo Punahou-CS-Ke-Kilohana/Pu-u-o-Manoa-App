@@ -5,20 +5,28 @@ For any questions or issues regarding this file, contact one of the Pu-u-o-Manoa
 """
 
 import os
-import datetime
+import torch
+from torchvision import transforms
 from easydict import EasyDict as Edict
 
 
 loader_config = Edict()
 
-loader_config.save_params = {
-    'save_root': os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'models'),
-    'save_name': f"model_{datetime.datetime.now().year}_{datetime.datetime.now().month}_{datetime.datetime.now().day}"
+loader_config.root = os.path.join(os.path.join((os.path.dirname(os.path.dirname(os.path.dirname(__file__)))), 'images', 'local'))
+
+loader_config.transform = {
+    transforms.Resize((256, 256)),
+    transforms.ToTensor(),
+    transforms.ConvertImageDtype(torch.float)
 }
 
 loader_config.dataloader_params = {
-    'batch_size': 5,
-    'color_channels': 3,
     'classes': 15,
-    'initial_dims': (256, 256)
+    'batch_size': 16,
+    'shuffle': True,
+    'num_workers': 0,
+    'pin_memory': True,
 }
+
+# expose to import
+__all__ = ['loader_config']

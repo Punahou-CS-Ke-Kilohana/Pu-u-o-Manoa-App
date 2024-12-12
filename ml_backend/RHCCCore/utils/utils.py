@@ -10,7 +10,7 @@ from typing import Optional, Union
 from types import LambdaType
 import warnings
 
-from ..errors import (
+from .errors import (
     MissingMethodError
 )
 

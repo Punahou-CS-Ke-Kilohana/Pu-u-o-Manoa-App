@@ -11,7 +11,7 @@ import torch.optim as optim
 import torch.nn as nn
 
 from .utils import ParamChecker
-from ..errors import MissingMethodError
+from .errors import MissingMethodError
 
 
 class OptimSetter:

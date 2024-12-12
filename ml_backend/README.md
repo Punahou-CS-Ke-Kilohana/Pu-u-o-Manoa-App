@@ -84,7 +84,7 @@ criterion = l_setter.get_loss()
 # set optimizer
 o_setter = OptimSetter()
 o_setter.set_hyperparameters()
-optimizer = o_setter.get_optim(model.parameters)
+optimizer = o_setter.get_optim(model.parameters())
 
 ```
 

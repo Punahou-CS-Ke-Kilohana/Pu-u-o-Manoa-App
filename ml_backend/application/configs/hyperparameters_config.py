@@ -34,3 +34,6 @@ hyperparameters_config.optimizer.hyperparams = {
     'differentiable': False,
     'fused': None
 }
+
+# expose to import
+__all__ = ['hyperparameters_config']
