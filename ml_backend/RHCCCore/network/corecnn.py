@@ -173,8 +173,8 @@ class CNNCore(nn.Module):
             # transfer from the dataloader
             images, labels = next(iter(loader))
             _, self._conv_sizes[0], h, w = images.shape
+            _, self._dense_sizes[-1] = labels.shape
             self._in_dims = (h, w)
-            self._dense_sizes[-1] = len(torch.unique(labels))
         elif loader:
             # loader provided, but not as the correct object
             if not self._ikwiad:
@@ -287,10 +287,10 @@ class CNNCore(nn.Module):
             parameters = [{}] * (len(self._dense_sizes) + len(self._conv_sizes) - 1)
         else:
             # check for errors
-            if not (len(methods) == len(parameters) == (len(self._conv_sizes) + len(self._dense_sizes) - 1)):
+            if not (len(methods) == len(parameters) == (len(self._conv_sizes) + len(self._dense_sizes) - 2)):
                 raise ValueError(
                     "Invalid matching of 'params', 'methods', and channels\n"
-                    f"({len(methods)} != {len(parameters)} != {len(self._conv_sizes) + len(self._dense_sizes)})"
+                    f"({len(methods)} != {len(parameters)} != {len(self._conv_sizes) + len(self._dense_sizes) - 2})"
                 )
             if not all([mth in self._allowed_acts for mth in methods]):
                 raise ValueError(
@@ -301,11 +301,6 @@ class CNNCore(nn.Module):
                 raise TypeError("'methods' must be a list")
             if not isinstance(parameters, list):
                 raise TypeError("'parameters' must be a list")
-            if not len(parameters) == len(self._dense_sizes) + len(self._conv_sizes) - 1:
-                raise ValueError(
-                    "'methods' and/or 'parameters' must correspond with the amount of layers in the network\n"
-                    f"({len(self._dense_sizes) + len(self._conv_sizes) - 1})"
-                )
 
         self._act_params = []
         for mthd, prms in zip(methods, parameters):
@@ -405,10 +400,10 @@ class CNNCore(nn.Module):
             # check parameter list
             if not isinstance(parameters, list):
                 raise TypeError("'parameters' must be a list")
-            if len(parameters) != len(self._conv_sizes):
+            if len(parameters) != len(self._conv_sizes) - 1:
                 raise ValueError(
                     "'parameters' length must match conv layers\n"
-                    f"({len(parameters)} != {len(self._conv_sizes)})"
+                    f"({len(parameters)} != {len(self._conv_sizes) - 1})"
                 )
 
         # validate conv params
@@ -497,10 +492,10 @@ class CNNCore(nn.Module):
             # check parameter list
             if not isinstance(parameters, list):
                 raise TypeError("'parameters' must be a list")
-            if len(parameters) != len(self._conv_sizes):
+            if len(parameters) != len(self._conv_sizes) - 1:
                 raise ValueError(
                     "'parameters' length must match conv layers\n"
-                    f"({len(parameters)} != {len(self._conv_sizes)})"
+                    f"({len(parameters)} != {len(self._conv_sizes) - 1})"
                 )
 
         # validate pool params
@@ -549,10 +544,10 @@ class CNNCore(nn.Module):
             # check parameter list
             if not isinstance(parameters, list):
                 raise TypeError("'parameters' must be a list")
-            if len(parameters) != len(self._dense_sizes):
+            if len(parameters) != len(self._dense_sizes) - 1:
                 raise ValueError(
                     "'parameters' length must match dense layers\n"
-                    f"({len(parameters)} != {len(self._dense_sizes)})"
+                    f"({len(parameters)} != {len(self._dense_sizes) - 1})"
                 )
 
         # validate dense params
@@ -633,7 +628,7 @@ class CNNCore(nn.Module):
             )
         self._dense_sizes[0] = final_size
 
-        for i, (conv, pool) in enumerate(zip(self._conv_params[:-1], self._pool_params[:-1])):
+        for i, (conv, pool) in enumerate(zip(self._conv_params, self._pool_params)):
             # set conv and pool layers
             self._conv.append(nn.Conv2d(*self._conv_sizes[i:i + 2], **conv))
             if pool is not None:
@@ -684,6 +679,9 @@ class CNNCore(nn.Module):
                 for act, dense in zip(self._dense_acts, self._dense):
                     x = act(dense(x))
                 return x
+
+        # todo: fix this!!!!!
+        print(self._dense_sizes)
 
         return _forward
 

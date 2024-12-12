@@ -68,6 +68,8 @@ def train(ikwiad: bool = False) -> None:
             inputs, labels = data
             optimizer.zero_grad()
             outputs = model(inputs)
+            print(outputs.shape)
+            print(labels.shape)
             loss = criterion(outputs, labels)
             loss.backward()
             optimizer.step()
