@@ -14,10 +14,10 @@ from RHCCCore.utils import (
     progress
 )
 
-from ..configs.hyperparameters_config import hyperparameters_config
-from ..configs.model_config import model_config
-from ..dataloader.dataloader import loader
-from ..configs.training_config import training_config
+from application.configs.hyperparameters_config import hyperparameters_config
+from application.configs.model_config import model_config
+from application.dataloader.dataloader import loader
+from application.configs.training_config import training_config
 
 
 def train(ikwiad: bool = False) -> None:
