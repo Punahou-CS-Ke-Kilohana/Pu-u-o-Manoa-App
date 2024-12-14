@@ -4,7 +4,7 @@ This file is the execution script for the Pu-u-o-Manoa-App.
 For any questions or issues regarding this file, contact one of the Pu-u-o-Manoa-App developers.
 """
 
-from application.scripts.train import train
+from ml_backend.application.scripts.train import train
 
 
 def main(name: str, *, ikwiad=False) -> None:
@@ -26,12 +26,12 @@ def main(name: str, *, ikwiad=False) -> None:
     methods = {
         'train': train,
         'validate': ...,
-        'execute': ...
+        'interpret': ...
     }
     method_titles = {
         'train': 'Training',
         'validate': 'Validating',
-        'execute': 'Executing'
+        'interpret': 'Interpreting'
     }
     if name not in methods.keys():
         # invalid method
@@ -47,7 +47,9 @@ def main(name: str, *, ikwiad=False) -> None:
 
 
 if __name__ == '__main__':
-    method_name = 'train'
-    possible_methods = ['train', 'validate', 'execute']
+    import torch.multiprocessing as mp
+    from method_selector import method_name
 
+    mp.freeze_support()
+    mp.set_start_method('spawn', force=True)
     main(method_name)

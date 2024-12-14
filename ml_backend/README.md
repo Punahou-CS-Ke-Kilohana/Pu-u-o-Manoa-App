@@ -18,24 +18,25 @@ This file includes the core of the internal code, data to train on, saved models
 - **Images**: The image processing and local images for training the model.
 - **Models**: The trained models.
 - **RHCCCore**: Generalized PyTorch code for building the model.
-- **main.py**: Main execution code, used for training, testing, and validation.
+- **main.py**: Main execution code, used for training, validation.
+- **method_selector.py**: Method selection for the execution.
 
 ----
 
 ## Usage
 
 #### Scripts
-To do anything with this folder, visit the *main.py* file.
-In the top line of the main file, there will be a string specifying the method to be run in that file.
-Change this string to whatever you want the script to execute, and run the file
+The only file that should be run is *main.py*.
+In the top line of the method_selector.py file, there will be a string specifying the method to be run in main.
+Change this string to whatever you want the script to execute, and run main.
 ```python
 method_name = 'train'
-possible_methods = ['train', 'execute', 'validate']
+possible_methods = ['train', 'validate', 'interpret']
 ```
 "train" trains a model.
-"execute" executes the model.
 "validate" validates a model by showing its statistics.
-The files to edit training settings can be found under configs in the application folder, but these should be set to correct values.
+"interpret" interprets inputs with a trained model.
+The files to edit settings for these files can be found under configs in the application folder.
 To add files to train on, visit images and edit the file paths.
 
 ### Backend Basic Usage
