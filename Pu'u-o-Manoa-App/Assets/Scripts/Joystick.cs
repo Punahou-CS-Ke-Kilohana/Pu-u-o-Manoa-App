@@ -19,18 +19,16 @@ public class Joystick : MonoBehaviour, IDragHandler, IPointerUpHandler, IPointer
 
     public Vector2 Direction => inputVector;
 
+    // On Start, initialize the RectTransform components:
+    // - `joystickBackground` is the RectTransform of the parent object (the visible joystick base).
+    // - `joystickHandle` is the RectTransform of the first child (the movable handle the user interacts with).
     private void Start()
     {
         joystickBackground = GetComponent<RectTransform>();
         joystickHandle = transform.GetChild(0).GetComponent<RectTransform>();  // First child is the handle
     }
 
-    //private void Update()
-    //{
-    //    Debug.Log($"Horizontal: {inputVector.x}, Vertical: {inputVector.y}");
-    //}
-
-
+    // OnDrag processes the user's drag input on the joystick
     public void OnDrag(PointerEventData eventData)
     {
         // Convert touch/mouse position to joystick background space
@@ -49,11 +47,16 @@ public class Joystick : MonoBehaviour, IDragHandler, IPointerUpHandler, IPointer
         joystickHandle.anchoredPosition = new Vector2(inputVector.x * (joystickBackground.sizeDelta.x / 2), inputVector.y * (joystickBackground.sizeDelta.y / 2));
     }
 
+    // OnPointerDown is called when the user touches or clicks on the joystick:
+    // - Immediately triggers OnDrag to calculate the initial joystick input and position.
     public void OnPointerDown(PointerEventData eventData)
     {
         OnDrag(eventData);  // Start dragging when pointer goes down
     }
 
+    // OnPointerUp is called when the user releases the joystick:
+    // - Resets the inputVector to (0, 0) to stop movement.
+    // - Returns the joystick handle to its default centered position.
     public void OnPointerUp(PointerEventData eventData)
     {
         inputVector = Vector2.zero;  // Reset input when pointer is lifted
