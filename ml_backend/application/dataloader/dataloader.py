@@ -3,6 +3,7 @@ This module consists of the dataloader for the Pu-u-o-Manoa-App.
 It accesses the images folder in the ml_backend directory for its data.
 
 For any questions or issues regarding this file, contact one of the Pu-u-o-Manoa-App developers.
+todo: make sure this file is compatible with the current format for the images folder.
 """
 
 import torch

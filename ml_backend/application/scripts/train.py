@@ -5,7 +5,6 @@ For any questions or issues regarding this file, contact one of the Pu-u-o-Manoa
 """
 
 import time
-import torch
 
 from RHCCCore.network import CNNCore
 from RHCCCore.utils import (

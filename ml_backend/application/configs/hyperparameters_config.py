@@ -9,6 +9,7 @@ from easydict import EasyDict as Edict
 
 hyperparameters_config = Edict()
 
+# loss hyperparameters
 hyperparameters_config.loss = Edict()
 hyperparameters_config.loss.method = 'CrossEntropyLoss'
 hyperparameters_config.loss.hyperparams = {
@@ -20,6 +21,7 @@ hyperparameters_config.loss.hyperparams = {
     'label_smoothing': 0.0
 }
 
+# optimizer hyperparameters
 hyperparameters_config.optimizer = Edict()
 hyperparameters_config.optimizer.method = 'Adam'
 hyperparameters_config.optimizer.hyperparams = {
