@@ -1,0 +1,3 @@
+Deprecated Folder for outdated, broken, or unused files.
+
+# **DO NOT RUN OR USE ANY CODE IN THIS FOLDER UNLESS YOU SPECIFICALLY KNOW WHAT YOU WANT TO ACCESS IN THIS FOLDER.**
