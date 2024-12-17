@@ -54,6 +54,8 @@ class CNNCore(nn.Module):
         self._allowed_acts = self.allowed_acts()
 
         # internals
+        self.forward = self.forward
+        self.forward_no_grad = self.forward_no_grad
         # internal checkers
         self._ikwiad = ikwiad
         self._instantiations = {
@@ -640,7 +642,7 @@ class CNNCore(nn.Module):
             self._dense.append(nn.Linear(*self._dense_sizes[i:i + 2], **prms))
 
         # set forward method
-        self.forward = self._compile_forward(bool(crossentropy))
+        self.forward, self.forward_no_grad = self._compile_forward(bool(crossentropy))
         self._instantiations['fully_instantiated'] = True
         return None
 
@@ -680,11 +682,44 @@ class CNNCore(nn.Module):
                     x = act(dense(x))
                 return x
 
-        return _forward
+        def _forward_no_grad(x: torch.Tensor) -> torch.Tensor:
+            # set forward w/o grad
+            with torch.no_grad:
+                for act, conv, pool in zip(self._conv_acts, self._conv, self._pool):
+                    x = pool(act(conv(x)))
+                x = torch.flatten(x, 1)
+                for act, dense in zip(self._dense_acts, self._dense):
+                    x = act(dense(x))
+                return x
+
+        return _forward, _forward_no_grad
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         r"""
         Runs a forward pass of the model if the model is fully built.
+        instantiate_model must be run before this function can be run.
+
+        Args:
+            x (torch.Tensor):
+                Inputs to the model.
+
+        Returns:
+            torch.Tensor:
+                Outputs to the model.
+
+        Raises:
+            MissingMethodError: If the model hasn't been fully instantiated.
+        """
+        # model not fully instantiated
+        raise MissingMethodError(
+            "Model wasn't fully instantiated\n"
+            f"({self._instantiations})"
+        )
+
+    def forward_no_grad(self, x: torch.Tensor) -> torch.Tensor:
+        r"""
+        Runs a forward pass of the model if the model is fully built without grad
+        and with the final activation method.
         instantiate_model must be run before this function can be run.
 
         Args:
