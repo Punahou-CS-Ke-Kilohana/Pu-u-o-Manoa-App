@@ -12,14 +12,17 @@ from easydict import EasyDict as Edict
 
 loader_config = Edict()
 
+# image location path
 loader_config.root = os.path.join(os.path.join((os.path.dirname(os.path.dirname(os.path.dirname(__file__)))), 'images', 'local'))
 
-loader_config.transform = {
+# image transformation
+loader_config.transform = transforms.Compose([
     transforms.Resize((256, 256)),
     transforms.ToTensor(),
     transforms.ConvertImageDtype(torch.float)
-}
+])
 
+# dataloader parameters
 loader_config.dataloader_params = {
     'classes': 15,
     'batch_size': 16,

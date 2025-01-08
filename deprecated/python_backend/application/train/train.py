@@ -32,7 +32,7 @@ def train(ikwiad: bool = False):
     # initialize model
     model = CNNCore(ikwiad=bool(ikwiad))
     model.set_channels(conv_channels=model_config.conv.sizes, dense_channels=model_config.dense.sizes)
-    model.transfer_training_params(**model_config.training_params)  # todo: this line is outdated
+    model.transfer_training_params(**model_config.training_params)  # this line is outdated
     model.set_acts(methods=model_config.acts.methods, parameters=model_config.acts.params)
     model.set_conv(parameters=model_config.conv.conv_params)
     model.set_pool(parameters=model_config.conv.pool_params)

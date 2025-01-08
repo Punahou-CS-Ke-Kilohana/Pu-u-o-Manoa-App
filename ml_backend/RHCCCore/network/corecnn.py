@@ -51,9 +51,11 @@ class CNNCore(nn.Module):
         super(CNNCore, self).__init__()
 
         # allowed activations list
-        self._allowed_acts = self.allowed_acts
+        self._allowed_acts = self.allowed_acts()
 
         # internals
+        self.forward = self.forward
+        self.forward_no_grad = self.forward_no_grad
         # internal checkers
         self._ikwiad = ikwiad
         self._instantiations = {
@@ -173,8 +175,8 @@ class CNNCore(nn.Module):
             # transfer from the dataloader
             images, labels = next(iter(loader))
             _, self._conv_sizes[0], h, w = images.shape
+            _, self._dense_sizes[-1] = labels.shape
             self._in_dims = (h, w)
-            self._dense_sizes[-1] = len(torch.unique(labels))
         elif loader:
             # loader provided, but not as the correct object
             if not self._ikwiad:
@@ -282,15 +284,15 @@ class CNNCore(nn.Module):
 
         if methods is None:
             # set default activators
-            methods = ['ReLU'] * (len(self._dense_sizes) + len(self._conv_sizes) - 2)
+            methods = ['ReLU'] * (len(self._dense_sizes) + len(self._conv_sizes) - 3)
             methods.append('Softmax')
-            parameters = [{}] * (len(self._dense_sizes) + len(self._conv_sizes) - 1)
+            parameters = [{}] * (len(self._dense_sizes) + len(self._conv_sizes) - 2)
         else:
             # check for errors
-            if not (len(methods) == len(parameters) == (len(self._conv_sizes) + len(self._dense_sizes))):
+            if not (len(methods) == len(parameters) == (len(self._conv_sizes) + len(self._dense_sizes) - 2)):
                 raise ValueError(
                     "Invalid matching of 'params', 'methods', and channels\n"
-                    f"({len(methods)} != {len(parameters)} != {len(self._conv_sizes) + len(self._dense_sizes)})"
+                    f"({len(methods)} != {len(parameters)} != {len(self._conv_sizes) + len(self._dense_sizes) - 2})"
                 )
             if not all([mth in self._allowed_acts for mth in methods]):
                 raise ValueError(
@@ -301,11 +303,6 @@ class CNNCore(nn.Module):
                 raise TypeError("'methods' must be a list")
             if not isinstance(parameters, list):
                 raise TypeError("'parameters' must be a list")
-            if not len(parameters) == len(self._dense_sizes) + len(self._conv_sizes) - 1:
-                raise ValueError(
-                    "'methods' and/or 'parameters' must correspond with the amount of layers in the network\n"
-                    f"({len(self._dense_sizes) + len(self._conv_sizes) - 1})"
-                )
 
         self._act_params = []
         for mthd, prms in zip(methods, parameters):
@@ -369,7 +366,7 @@ class CNNCore(nn.Module):
                         or (isinstance(x, tuple) and len(x) == 2 and all(isinstance(i, int) and 0 < i for i in x))
                 ),
                 'padding': lambda x: (
-                        (isinstance(x, int) and 0 < x)
+                        (isinstance(x, int) and 0 <= x)
                         or (isinstance(x, tuple) and len(x) == 2 and all(isinstance(i, int) and 0 < i for i in x))
                 ),
                 'dilation': lambda x: (
@@ -405,10 +402,10 @@ class CNNCore(nn.Module):
             # check parameter list
             if not isinstance(parameters, list):
                 raise TypeError("'parameters' must be a list")
-            if len(parameters) != len(self._conv_sizes):
+            if len(parameters) != len(self._conv_sizes) - 1:
                 raise ValueError(
                     "'parameters' length must match conv layers\n"
-                    f"({len(parameters)} != {len(self._conv_sizes)})"
+                    f"({len(parameters)} != {len(self._conv_sizes) - 1})"
                 )
 
         # validate conv params
@@ -458,12 +455,12 @@ class CNNCore(nn.Module):
                         (isinstance(x, int) and 0 < x)
                         or (isinstance(x, tuple) and len(x) == 2 and all(isinstance(i, int) and 0 < i for i in x))
                 ),
-                'stride': lambda x: (
+                'stride': lambda x: x is None or (
                         (isinstance(x, int) and 0 < x)
                         or (isinstance(x, tuple) and len(x) == 2 and all(isinstance(i, int) and 0 < i for i in x))
                 ),
                 'padding': lambda x: (
-                        (isinstance(x, int) and 0 < x)
+                        (isinstance(x, int) and 0 <= x)
                         or (isinstance(x, tuple) and len(x) == 2 and all(isinstance(i, int) and 0 < i for i in x))
                 ),
                 'dilation': lambda x: (
@@ -497,10 +494,10 @@ class CNNCore(nn.Module):
             # check parameter list
             if not isinstance(parameters, list):
                 raise TypeError("'parameters' must be a list")
-            if len(parameters) != len(self._conv_sizes):
+            if len(parameters) != len(self._conv_sizes) - 1:
                 raise ValueError(
                     "'parameters' length must match conv layers\n"
-                    f"({len(parameters)} != {len(self._conv_sizes)})"
+                    f"({len(parameters)} != {len(self._conv_sizes) - 1})"
                 )
 
         # validate pool params
@@ -549,10 +546,10 @@ class CNNCore(nn.Module):
             # check parameter list
             if not isinstance(parameters, list):
                 raise TypeError("'parameters' must be a list")
-            if len(parameters) != len(self._dense_sizes):
+            if len(parameters) != len(self._dense_sizes) - 1:
                 raise ValueError(
                     "'parameters' length must match dense layers\n"
-                    f"({len(parameters)} != {len(self._conv_sizes)})"
+                    f"({len(parameters)} != {len(self._dense_sizes) - 1})"
                 )
 
         # validate dense params
@@ -645,7 +642,7 @@ class CNNCore(nn.Module):
             self._dense.append(nn.Linear(*self._dense_sizes[i:i + 2], **prms))
 
         # set forward method
-        self.forward = self._compile_forward(bool(crossentropy))
+        self.forward, self.forward_no_grad = self._compile_forward(bool(crossentropy))
         self._instantiations['fully_instantiated'] = True
         return None
 
@@ -685,11 +682,44 @@ class CNNCore(nn.Module):
                     x = act(dense(x))
                 return x
 
-        return _forward
+        def _forward_no_grad(x: torch.Tensor) -> torch.Tensor:
+            # set forward w/o grad
+            with torch.no_grad:
+                for act, conv, pool in zip(self._conv_acts, self._conv, self._pool):
+                    x = pool(act(conv(x)))
+                x = torch.flatten(x, 1)
+                for act, dense in zip(self._dense_acts, self._dense):
+                    x = act(dense(x))
+                return x
+
+        return _forward, _forward_no_grad
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         r"""
         Runs a forward pass of the model if the model is fully built.
+        instantiate_model must be run before this function can be run.
+
+        Args:
+            x (torch.Tensor):
+                Inputs to the model.
+
+        Returns:
+            torch.Tensor:
+                Outputs to the model.
+
+        Raises:
+            MissingMethodError: If the model hasn't been fully instantiated.
+        """
+        # model not fully instantiated
+        raise MissingMethodError(
+            "Model wasn't fully instantiated\n"
+            f"({self._instantiations})"
+        )
+
+    def forward_no_grad(self, x: torch.Tensor) -> torch.Tensor:
+        r"""
+        Runs a forward pass of the model if the model is fully built without grad
+        and with the final activation method.
         instantiate_model must be run before this function can be run.
 
         Args:

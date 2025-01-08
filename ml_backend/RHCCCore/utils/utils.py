@@ -165,13 +165,13 @@ class ParamChecker:
             # datatype check
             if not isinstance(prm, self._dtypes[key]):
                 raise ValueError(
-                    f"Invalid datatype for '{self._name}': '{prm}'\n"
-                    f"Choose from: {self._dtypes[prm]}"
+                    f"Invalid datatype for '{self._name}' '{key}': '{prm}'\n"
+                    f"Choose from: {self._dtypes[key]}"
                 )
             if not self._vtypes[key](prm):
                 raise ValueError(
-                    f"Invalid value for '{self._name}': '{prm}'\n"
-                    f"Failed conditional: {self._vtypes[prm]}"
+                    f"Invalid value for '{self._name}' '{key}': '{prm}'\n"
+                    f"Failed conditional: {self._vtypes[key]}"
                 )
             # set parameter
             final[key] = self._ctypes[key](prm)
@@ -204,10 +204,10 @@ def progress(idx: int, max_idx: int, *, desc: Optional[str] = None, b_len: int =
     """
     if not isinstance(idx, int):
         raise TypeError("'idx' must be an integer")
-    if not isinstance(max_idx, int):
-        raise TypeError("'max_idx' must be an integer")
-    if not isinstance(b_len, int):
-        raise TypeError("'b_len' must be an integer")
+    if not (isinstance(max_idx, int) and 0 < max_idx):
+        raise TypeError("'max_idx' must be a positive integer")
+    if not (isinstance(b_len, int) and 0 < b_len):
+        raise TypeError("'b_len' must be a positive integer")
     # completed progress
     completed = (idx + 1) / max_idx
     # make progress bar

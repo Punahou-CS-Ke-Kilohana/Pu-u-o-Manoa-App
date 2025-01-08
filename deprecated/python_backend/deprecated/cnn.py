@@ -758,5 +758,5 @@ class TorchCNN(torch.nn.Module):
                 loss.backward()
                 self._optim.step()
                 running_loss += loss.item()
-                # todo: status bar
+                # status bar
             print(running_loss)

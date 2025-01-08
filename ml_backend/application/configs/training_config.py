@@ -13,12 +13,18 @@ from easydict import EasyDict as Edict
 
 training_config = Edict()
 
+# load path
+training_config.loaded_model = None
+
+# iteration saving settings
 training_config.save_params = {
     'save_root': os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'models'),
     'save_name': f"model_{datetime.datetime.now().year}_{datetime.datetime.now().month}_{datetime.datetime.now().day}"
 }
+training_config.save_gap = 25
 
-training_config.epochs = 1_000
+# epochs
+training_config.epochs = 500
 
 # expose to import
 __all__ = ['training_config']

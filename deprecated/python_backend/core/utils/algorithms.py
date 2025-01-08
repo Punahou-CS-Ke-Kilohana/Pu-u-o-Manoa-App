@@ -4,7 +4,6 @@ It contains an optimizer setter and loss setter.
 
 For any questions or issues regarding this file, contact one of the Pu-u-o-Manoa-App developers.
 """
-# todo: clean up some code and add docstrings to this file
 
 from typing import Iterator, Optional, Union
 import torch.optim
