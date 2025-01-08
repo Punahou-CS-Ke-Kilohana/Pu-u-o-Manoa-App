@@ -247,7 +247,7 @@ def convert_time(seconds: Union[float, int]) -> str:
 # from types import LambdaType
 # import warnings
 #
-# 
+#
 # class Params:
 #     def __init__(
 #             self,
