@@ -125,10 +125,11 @@ def downloadImages(image_urls, species, outputDir):
         except requests.exceptions.RequestException as e:
             print(f"Failed to download {img_url}: {e}")
 
+species_name = [] # Replace with your test species
 # Example usage:
-species_name = "Hibiscus"  # Replace with your test species
-output_directory = "./species_images"  # Replace with your desired output directory
-image_number = 500
-image_urls = scrapeImageUrls(species_name, output_directory, image_number)
-if image_urls:
-    downloadImages(image_urls, species_name, output_directory)
+for i in len(species_name)
+    output_directory = f"./{species_name}"  # Replace with your desired output directory
+    image_number = 1000
+    image_urls = scrapeImageUrls(species_name, output_directory, image_number)
+    if image_urls:
+        downloadImages(image_urls, species_name, output_directory)
