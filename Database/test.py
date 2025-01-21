@@ -125,10 +125,13 @@ def downloadImages(image_urls, species, outputDir):
         except requests.exceptions.RequestException as e:
             print(f"Failed to download {img_url}: {e}")
 
+species_name = ["Aalii", "Akia"]  # Replace with your test species
 # Example usage:
-species_name = "Hibiscus"  # Replace with your test species
-output_directory = "./species_images"  # Replace with your desired output directory
-image_number = 500
-image_urls = scrapeImageUrls(species_name, output_directory, image_number)
-if image_urls:
-    downloadImages(image_urls, species_name, output_directory)
+for species in species_name:
+    output_directory = f"./{species}"  # Creates a folder for each species
+    os.makedirs(output_directory, exist_ok=True)  # Create the folder if it doesn't exist
+    image_number = 1000  # Set the number of images to scrape for each species
+    image_urls = scrapeImageUrls(species, output_directory, image_number)  # Assuming this function takes these parameters
+    if image_urls:
+        downloadImages(image_urls, species, output_directory)  # Assuming this function takes these parameters
+
