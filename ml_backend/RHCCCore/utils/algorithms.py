@@ -10,7 +10,7 @@ import torch.optim
 import torch.optim as optim
 import torch.nn as nn
 
-from .utils import ParamChecker
+from .utils import Params, ParamChecker
 from .errors import MissingMethodError
 
 
@@ -84,8 +84,8 @@ class OptimSetter:
         """
         # optim hyperparameter reference
         optim_hyperparams = {
-            'Adagrad': {
-                'default': {
+            'Adagrad': Params(
+                default={
                     'lr': 0.01,
                     'lr_decay': 0.0,
                     'weight_decay': 0.0,
@@ -96,7 +96,7 @@ class OptimSetter:
                     'differentiable': False,
                     'fused': None
                 },
-                'dtypes': {
+                dtypes={
                     'lr': (float, int),
                     'lr_decay': (float, int),
                     'weight_decay': (float, int),
@@ -107,7 +107,7 @@ class OptimSetter:
                     'differentiable': (bool, int),
                     'fused': (type(None), bool, int)
                 },
-                'vtypes': {
+                vtypes={
                     'lr': lambda x: 0 < x,
                     'lr_decay': lambda x: 0 <= x,
                     'weight_decay': lambda x: 0 <= x,
@@ -118,7 +118,7 @@ class OptimSetter:
                     'differentiable': lambda x: True,
                     'fused': lambda x: True
                 },
-                'ctypes': {
+                ctypes={
                     'lr': lambda x: float(x),
                     'lr_decay': lambda x: float(x),
                     'weight_decay': lambda x: float(x),
@@ -129,9 +129,9 @@ class OptimSetter:
                     'differentiable': lambda x: bool(x),
                     'fused': lambda x: bool(x) if x is not None else None
                 }
-            },
-            'Adam': {
-                'default': {
+            ),
+            'Adam': Params(
+                default={
                     'lr': 0.01,
                     'betas': (0.9, 0.999),
                     'eps': 1e-08,
@@ -143,7 +143,7 @@ class OptimSetter:
                     'differentiable': False,
                     'fused': None
                 },
-                'dtypes': {
+                dtypes={
                     'lr': (float, int),
                     'betas': tuple,
                     'eps': float,
@@ -155,7 +155,7 @@ class OptimSetter:
                     'differentiable': (bool, int),
                     'fused': (type(None), bool, int)
                 },
-                'vtypes': {
+                vtypes={
                     'lr': lambda x: 0 < x,
                     'betas': lambda x: len(x) == 2 and (isinstance(itm, float) and 0 < itm < 1 for itm in x),
                     'eps': lambda x: 0 < x < 1,
@@ -167,7 +167,7 @@ class OptimSetter:
                     'differentiable': lambda x: True,
                     'fused': lambda x: True
                 },
-                'ctypes': {
+                ctypes={
                     'lr': lambda x: float(x),
                     'betas': lambda x: x,
                     'eps': lambda x: x,
@@ -179,9 +179,9 @@ class OptimSetter:
                     'differentiable': lambda x: bool(x),
                     'fused': lambda x: bool(x) if x is not None else None
                 }
-            },
-            'AdamW': {
-                'default': {
+            ),
+            'AdamW': Params(
+                default={
                     'lr': 0.01,
                     'betas': (0.9, 0.999),
                     'eps': 1e-08,
@@ -193,7 +193,7 @@ class OptimSetter:
                     'differentiable': False,
                     'fused': None
                 },
-                'dtypes': {
+                dtypes={
                     'lr': (float, int),
                     'betas': tuple,
                     'eps': float,
@@ -205,7 +205,7 @@ class OptimSetter:
                     'differentiable': (bool, int),
                     'fused': (type(None), bool, int)
                 },
-                'vtypes': {
+                vtypes={
                     'lr': lambda x: 0 < x,
                     'betas': lambda x: len(x) == 2 and (isinstance(itm, float) and 0 < itm < 1 for itm in x),
                     'eps': lambda x: 0 < x < 1,
@@ -217,7 +217,7 @@ class OptimSetter:
                     'differentiable': lambda x: True,
                     'fused': lambda x: True
                 },
-                'ctypes': {
+                ctypes={
                     'lr': lambda x: float(x),
                     'betas': lambda x: x,
                     'eps': lambda x: x,
@@ -229,9 +229,9 @@ class OptimSetter:
                     'differentiable': lambda x: bool(x),
                     'fused': lambda x: bool(x) if x is not None else None
                 }
-            },
-            'RMSprop': {
-                'default': {
+            ),
+            'RMSprop': Params(
+                default={
                     'lr': 0.01,
                     'alpha': 0.99,
                     'eps': 1e-08,
@@ -243,7 +243,7 @@ class OptimSetter:
                     'maximize': False,
                     'differentiable': False
                 },
-                'dtypes': {
+                dtypes={
                     'lr': (float, int),
                     'alpha': float,
                     'eps': float,
@@ -255,7 +255,7 @@ class OptimSetter:
                     'maximize': (bool, int),
                     'differentiable': (bool, int)
                 },
-                'vtypes': {
+                vtypes={
                     'lr': lambda x: 0 < x,
                     'alpha': lambda x: 0 < x < 1,
                     'eps': lambda x: 0 < x < 1,
@@ -267,7 +267,7 @@ class OptimSetter:
                     'maximize': lambda x: True,
                     'differentiable': lambda x: True,
                 },
-                'ctypes': {
+                ctypes={
                     'lr': lambda x: float(x),
                     'alpha': lambda x: x,
                     'eps': lambda x: x,
@@ -279,9 +279,9 @@ class OptimSetter:
                     'maximize': lambda x: bool(x),
                     'differentiable': lambda x: bool(x),
                 }
-            },
-            'SGD': {
-                'default': {
+            ),
+            'SGD': Params(
+                default={
                     'lr': 0.01,
                     'momentum': 0.0,
                     'dampening': 0.0,
@@ -292,7 +292,7 @@ class OptimSetter:
                     'differentiable': False,
                     'fused': None
                 },
-                'dtypes': {
+                dtypes={
                     'lr': (float, int),
                     'momentum': float,
                     'dampening': float,
@@ -303,7 +303,7 @@ class OptimSetter:
                     'differentiable': (bool, int),
                     'fused': (type(None), bool, int)
                 },
-                'vtypes': {
+                vtypes={
                     'lr': lambda x: 0 < x,
                     'momentum': lambda x: 0 <= x < 1,
                     'dampening': lambda x: 0 < x < 1,
@@ -314,7 +314,7 @@ class OptimSetter:
                     'differentiable': lambda x: True,
                     'fused': lambda x: True
                 },
-                'ctypes': {
+                ctypes={
                     'lr': lambda x: float(x),
                     'momentum': lambda x: x,
                     'dampening': lambda x: x,
@@ -325,7 +325,7 @@ class OptimSetter:
                     'differentiable': lambda x: bool(x),
                     'fused': lambda x: bool(x) if x is not None else None
                 }
-            }
+            )
         }
 
         # check types and methods
@@ -338,12 +338,15 @@ class OptimSetter:
             )
 
         # check hyperparameters
-        optim_checker = ParamChecker(name=f'{method} Parameters', ikwiad=self._ikwiad)
-        optim_checker.set_types(**optim_hyperparams[method])
+        optim_checker = ParamChecker(
+            prefix=f'{method} Parameters',
+            parameters=optim_hyperparams[method],
+            ikwiad=self._ikwiad
+        )
 
         # set internal hyperparameters
         self._method = method
-        self._hyperparameters = optim_checker.check_params(hyperparameters, **kwargs)
+        self._hyperparameters = optim_checker(hyperparameters, **kwargs)
         return None
 
     def get_optim(self, parameters: Union[Iterator[nn.Parameter], nn.Parameter]) -> optim.Optimizer:
@@ -446,8 +449,8 @@ class LossSetter:
         """
         # loss hyperparameter reference
         loss_hyperparams = {
-            'CrossEntropyLoss': {
-                'default': {
+            'CrossEntropyLoss': Params(
+                default={
                     'weight': None,
                     'size_average': None,
                     'ignore_index': -100,
@@ -455,7 +458,7 @@ class LossSetter:
                     'reduction': 'mean',
                     'label_smoothing': 0.0
                 },
-                'dtypes': {
+                dtypes={
                     'weight': (type(None), torch.Tensor),
                     'size_average': (type(None), bool, int),
                     'ignore_index': int,
@@ -463,7 +466,7 @@ class LossSetter:
                     'reduction': str,
                     'label_smoothing': (float, int)
                 },
-                'vtypes': {
+                vtypes={
                     'weight': lambda x: True,
                     'size_average': lambda x: True,
                     'ignore_index': lambda x: True,
@@ -471,7 +474,7 @@ class LossSetter:
                     'reduction': lambda x: x in ['none', 'mean', 'sum'],
                     'label_smoothing': lambda x: 0 <= x <= 1
                 },
-                'ctypes': {
+                ctypes={
                     'weight': lambda x: x,
                     'size_average': lambda x: bool(x) if x is not None else None,
                     'ignore_index': lambda x: x,
@@ -479,51 +482,51 @@ class LossSetter:
                     'reduction': lambda x: x,
                     'label_smoothing': lambda x: float(x)
                 }
-            },
-            'MSELoss': {
-                'default': {
+            ),
+            'MSELoss': Params(
+                default={
                     'size_average': None,
                     'reduce': None,
                     'reduction': 'mean'
                 },
-                'dtypes': {
+                dtypes={
                     'size_average': (type(None), bool, int),
                     'reduce': (type(None), bool, int),
                     'reduction': str
                 },
-                'vtypes': {
+                vtypes={
                     'size_average': lambda x: True,
                     'reduce': lambda x: True,
                     'reduction': lambda x: x in ['none', 'mean', 'sum']
                 },
-                'ctypes': {
+                ctypes={
                     'size_average': lambda x: bool(x) if x is not None else None,
                     'reduce': lambda x: bool(x) if x is not None else None,
                     'reduction': lambda x: x
                 }
-            },
-            'L1Loss': {
-                'default': {
+            ),
+            'L1Loss': Params(
+                default={
                     'size_average': None,
                     'reduce': None,
                     'reduction': 'mean'
                 },
-                'dtypes': {
+                dtypes={
                     'size_average': (type(None), bool, int),
                     'reduce': (type(None), bool, int),
                     'reduction': str
                 },
-                'vtypes': {
+                vtypes={
                     'size_average': lambda x: True,
                     'reduce': lambda x: True,
                     'reduction': lambda x: x in ['none', 'mean', 'sum']
                 },
-                'ctypes': {
+                ctypes={
                     'size_average': lambda x: bool(x) if x is not None else None,
                     'reduce': lambda x: bool(x) if x is not None else None,
                     'reduction': lambda x: x
                 }
-            }
+            )
         }
 
         # check types and methods
@@ -536,12 +539,15 @@ class LossSetter:
             )
 
         # check hyperparameters
-        loss_checker = ParamChecker(name=f'{method} Parameters', ikwiad=self._ikwiad)
-        loss_checker.set_types(**loss_hyperparams[method])
+        loss_checker = ParamChecker(
+            prefix=f'{method} Parameters',
+            parameters=loss_hyperparams[method],
+            ikwiad=self._ikwiad
+        )
 
         # set internal hyperparameters
         self._method = method
-        self._hyperparameters = loss_checker.check_params(hyperparameters, **kwargs)
+        self._hyperparameters = loss_checker(hyperparameters, **kwargs)
         return None
 
     def get_loss(self) -> nn.Module:
