@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class NewBehaviourScript : MonoBehaviour
 {
-    public float startLat = 3.5f;
-    public float startLon = 0.1f;
+    public double startLat = 21.1816;
+    public double startLon = 157.4930;
 
     // Start is called before the first frame update
     void Start()
@@ -21,7 +21,10 @@ public class NewBehaviourScript : MonoBehaviour
 
     void Place(float Latitude, float Longitude, string image)
     {
+        double yPos = Longitude - startLon;
+        double xPos = Latitude - startLat;
 
+        // create image with yPos and xPos using image
     }
 
 }
