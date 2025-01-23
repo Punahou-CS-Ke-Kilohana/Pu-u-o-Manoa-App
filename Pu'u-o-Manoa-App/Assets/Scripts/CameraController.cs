@@ -2,25 +2,25 @@ using UnityEngine;
 
 public class FirstPersonCamera : MonoBehaviour
 {
-    public float mouseSensitivity = 1000f;
+    public float sensitivity = 1000f;
     public Transform playerBody;
+    public POVJoystick povJoystick; // Reference to the POVJoystick script
 
-    float xRotation = 0f;
-
-    void Start()
-    {
-        // Locks Cursor
-        // Cursor.lockState = CursorLockMode.Locked;
-    }
+    private float xRotation = 0f;
 
     void Update()
     {
-        //float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
-        //float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
+        // Get joystick input
+        float joystickX = povJoystick.Direction.x; // Horizontal input
+        float joystickY = povJoystick.Direction.y; // Vertical input
 
-        //playerBody.Rotate(Vector3.up * mouseX);
+        // Rotate player body horizontally
+        float mouseX = joystickX * sensitivity * Time.deltaTime;
+        playerBody.Rotate(Vector3.up * mouseX);
 
-        //xRotation -= mouseY;
+        // Rotate camera vertically
+        float mouseY = joystickY * sensitivity * Time.deltaTime;
+        xRotation -= mouseY;
         xRotation = Mathf.Clamp(xRotation, -90f, 90f);
 
         transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
