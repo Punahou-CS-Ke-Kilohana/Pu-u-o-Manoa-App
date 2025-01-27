@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement; // switching scenes
 using System.IO; // for files
 using System; // for timestamps
+//using ImagePlacer;
 
 public class CapImg : MonoBehaviour
 {
@@ -14,6 +15,7 @@ public class CapImg : MonoBehaviour
     // variables for the image display and take picture button
     public RawImage cameraDisplay; 
     public Button captureButton; 
+    public ImagePlacer imagePlacer;
 
     void Start()
     {
@@ -22,6 +24,8 @@ public class CapImg : MonoBehaviour
         cameraDisplay.texture = webcam;
         cameraDisplay.material.mainTexture = webcam;
         webcam.Play();
+
+        imagePlacer = GameObject.Find("ImagePlacerManager").GetComponent<ImagePlacer>();
 
         // Attach "CapturePhotoAndNavigate" to the onClick event of the camera button
         if (captureButton != null)
@@ -77,6 +81,8 @@ public class CapImg : MonoBehaviour
             // Stop the webcam
             webcam.Stop();
             Debug.Log("Webcam has been stopped.");
+
+            imagePlacer.Place(21.1816f, 157.4930f, "e");
         }
         else
         {

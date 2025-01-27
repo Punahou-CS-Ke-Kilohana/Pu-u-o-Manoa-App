@@ -2,10 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NewBehaviourScript : MonoBehaviour
+public class ImagePlacer : MonoBehaviour
 {
-    public double startLat = 21.1816;
-    public double startLon = 157.4930;
+    public float startLat = 21.1816f;
+    public float startLon = 157.4930f;
+    public GameObject imagePrefab; 
+    
 
     // Start is called before the first frame update
     void Start()
@@ -19,12 +21,15 @@ public class NewBehaviourScript : MonoBehaviour
         
     }
 
-    void Place(float Latitude, float Longitude, string image)
+    public void Place(float Latitude, float Longitude, string image_loc)
     {
-        double yPos = Longitude - startLon;
-        double xPos = Latitude - startLat;
+        float xPos = Longitude - startLon;
+        float zPos = Latitude - startLat;
 
         // create image with yPos and xPos using image
+        Vector3 spawnPos = new Vector3(xPos, 100f, zPos);
+        GameObject image = Instantiate(imagePrefab, spawnPos, Quaternion.identity);
+
     }
 
 }
