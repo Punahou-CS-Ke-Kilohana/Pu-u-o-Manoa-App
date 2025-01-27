@@ -122,40 +122,7 @@ public class PlayerController : MonoBehaviour
         {
             this.Move(moveDirection * speedMultiplier);
         }
-
-
-
-        // Access the joystick input data
-
-        //Vector3 moveDirection = Vector3.zero;
-        //Vector3 newDirection = new Vector3(Direction.x, Direction.y, 0);
-
-        //if (newDirection.y > 0)
-        //{
-        //    this.Move(moveDirection += newDirection * speedMultiplier);
-        //}
-        //if (newDirection.y < 0)
-        //{
-        //    this.Move(moveDirection -= newDirection * speedMultiplier);
-        //}
-        //if (newDirection.x < 0)
-        //{
-        //    this.Move(moveDirection -= newDirection * speedMultiplier);
-        //}
-        //if (newDirection.x > 0)
-        //{
-        //    this.Move(moveDirection += newDirection * speedMultiplier);
-        //}
     }
-
-    //    //Debug.Log($"Joystick Horizontal: {horizontal}, Vertical: {vertical}");
-
-    //    // Create a movement direction based on the joystick input and camera orientation
-    //    //Vector3 moveDirection = (cameraForward * vertical + cameraRight * horizontal).normalized;
-
-    //    //// Use the move direction to move the player
-    //    //this.Move(moveDirection += cameraForward * speedMultiplier);
-    //
 
     private void LimitSpeed()
     {
