@@ -11,7 +11,7 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
 
-from ..utils.utils import ParamChecker
+from ..utils.utils import Params, ParamChecker
 from ..utils.errors import (
     AlreadySetError,
     MissingMethodError
@@ -225,54 +225,46 @@ class CNNCore(nn.Module):
         """
         # activation parameter reference
         act_params = {
-            'ReLU': {
-                'default': {'inplace': False},
-                'dtypes': {'inplace': (bool, int)},
-                'vtypes': {'inplace': lambda x: True},
-                'ctypes': {'inplace': lambda x: bool(x)}
-            },
-            'Softplus': {
-                'default': {
+            'ReLU': Params(
+                default={'inplace': False},
+                dtypes={'inplace': (bool, int)},
+                vtypes={'inplace': lambda x: True},
+                ctypes={'inplace': lambda x: bool(x)}
+            ),
+            'Softplus': Params(
+                default={
                     'beta': 1.0,
                     'threshold': 20.0
                 },
-                'dtypes': {
+                dtypes={
                     'beta': (float, int),
                     'threshold': (float, int)
                 },
-                'vtypes': {
+                vtypes={
                     'beta': lambda x: 0 < x,
                     'threshold': lambda x: 0 < x
                 },
-                'ctypes': {
+                ctypes={
                     'beta': lambda x: float(x),
                     'threshold': lambda x: float(x)
                 }
-            },
-            'Softmax': {
-                'default': {'dim': None},
-                'dtypes': {'dim': (type(None), int)},
-                'vtypes': {'dim': lambda x: True},
-                'ctypes': {'dim': lambda x: x}
-            },
-            'Tanh': {
-                'default': None,
-                'dtypes': None,
-                'vtypes': None,
-                'ctypes': None
-            },
-            'Sigmoid': {
-                'default': None,
-                'dtypes': None,
-                'vtypes': None,
-                'ctypes': None
-            },
-            'Mish': {
-                'default': {'inplace': False},
-                'dtypes': {'inplace': (bool, int)},
-                'vtypes': {'inplace': lambda x: True},
-                'ctypes': {'inplace': lambda x: bool(x)}
-            }
+            ),
+            'Softmax': Params(
+                default={'dim': None},
+                dtypes={'dim': (type(None), int)},
+                vtypes={'dim': lambda x: True},
+                ctypes={'dim': lambda x: x}
+            ),
+            'Tanh': Params(
+            ),
+            'Sigmoid': Params(
+            ),
+            'Mish': Params(
+                default={'inplace': False},
+                dtypes={'inplace': (bool, int)},
+                vtypes={'inplace': lambda x: True},
+                ctypes={'inplace': lambda x: bool(x)}
+            )
         }
 
         # check for channel set
@@ -307,11 +299,14 @@ class CNNCore(nn.Module):
         self._act_params = []
         for mthd, prms in zip(methods, parameters):
             # set activation objects
-            act_checker = ParamChecker(name=f'Activator Parameters ({mthd})', ikwiad=self._ikwiad)
-            act_checker.set_types(**act_params[mthd])
+            act_checker = ParamChecker(
+                prefix=f'Activator parameters ({mthd})',
+                parameters=act_params[mthd],
+                ikwiad=self._ikwiad
+            )
             self._act_params.append({
                 'mthd': mthd,
-                'prms': act_checker.check_params(prms)
+                'prms': act_checker(prms)
             })
 
         self._instantiations['activators'] = True
@@ -336,8 +331,7 @@ class CNNCore(nn.Module):
             ValueError: If invalid values were passed for any of the parameters.
         """
         # instantiate parameter checker
-        conv_checker = ParamChecker(name='Convolutional Parameters', ikwiad=self._ikwiad)
-        conv_checker.set_types(
+        conv_params = Params(
             default={
                 'kernel_size': 3,
                 'stride': 1,
@@ -387,6 +381,7 @@ class CNNCore(nn.Module):
                 'padding_mode': lambda x: x
             }
         )
+        conv_checker = ParamChecker(prefix='Convolutional Parameters', parameters=conv_params, ikwiad=self._ikwiad)
 
         # check for channel set
         if not self._instantiations['channels']:
@@ -409,7 +404,7 @@ class CNNCore(nn.Module):
                 )
 
         # validate conv params
-        self._conv_params = [conv_checker.check_params(prm) for prm in parameters]
+        self._conv_params = [conv_checker(prm) for prm in parameters]
         self._instantiations['convolutional'] = True
         return None
 
@@ -432,8 +427,7 @@ class CNNCore(nn.Module):
                 ValueError: If invalid values were passed for any of the parameters.
             """
         # instantiate parameter checker
-        pool_checker = ParamChecker(name='Pooling Parameters', ikwiad=self._ikwiad)
-        pool_checker.set_types(
+        pool_params = Params(
             default={
                 'kernel_size': 3,
                 'stride': None,
@@ -479,6 +473,7 @@ class CNNCore(nn.Module):
                 'ceil_mode': lambda x: bool(x)
             }
         )
+        pool_checker = ParamChecker(prefix='Pooling Parameters', parameters=pool_params, ikwiad=self._ikwiad)
 
         # check for channel set
         if not self._instantiations['channels']:
@@ -501,7 +496,7 @@ class CNNCore(nn.Module):
                 )
 
         # validate pool params
-        self._pool_params = [pool_checker.check_params(prm) if prm is not None else None for prm in parameters]
+        self._pool_params = [pool_checker(prm) if prm is not None else None for prm in parameters]
         self._instantiations['pooling'] = True
         return None
 
@@ -524,13 +519,13 @@ class CNNCore(nn.Module):
             ValueError: If invalid values were passed for any of the parameters.
         """
         # initialize parameter checker
-        dense_checker = ParamChecker(name='Dense Parameters', ikwiad=self._ikwiad)
-        dense_checker.set_types(
+        dense_params = Params(
             default={'bias': True},
             dtypes={'bias': (bool, int)},
             vtypes={'bias': lambda x: True},
             ctypes={'bias': lambda x: bool(x)}
         )
+        dense_checker = ParamChecker(prefix='Dense Parameters', parameters=dense_params, ikwiad=self._ikwiad)
 
         # check for channel set
         if not self._instantiations['channels']:
@@ -553,7 +548,7 @@ class CNNCore(nn.Module):
                 )
 
         # validate dense params
-        self._dense_params = [dense_checker.check_params(prm) for prm in parameters]
+        self._dense_params = [dense_checker(prm) for prm in parameters]
         self._instantiations['dense'] = True
         return None
 

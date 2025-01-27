@@ -80,8 +80,8 @@ class Params:
     """
     def __init__(
             self,
-            default: Union[Dict[str, Union[int, float, str, bool]], None] = None,
-            dtypes: Union[Dict[str, Union[tuple, any]], None] = None,
+            default: Union[Dict[str, Union[int, float, str, bool, None]], None] = None,
+            dtypes: Union[Dict[str, Union[tuple, any, None]], None] = None,
             vtypes: Union[Dict[str, Callable], None] = None,
             ctypes: Union[Dict[str, Callable], None] = None
     ):
@@ -125,7 +125,7 @@ class Params:
         # check default
         if (
                 isinstance(default, dict) and
-                not all([isinstance(itm, (int, float, str, bool)) for itm in default.values()])
+                not all([isinstance(itm, (int, float, str, bool, type(None))) for itm in default.values()])
         ):
             raise TypeError("Attempted creating default values with invalid types.")
         # return default
