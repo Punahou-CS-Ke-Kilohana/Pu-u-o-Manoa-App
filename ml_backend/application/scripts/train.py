@@ -60,6 +60,11 @@ def train(ikwiad: bool = False) -> None:
         hyperparameters=hyperparameters_config.optimizer.hyperparams)
     optimizer = optim_setter.get_optim(parameters=model.parameters())
 
+    # set saving
+    model_path = os.path.join(f"{training_config.save_params['save_root']}", f"{training_config.save_params['save_name']}")
+    os.mkdir(model_path)
+    os.sync()
+
     # training
     max_idx = len(loader)
     start_time = time.perf_counter()
@@ -96,20 +101,10 @@ def train(ikwiad: bool = False) -> None:
             progress(i, max_idx, desc=desc)
 
         if epoch % training_config.save_gap == 0:
-            torch.save(
-                model.state_dict(),
-                os.path.join(
-                    f"{training_config.save_params['save_root']}",
-                    f"{training_config.save_params['save_name']}_ep{epoch}"
-                )
-            )
+            torch.save(model.state_dict(), os.path.join(model_path,f"epoch_{epoch}"))
+            os.sync()
 
-    torch.save(
-        model.state_dict(),
-        os.path.join(
-            f"{training_config.save_params['save_root']}",
-            f"{training_config.save_params['save_name']}_final"
-        )
-    )
+    torch.save(model.state_dict(), os.path.join(model_path, "final"))
+    os.sync()
 
     return None
