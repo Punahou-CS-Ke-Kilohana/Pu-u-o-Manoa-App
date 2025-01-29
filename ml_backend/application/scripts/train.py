@@ -5,6 +5,8 @@ For any questions or issues regarding this file, contact one of the Pu-u-o-Manoa
 """
 
 import time
+import os
+import torch
 
 from RHCCCore.network import CNNCore
 from RHCCCore.utils import (
@@ -61,8 +63,8 @@ def train(ikwiad: bool = False) -> None:
     # training
     max_idx = len(loader)
     start_time = time.perf_counter()
-    for epoch in range(training_config.epochs):
-        print(f"Epoch {epoch + 1} / {training_config.epochs}")
+    for epoch in range(1, training_config.epochs + 1):
+        print(f"Epoch {epoch} / {training_config.epochs}")
         desc = (
             f"{str(0).zfill(len(str(max_idx)))}it/{max_idx}it  "
             f"{0:05.1f}%  "
@@ -92,5 +94,22 @@ def train(ikwiad: bool = False) -> None:
                 f"{round((i + 1) / elapsed, 1)}it/s"
             )
             progress(i, max_idx, desc=desc)
+
+        if epoch % training_config.save_gap == 0:
+            torch.save(
+                model.state_dict(),
+                os.path.join(
+                    f"{training_config.save_params['save_root']}",
+                    f"{training_config.save_params['save_name']}_ep{epoch}"
+                )
+            )
+
+    torch.save(
+        model.state_dict(),
+        os.path.join(
+            f"{training_config.save_params['save_root']}",
+            f"{training_config.save_params['save_name']}_final"
+        )
+    )
 
     return None

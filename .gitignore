@@ -82,3 +82,4 @@ crashlytics-build.properties
 
 # library
 ml_backend/RHCCCore/RHCCCore.egg-info/*
+*.swp
