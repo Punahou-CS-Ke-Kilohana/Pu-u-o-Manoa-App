@@ -125,7 +125,7 @@ class Params:
         # check default
         if (
                 isinstance(default, dict) and
-                not all([isinstance(itm, (int, float, str, bool, type(None))) for itm in default.values()])
+                not all([isinstance(itm, (int, float, str, bool, tuple, type(None))) for itm in default.values()])
         ):
             raise TypeError("Attempted creating default values with invalid types.")
         # return default
