@@ -52,7 +52,7 @@ public class PlayerController : MonoBehaviour
         Vector2 joystickDirection = joystick.Direction;
         //Debug.Log($"Horizontal: {joystickDirection.x}, Vertical: {joystickDirection.y}");
         CheckPressedKeys(cameraForward, cameraRight);
-        CheckJoystick(joystickDirection);
+        CheckJoystick(joystickDirection, cameraForward, cameraRight);
 
         LimitSpeed();
 
@@ -112,16 +112,20 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void CheckJoystick(Vector2 Direction)
+    private void CheckJoystick(Vector2 joyDir, Vector3 cameraForward, Vector3 cameraRight)
     {
         // Convert 2D joystick input to 3D movement direction
-        Vector3 moveDirection = new Vector3(Direction.x, 0, Direction.y).normalized;
-
-        // Apply movement if there's input
-        if (moveDirection != Vector3.zero)
+        Vector3 dirForward = new Vector3(0, 0, joyDir.y).normalized;
+        Vector3 dirLeft = new Vector3(joyDir.x, 0, 0).normalized;
+        if (dirForward != Vector3.zero)
         {
-            this.Move(moveDirection * speedMultiplier);
+            this.Move(dirForward + cameraForward * speedMultiplier);
         }
+        if (dirLeft != Vector3.zero)
+        {
+            this.Move(dirLeft - cameraRight * speedMultiplier);
+        }
+
     }
 
     private void LimitSpeed()
