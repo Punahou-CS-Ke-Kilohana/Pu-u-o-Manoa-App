@@ -114,17 +114,24 @@ public class PlayerController : MonoBehaviour
 
     private void CheckJoystick(Vector2 joyDir, Vector3 cameraForward, Vector3 cameraRight)
     {
-        // Convert 2D joystick input to 3D movement direction
-        Vector3 dirForward = new Vector3(0, 0, joyDir.y).normalized;
-        Vector3 dirLeft = new Vector3(joyDir.x, 0, 0).normalized;
-        if (dirForward != Vector3.zero)
+
+        Vector3 moveDirection = Vector3.zero;
+
+        if (joyDir.y > 0)
         {
-            this.Move(dirForward + cameraForward * speedMultiplier);
+            moveDirection += cameraForward * speedMultiplier;
         }
-        if (dirLeft != Vector3.zero)
+        if (joyDir.y < 0)
         {
-            this.Move(dirLeft - cameraRight * speedMultiplier);
+            moveDirection -= cameraForward * speedMultiplier;
         }
+
+        if (joyDir.x != 0)
+        {
+            moveDirection += cameraRight * joyDir.x * speedMultiplier;
+        }
+
+        this.Move(moveDirection);
 
     }
 
