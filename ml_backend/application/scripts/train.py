@@ -80,7 +80,7 @@ def train(ikwiad: bool = False) -> None:
         )
         progress(-1, max_idx, desc=desc)
         running_loss = 0.0
-        for i, data in enumerate(loader):
+        for i, data in enumerate(loader, start=1):
             inputs, labels = data
             optimizer.zero_grad()
             outputs = model(inputs)
@@ -91,14 +91,14 @@ def train(ikwiad: bool = False) -> None:
             running_loss += loss.item()
             elapsed = time.perf_counter() - start_time
             desc = (
-                f"{str(i + 1).zfill(len(str(max_idx)))}it/{max_idx}it  "
-                f"{(100 * (i + 1) / max_idx):05.1f}%  "
-                f"{running_loss / (i + 1):.3}loss  "
+                f"{str(i).zfill(len(str(max_idx)))}it/{max_idx}it  "
+                f"{(100 * (i) / max_idx):05.1f}%  "
+                f"{running_loss / (i):.3}loss  "
                 f"{convert_time(elapsed)}et  "
-                f"{convert_time(elapsed * max_idx / (i + 1) - elapsed)}eta  "
-                f"{round((i + 1) / elapsed, 1)}it/s"
+                f"{convert_time(elapsed * max_idx / (i) - elapsed)}eta  "
+                f"{round((i) / elapsed, 1)}it/s"
             )
-            progress(i, max_idx, desc=desc)
+            progress(i - 1, max_idx, desc=desc)
 
         if epoch % training_config.save_gap == 0:
             torch.save(model.state_dict(), os.path.join(model_path,f"epoch_{epoch}"))
