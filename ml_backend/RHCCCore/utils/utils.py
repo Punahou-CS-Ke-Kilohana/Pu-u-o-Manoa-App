@@ -54,7 +54,7 @@ def convert_time(seconds: Union[float, int]) -> str:
 
     Args:
         seconds:
-            Amount of seconds to be converted.
+            Number of seconds to be converted.
 
     Returns:
         str:
