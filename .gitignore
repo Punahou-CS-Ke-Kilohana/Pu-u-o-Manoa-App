@@ -84,3 +84,4 @@ ml_backend/RHCCCore/RHCCCore.egg-info/*
 *.egg-info
 *.pyc
 ml_backend/models/*
+!ml_backend/models/model_clear.py

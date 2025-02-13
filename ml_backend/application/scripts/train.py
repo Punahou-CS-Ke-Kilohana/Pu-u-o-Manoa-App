@@ -6,6 +6,7 @@ For any questions or issues regarding this file, contact one of the Pu-u-o-Manoa
 
 import time
 import os
+import sys
 import shutil
 import torch
 
@@ -62,6 +63,7 @@ def train(ikwiad: bool = False) -> None:
     optimizer = optim_setter.get_optim(parameters=model.parameters())
 
     # set saving
+    os.makedirs(training_config.save_params['save_root'], exist_ok=True)
     model_path = os.path.join(f"{training_config.save_params['save_root']}", f"{training_config.save_params['save_name']}")
     os.mkdir(model_path)
     shutil.copy(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'configs', 'model_config.py'), model_path)
@@ -69,10 +71,12 @@ def train(ikwiad: bool = False) -> None:
     with open(os.path.join(model_path, 'model_config.py'), 'r') as f:
         lines = f.readlines()[5:]
     with open(os.path.join(model_path, 'model_config.py'), 'w') as f:
+        _save_name = training_config.save_params['save_name']
         top_level_doc = (
-            f'r"""\nCNN build for {training_config.save_params['save_name']}.\n\n'
+            f'r"""\nCNN build for {_save_name}.\n\n'
             f'For any questions or issues regarding this file, contact one of the Pu-u-o-Manoa-App developers.\n"""\n'
         )
+        del _save_name
         f.write(top_level_doc)
         f.writelines(lines)
     os.sync()
@@ -81,7 +85,9 @@ def train(ikwiad: bool = False) -> None:
     max_idx = len(loader)
     start_time = time.perf_counter()
     for epoch in range(1, training_config.epochs + 1):
-        print(f"Epoch {epoch} / {training_config.epochs}")
+        if epoch % training_config.save_gap == 0:
+            sys.stdout.write(f"Epoch {epoch} / {training_config.epochs}\n")
+            sys.stdout.flush()
         desc = (
             f"{str(0).zfill(len(str(max_idx)))}it/{max_idx}it  "
             f"{0:05.1f}%  "
