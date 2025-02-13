@@ -1,0 +1,6 @@
+torch~=2.6.0
+torchvision~=0.21.0
+matplotlib~=3.10.0
+easydict~=1.13
+SimpleITK~=2.4.1
+setuptools~=75.8.0

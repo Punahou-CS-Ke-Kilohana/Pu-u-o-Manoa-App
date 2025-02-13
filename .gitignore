@@ -77,9 +77,10 @@ crashlytics-build.properties
 
 ./Library/artifacts/*
 
-# PyCharm Settings
-.idea
-
-# library
-ml_backend/RHCCCore/RHCCCore.egg-info/*
+# ml backend
+*.idea
 *.swp
+ml_backend/RHCCCore/RHCCCore.egg-info/*
+*.egg-info
+*.pyc
+ml_backend/models/*

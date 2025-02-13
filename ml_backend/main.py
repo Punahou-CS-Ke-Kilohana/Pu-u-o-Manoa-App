@@ -4,7 +4,7 @@ This file is the execution script for the Pu-u-o-Manoa-App.
 For any questions or issues regarding this file, contact one of the Pu-u-o-Manoa-App developers.
 """
 
-from ml_backend.application.scripts.train import train
+from application.scripts.train import train
 
 
 def main(name: str, *, ikwiad=False) -> None:

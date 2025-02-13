@@ -6,6 +6,7 @@ For any questions or issues regarding this file, contact one of the Pu-u-o-Manoa
 
 import time
 import os
+import shutil
 import torch
 
 from RHCCCore.network import CNNCore
@@ -16,10 +17,10 @@ from RHCCCore.utils import (
     progress
 )
 
-from ml_backend.application.configs.hyperparameters_config import hyperparameters_config
-from ml_backend.application.configs.model_config import model_config
-from ml_backend.application.dataloader.dataloader import loader
-from ml_backend.application.configs.training_config import training_config
+from application.configs.hyperparameters_config import hyperparameters_config
+from application.configs.model_config import model_config
+from application.dataloader.dataloader import loader
+from application.configs.training_config import training_config
 
 
 def train(ikwiad: bool = False) -> None:
@@ -63,6 +64,17 @@ def train(ikwiad: bool = False) -> None:
     # set saving
     model_path = os.path.join(f"{training_config.save_params['save_root']}", f"{training_config.save_params['save_name']}")
     os.mkdir(model_path)
+    shutil.copy(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'configs', 'model_config.py'), model_path)
+    os.sync()
+    with open(os.path.join(model_path, 'model_config.py'), 'r') as f:
+        lines = f.readlines()[5:]
+    with open(os.path.join(model_path, 'model_config.py'), 'w') as f:
+        top_level_doc = (
+            f'r"""\nCNN build for {training_config.save_params['save_name']}.\n\n'
+            f'For any questions or issues regarding this file, contact one of the Pu-u-o-Manoa-App developers.\n"""\n'
+        )
+        f.write(top_level_doc)
+        f.writelines(lines)
     os.sync()
 
     # training
@@ -92,16 +104,16 @@ def train(ikwiad: bool = False) -> None:
             elapsed = time.perf_counter() - start_time
             desc = (
                 f"{str(i).zfill(len(str(max_idx)))}it/{max_idx}it  "
-                f"{(100 * (i) / max_idx):05.1f}%  "
-                f"{running_loss / (i):.3}loss  "
+                f"{(100 * i / max_idx):05.1f}%  "
+                f"{running_loss / i:.3}loss  "
                 f"{convert_time(elapsed)}et  "
-                f"{convert_time(elapsed * max_idx / (i) - elapsed)}eta  "
-                f"{round((i) / elapsed, 1)}it/s"
+                f"{convert_time(elapsed * max_idx / i - elapsed)}eta  "
+                f"{round(i / elapsed, 1)}it/s"
             )
             progress(i - 1, max_idx, desc=desc)
 
         if epoch % training_config.save_gap == 0:
-            torch.save(model.state_dict(), os.path.join(model_path,f"epoch_{epoch}"))
+            torch.save(model.state_dict(), os.path.join(model_path, f"epoch_{epoch}"))
             os.sync()
 
     torch.save(model.state_dict(), os.path.join(model_path, "final"))
