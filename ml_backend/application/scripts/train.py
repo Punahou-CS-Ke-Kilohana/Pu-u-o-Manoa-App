@@ -64,8 +64,11 @@ def train(ikwiad: bool = False) -> None:
 
     # set saving
     os.makedirs(training_config.save_params['save_root'], exist_ok=True)
-    model_path = os.path.join(f"{training_config.save_params['save_root']}", f"{training_config.save_params['save_name']}")
+    model_path = os.path.join(
+        f"{training_config.save_params['save_root']}", f"{training_config.save_params['save_name']}"
+    )
     os.mkdir(model_path)
+    # save config
     shutil.copy(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'configs', 'model_config.py'), model_path)
     os.sync()
     with open(os.path.join(model_path, 'model_config.py'), 'r') as f:
@@ -86,8 +89,11 @@ def train(ikwiad: bool = False) -> None:
     start_time = time.perf_counter()
     for epoch in range(1, training_config.epochs + 1):
         if epoch % training_config.save_gap == 0:
-            sys.stdout.write(f"Epoch {epoch} / {training_config.epochs}\n")
+            # gap report
+            sys.stdout.write(
+                f"Epoch {str(epoch).zfill(len(str(training_config.epochs)))} / {training_config.epochs}\n")
             sys.stdout.flush()
+        # initial bar
         desc = (
             f"{str(0).zfill(len(str(max_idx)))}it/{max_idx}it  "
             f"{0:05.1f}%  "
@@ -96,9 +102,10 @@ def train(ikwiad: bool = False) -> None:
             "?eta  "
             "?it/s"
         )
-        progress(-1, max_idx, desc=desc)
+        progress(-1, max_idx, b_len=75, desc=desc)
         running_loss = 0.0
         for i, data in enumerate(loader, start=1):
+            # step
             inputs, labels = data
             optimizer.zero_grad()
             outputs = model(inputs)
@@ -106,6 +113,7 @@ def train(ikwiad: bool = False) -> None:
             loss.backward()
             optimizer.step()
 
+            # bar update
             running_loss += loss.item()
             elapsed = time.perf_counter() - start_time
             desc = (
@@ -116,12 +124,14 @@ def train(ikwiad: bool = False) -> None:
                 f"{convert_time(elapsed * max_idx / i - elapsed)}eta  "
                 f"{round(i / elapsed, 1)}it/s"
             )
-            progress(i - 1, max_idx, desc=desc)
+            progress(i - 1, max_idx, b_len=75, desc=desc)
 
         if epoch % training_config.save_gap == 0:
+            # save gap model
             torch.save(model.state_dict(), os.path.join(model_path, f"epoch_{epoch}"))
             os.sync()
 
+    # save final model
     torch.save(model.state_dict(), os.path.join(model_path, "final"))
     os.sync()
 

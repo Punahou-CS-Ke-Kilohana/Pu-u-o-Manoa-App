@@ -41,7 +41,7 @@ def main(name: str, *, ikwiad=False) -> None:
         )
 
     # method execution
-    print(f"{method_titles[name]}\n")
+    print(f"Executing {method_titles[name]}")
     methods[name](ikwiad=ikwiad)
     return None
 

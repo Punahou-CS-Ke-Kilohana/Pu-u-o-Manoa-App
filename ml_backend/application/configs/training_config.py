@@ -22,10 +22,10 @@ training_config.save_params = {
     'save_root': os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'models'),
     'save_name': f"model_{datetime.datetime.now().year}_{str(datetime.datetime.now().month).zfill(2)}_{str(datetime.datetime.now().day).zfill(2)}"
 }
-training_config.save_gap = 1
+training_config.save_gap = 25
 
 # epochs
-training_config.epochs = 5
+training_config.epochs = 500
 
 # expose to import
 __all__ = ['training_config']
