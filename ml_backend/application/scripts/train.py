@@ -37,8 +37,9 @@ def train(ikwiad: bool = False) -> None:
     Returns:
         None
     """
+    ikwiad = bool(ikwiad)
     # initialize model
-    model = CNNCore(ikwiad=bool(ikwiad))
+    model = CNNCore(ikwiad=ikwiad)
     model.set_channels(conv_channels=model_config.conv.sizes, dense_channels=model_config.dense.sizes)
     model.transfer_training_params(loader=loader)
     model.set_acts(methods=model_config.acts.methods, parameters=model_config.acts.params)

@@ -7,7 +7,7 @@ For any questions or issues regarding this file, contact one of the Pu-u-o-Manoa
 from application.scripts.train import train
 
 
-def main(name: str, *, ikwiad=False) -> None:
+def main(name: str, *, ikwiad=False) -> int:
     r"""
     The main execution script for the Pu-u-o-Manoa-App.
 
@@ -43,7 +43,7 @@ def main(name: str, *, ikwiad=False) -> None:
     # method execution
     print(f"Executing {method_titles[name]}")
     methods[name](ikwiad=ikwiad)
-    return None
+    return 0
 
 
 if __name__ == '__main__':
