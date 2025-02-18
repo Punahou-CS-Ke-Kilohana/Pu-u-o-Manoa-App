@@ -81,8 +81,7 @@ public class CapImg : MonoBehaviour
             // Stop the webcam
             webcam.Stop();
             Debug.Log("Webcam has been stopped.");
-
-            ImagePlacer.Instance.Place(21.1816f, 157.4930f, "e");
+            //ImagePlacer.Instance.Place(21.1816f, 157.4930f, "e");
         }
         else
         {

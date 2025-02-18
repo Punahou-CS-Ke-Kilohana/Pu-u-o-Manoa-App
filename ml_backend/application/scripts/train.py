@@ -9,6 +9,8 @@ import os
 import sys
 import shutil
 import torch
+from typing import Optional
+from warnings import warn
 
 from RHCCCore.network import CNNCore
 from RHCCCore.utils import (
@@ -24,13 +26,22 @@ from application.dataloader.dataloader import loader
 from application.configs.training_config import training_config
 
 
-def train(device: torch.device = torch.device('cpu'), ikwiad: bool = False) -> None:
+def train(
+        device: torch.device = torch.device('cpu'),
+        name: Optional[str] = None,
+        epoch: Optional[int] = None,
+        ikwiad: bool = False
+) -> None:
     r"""
     Trains the model using the configs in the config folder.
 
     Args:
         device (torch.device):
             Utilized device.
+        name (str):
+            Name the model will save with.
+        epoch (int):
+            Resumed epoch.
         ikwiad (bool, optional):
             "I know what I am doing" (ikwiad).
             If True, removes all warning messages.
@@ -40,6 +51,10 @@ def train(device: torch.device = torch.device('cpu'), ikwiad: bool = False) -> N
         None
     """
     ikwiad = bool(ikwiad)
+    try:
+        epoch = int(epoch)
+    except TypeError or ValueError:
+        pass
     # initialize model
     model = CNNCore(ikwiad=ikwiad)
     model.set_channels(conv_channels=model_config.conv.sizes, dense_channels=model_config.dense.sizes)
@@ -67,27 +82,32 @@ def train(device: torch.device = torch.device('cpu'), ikwiad: bool = False) -> N
     optimizer = optim_setter.get_optim(parameters=model.parameters())
 
     # set saving
+    save_name = name or training_config.save_params['save_name']
     os.makedirs(training_config.save_params['save_root'], exist_ok=True)
     model_path = os.path.join(
-        f"{training_config.save_params['save_root']}", f"{training_config.save_params['save_name']}"
+        f"{training_config.save_params['save_root']}", f"{save_name}"
     )
     try:
         # make save dir
         os.mkdir(model_path)
+        if epoch and not ikwiad:
+            warn("Could not find model to learn.")
     except FileExistsError:
         # file exists
+        if epoch:
+            ...
         confirm = (input(
-            f"{training_config.save_params['save_name']} already exists. Confirm overwrite with 'y': ").lower() == 'y'
+            f"{save_name} already exists. Confirm overwrite with 'y': ").lower() == 'y'
         )
         if confirm:
             # reset save dir
             shutil.rmtree(model_path)
-            sys.stdout.write(f"Removed existing model at {training_config.save_params['save_name']}.\n")
+            sys.stdout.write(f"Removed existing model at {save_name}.\n")
             sys.stdout.flush()
             os.mkdir(model_path)
         else:
             # retain save dir
-            sys.stdout.write(f"Exiting training and retaining {training_config.save_params['save_name']}.\n")
+            sys.stdout.write(f"Exiting training and retaining {save_name}.\n")
             sys.stdout.flush()
             sys.exit(0)
     # save config
@@ -96,12 +116,10 @@ def train(device: torch.device = torch.device('cpu'), ikwiad: bool = False) -> N
     with open(os.path.join(model_path, 'model_config.py'), 'r') as f:
         lines = f.readlines()[5:]
     with open(os.path.join(model_path, 'model_config.py'), 'w') as f:
-        _save_name = training_config.save_params['save_name']
         top_level_doc = (
-            f'r"""\nCNN build for {_save_name}.\n\n'
+            f'r"""\nCNN build for {save_name}.\n\n'
             f'For any questions or issues regarding this file, contact one of the Pu-u-o-Manoa-App developers.\n"""\n'
         )
-        del _save_name
         f.write(top_level_doc)
         f.writelines(lines)
     os.sync()
@@ -109,11 +127,11 @@ def train(device: torch.device = torch.device('cpu'), ikwiad: bool = False) -> N
     # training
     max_idx = len(loader)
     start_time = time.perf_counter()
-    for epoch in range(1, training_config.epochs + 1):
-        if epoch % training_config.save_gap == 0:
+    for ep in range(1, training_config.epochs + 1):
+        if ep % training_config.save_gap == 0:
             # gap report
             sys.stdout.write(
-                f"Epoch {str(epoch).zfill(len(str(training_config.epochs)))} / {training_config.epochs}\n")
+                f"Epoch {str(ep).zfill(len(str(training_config.epochs)))} / {training_config.epochs}\n")
             sys.stdout.flush()
         # initial bar
         desc = (
@@ -149,13 +167,13 @@ def train(device: torch.device = torch.device('cpu'), ikwiad: bool = False) -> N
             )
             progress(i - 1, max_idx, b_len=75, desc=desc)
 
-        if epoch % training_config.save_gap == 0:
+        if ep % training_config.save_gap == 0:
             # save gap model
-            torch.save(model.state_dict(), os.path.join(model_path, f"epoch_{epoch}"))
+            torch.save(model.state_dict(), os.path.join(model_path, f"epoch_{ep}"))
             os.sync()
 
     # save final model
-    torch.save(model.state_dict(), os.path.join(model_path, "final"))
+    torch.save(model.state_dict(), os.path.join(model_path, f"epoch_{training_config.epochs}"))
     os.sync()
 
     return None
