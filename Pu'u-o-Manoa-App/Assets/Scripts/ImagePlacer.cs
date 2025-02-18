@@ -4,18 +4,30 @@ using UnityEngine;
 
 public class ImagePlacer : MonoBehaviour
 {
+
+    public static ImagePlacer Instance { get; private set; }
     public float startLat = 21.1816f;
     public float startLon = 157.4930f;
-    public GameObject imagePrefab; 
-    
+    public GameObject imagePrefab;
 
-    // Start is called before the first frame update
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
     void Start()
     {
 
     }
 
-    // Update is called once per frame
     void Update()
     {
         
@@ -26,9 +38,9 @@ public class ImagePlacer : MonoBehaviour
         float xPos = Longitude - startLon;
         float zPos = Latitude - startLat;
 
-        // create image with yPos and xPos using image
         Vector3 spawnPos = new Vector3(xPos, 100f, zPos);
         GameObject image = Instantiate(imagePrefab, spawnPos, Quaternion.identity);
+        print("aaa");
 
     }
 

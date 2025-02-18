@@ -15,7 +15,7 @@ public class CapImg : MonoBehaviour
     // variables for the image display and take picture button
     public RawImage cameraDisplay; 
     public Button captureButton; 
-    public ImagePlacer imagePlacer;
+    //public ImagePlacer imagePlacer;
 
     void Start()
     {
@@ -25,7 +25,7 @@ public class CapImg : MonoBehaviour
         cameraDisplay.material.mainTexture = webcam;
         webcam.Play();
 
-        imagePlacer = GameObject.Find("ImagePlacerManager").GetComponent<ImagePlacer>();
+        //imagePlacer = GameObject.Find("ImagePlacerManager").GetComponent<ImagePlacer>();
 
         // Attach "CapturePhotoAndNavigate" to the onClick event of the camera button
         if (captureButton != null)
@@ -82,7 +82,7 @@ public class CapImg : MonoBehaviour
             webcam.Stop();
             Debug.Log("Webcam has been stopped.");
 
-            imagePlacer.Place(21.1816f, 157.4930f, "e");
+            ImagePlacer.Instance.Place(21.1816f, 157.4930f, "e");
         }
         else
         {
