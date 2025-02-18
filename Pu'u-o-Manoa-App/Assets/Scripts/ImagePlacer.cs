@@ -9,12 +9,14 @@ public class ImagePlacer : MonoBehaviour
     public float startLat = 21.1816f;
     public float startLon = 157.4930f;
     public GameObject imagePrefab;
+    public List<ImageObject> images;
 
     private void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
+            images = new List<ImageObject>();
             DontDestroyOnLoad(gameObject);
         }
         else
@@ -39,9 +41,24 @@ public class ImagePlacer : MonoBehaviour
         float zPos = Latitude - startLat;
 
         Vector3 spawnPos = new Vector3(xPos, 100f, zPos);
-        GameObject image = Instantiate(imagePrefab, spawnPos, Quaternion.identity);
-        print("aaa");
+        images.Add(new ImageObject(imagePrefab, spawnPos, Quaternion.identity));
+        //Instantiate(imagePrefab, spawnPos, Quaternion.identity)
 
+    }
+
+}
+
+public class ImageObject
+{
+    public GameObject Prefab { get; private set; }
+    public Vector3 SpawnPos { get; private set; }
+    public Quaternion Rotation { get; private set; }
+
+    public ImageObject(GameObject prefab, Vector3 spawnPos, Quaternion rotation)
+    {
+        Prefab = prefab;
+        SpawnPos = spawnPos;
+        Rotation = rotation;
     }
 
 }
