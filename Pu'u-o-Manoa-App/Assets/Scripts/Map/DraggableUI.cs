@@ -33,6 +33,14 @@ public class DraggableUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
         //{
         //    btn.onClick.AddListener(() => OnButtonClick(btn));
         //}
+        for (int i = 0; i < ImagePlacer.Instance.images.Count; i++)
+        {
+            ImageObject image = ImagePlacer.Instance.images[i];
+            Instantiate(image.Prefab, image.SpawnPos, image.Rotation);
+            print("bbbb");
+        }
+
+
     }
 
     private void OnButtonClick(Button clickedButton)
