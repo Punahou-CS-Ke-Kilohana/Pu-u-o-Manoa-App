@@ -24,11 +24,13 @@ from application.dataloader.dataloader import loader
 from application.configs.training_config import training_config
 
 
-def train(ikwiad: bool = False) -> None:
+def train(device: torch.device = torch.device('cpu'), ikwiad: bool = False) -> None:
     r"""
     Trains the model using the configs in the config folder.
 
     Args:
+        device (torch.device):
+            Utilized device.
         ikwiad (bool, optional):
             "I know what I am doing" (ikwiad).
             If True, removes all warning messages.
@@ -47,6 +49,7 @@ def train(ikwiad: bool = False) -> None:
     model.set_pool(parameters=model_config.conv.pool_params)
     model.set_dense(parameters=model_config.dense.params)
     model.instantiate_model(crossentropy=(hyperparameters_config.loss.method == 'CrossEntropyLoss'))
+    model = model.to(device=device)
 
     # set loss
     loss_setter = LossSetter(ikwiad=ikwiad)
@@ -54,7 +57,7 @@ def train(ikwiad: bool = False) -> None:
         method=hyperparameters_config.loss.method,
         hyperparameters=hyperparameters_config.loss.hyperparams
     )
-    criterion = loss_setter.get_loss()
+    criterion = loss_setter.get_loss().to(device=device)
 
     # set optimizer
     optim_setter = OptimSetter(ikwiad=ikwiad)
@@ -68,7 +71,25 @@ def train(ikwiad: bool = False) -> None:
     model_path = os.path.join(
         f"{training_config.save_params['save_root']}", f"{training_config.save_params['save_name']}"
     )
-    os.mkdir(model_path)
+    try:
+        # make save dir
+        os.mkdir(model_path)
+    except FileExistsError:
+        # file exists
+        confirm = (input(
+            f"{training_config.save_params['save_name']} already exists. Confirm overwrite with 'y': ").lower() == 'y'
+        )
+        if confirm:
+            # reset save dir
+            shutil.rmtree(model_path)
+            sys.stdout.write(f"Removed existing model at {training_config.save_params['save_name']}.\n")
+            sys.stdout.flush()
+            os.mkdir(model_path)
+        else:
+            # retain save dir
+            sys.stdout.write(f"Exiting training and retaining {training_config.save_params['save_name']}.\n")
+            sys.stdout.flush()
+            sys.exit(0)
     # save config
     shutil.copy(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'configs', 'model_config.py'), model_path)
     os.sync()
@@ -108,6 +129,7 @@ def train(ikwiad: bool = False) -> None:
         for i, data in enumerate(loader, start=1):
             # step
             inputs, labels = data
+            inputs, labels = inputs.to(device=device), labels.to(device=device)
             optimizer.zero_grad()
             outputs = model(inputs)
             loss = criterion(outputs, labels)

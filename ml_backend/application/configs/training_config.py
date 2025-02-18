@@ -17,10 +17,16 @@ training_config = Edict()
 training_config.loaded_model = None
 
 # iteration saving settings
-default_name = f"model_{datetime.datetime.now().year}_{str(datetime.datetime.now().month).zfill(2)}_{str(datetime.datetime.now().day).zfill(2)}"
+default_name = (f"model_"
+                f"{datetime.datetime.now().year}_"
+                f"{str(datetime.datetime.now().month).zfill(2)}_"
+                f"{str(datetime.datetime.now().day).zfill(2)}")
 training_config.save_params = {
     'save_root': os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'models'),
-    'save_name': f"model_{datetime.datetime.now().year}_{str(datetime.datetime.now().month).zfill(2)}_{str(datetime.datetime.now().day).zfill(2)}"
+    'save_name': f"model_"
+                 f"{datetime.datetime.now().year}_"
+                 f"{str(datetime.datetime.now().month).zfill(2)}_"
+                 f"{str(datetime.datetime.now().day).zfill(2)}"
 }
 training_config.save_gap = 25
 
