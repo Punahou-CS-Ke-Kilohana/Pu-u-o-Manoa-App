@@ -8,6 +8,8 @@ import argparse
 import torch
 
 from application.scripts.train import train
+from application.scripts.interpret import interpret
+from application.scripts.validate import validate
 
 
 def parse():
@@ -17,21 +19,20 @@ def parse():
     parser = argparse.ArgumentParser(description="Main argument parser.")
 
     # arguments
-    parser.add_argument("--device", type=str, required=False, help="PyTorch device.")
-    parser.add_argument("--ikwiad", action="store_true", help="'I know what I am doing'")
+    parser.add_argument("--script", "-s", type=str, required=True, help="Executed script.")
+    parser.add_argument("--device", "-d", type=str, required=False, help="PyTorch device.")
+    parser.add_argument("--name", "-n", type=str, required=False, help="Loaded model.")
+    parser.add_argument("--epoch", "-e", type=str, required=False, help="Loaded epoch.")
+    parser.add_argument("--ikwiad", action="store_true", help="'I know what I am doing.'")
     return parser.parse_args()
 
 
-def main(name: str) -> int:
+def main() -> int:
     r"""
     The main execution script for the Pu-u-o-Manoa-App.
 
-    Args:
-        name (str):
-            The method name.
-
     Returns:
-        None
+        int: 0.
     """
     # get args
     args = parse()
@@ -57,33 +58,36 @@ def main(name: str) -> int:
     # method reference
     methods = {
         'train': train,
-        'validate': ...,
-        'interpret': ...
+        'validate': validate,
+        'interpret': interpret
     }
     method_titles = {
         'train': 'Training',
         'validate': 'Validating',
         'interpret': 'Interpreting'
     }
-    if name not in methods.keys():
+    if args.script not in methods.keys():
         # invalid method
         raise ValueError(
-            "'name' must refer to a valid method\n"
+            "Invalid referenced script\n"
             f"({list(methods.keys())})"
         )
 
     # method execution
-    print(f"{method_titles[name]}")
-    methods[name](device=device, ikwiad=bool(args.ikwiad))
+    print(f"{method_titles[args.script]}")
+    try:
+        epoch = int(args.epoch)
+    except TypeError or ValueError:
+        epoch = args.epoch
+    methods[args.script](device=device, name=(args.name or None), epoch=(epoch or None), ikwiad=bool(args.ikwiad))
     return 0
 
 
 if __name__ == '__main__':
     import torch.multiprocessing as mp
-    from method_selector import method_name
 
     # debug issues
     mp.freeze_support()
     mp.set_start_method('spawn', force=True)
     # main script
-    main(name=method_name)
+    main()
