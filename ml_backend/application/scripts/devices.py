@@ -11,5 +11,6 @@ if cuda:
     print(
         f"Cuda is available at {[torch.cuda.get_device_name(device) for device in range(torch.cuda.device_count())]}."
     )
+    print(f"Current script only utilizes one model, which is {torch.cude.get_device_name(0)}")
 else:
     print("Cuda is not available.")

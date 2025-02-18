@@ -41,7 +41,7 @@ def train(device: torch.device = torch.device('cpu'), ikwiad: bool = False) -> N
     """
     ikwiad = bool(ikwiad)
     # initialize model
-    model = CNNCore(ikwiad=ikwiad).to(device=device)
+    model = CNNCore(ikwiad=ikwiad)
     model.set_channels(conv_channels=model_config.conv.sizes, dense_channels=model_config.dense.sizes)
     model.transfer_training_params(loader=loader)
     model.set_acts(methods=model_config.acts.methods, parameters=model_config.acts.params)
@@ -49,6 +49,7 @@ def train(device: torch.device = torch.device('cpu'), ikwiad: bool = False) -> N
     model.set_pool(parameters=model_config.conv.pool_params)
     model.set_dense(parameters=model_config.dense.params)
     model.instantiate_model(crossentropy=(hyperparameters_config.loss.method == 'CrossEntropyLoss'))
+    model = model.to(device=device)
 
     # set loss
     loss_setter = LossSetter(ikwiad=ikwiad)
@@ -128,7 +129,7 @@ def train(device: torch.device = torch.device('cpu'), ikwiad: bool = False) -> N
         for i, data in enumerate(loader, start=1):
             # step
             inputs, labels = data
-            # inputs, labels = inputs.to(device=device), labels.to(device=device)
+            inputs, labels = inputs.to(device=device), labels.to(device=device)
             optimizer.zero_grad()
             outputs = model(inputs)
             loss = criterion(outputs, labels)
