@@ -63,7 +63,6 @@ public class DraggableUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
     {
         if (Input.GetKeyDown(KeyCode.V))
         {
-            Debug.Log("AAAA");
             ExitMap();
         }
     }

@@ -16,6 +16,7 @@ public class ImagePlacer : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
+            images = new List<ImageObject>();
             DontDestroyOnLoad(gameObject);
         }
         else
