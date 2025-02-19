@@ -8,7 +8,6 @@ import argparse
 import torch
 
 from application.scripts.train import train
-from application.scripts.interpret import interpret
 from application.scripts.validate import validate
 
 
@@ -32,7 +31,7 @@ def main() -> int:
     The main execution script for the Pu-u-o-Manoa-App.
 
     Returns:
-        int: 0.
+        int: End status.
     """
     # get args
     args = parse()
@@ -58,13 +57,11 @@ def main() -> int:
     # method reference
     methods = {
         'train': train,
-        'validate': validate,
-        'interpret': interpret
+        'validate': validate
     }
     method_titles = {
         'train': 'Training',
-        'validate': 'Validating',
-        'interpret': 'Interpreting'
+        'validate': 'Validating'
     }
     if args.script not in methods.keys():
         # invalid method

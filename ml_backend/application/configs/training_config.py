@@ -31,7 +31,7 @@ training_config.save_params = {
 training_config.save_gap = 4
 
 # epochs
-training_config.epochs = 5
+training_config.epochs = 10
 
 # expose to import
 __all__ = ['training_config']
