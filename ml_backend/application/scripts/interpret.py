@@ -92,7 +92,9 @@ def interpret(
         # todo: this is fried as hell
         img_path = input('Image name: ')
         img = Image.open(os.path.join(loader_config.image_loc, img_path))
-        model.forward(x=transform(img).to(device=device))
+        img = transform(img).to(device=device)
+        print(img)
+        model.forward(x=img)
 
 
 if __name__ == "__main__":
