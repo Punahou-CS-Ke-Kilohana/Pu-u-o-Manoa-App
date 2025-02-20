@@ -14,14 +14,14 @@ from RHCCCore.network import CNNCore
 from application.configs.training_config import training_config
 
 
-def validate(
+def interpret(
         device: torch.device = torch.device('cpu'),
         name: str = None,
         epoch: Optional[int] = None,
         ikwiad: bool = False
 ) -> CNNCore:
     r"""
-    Validates a trained model.
+    Interprets a trained model.
 
     Args:
         device (torch.device):
@@ -74,5 +74,7 @@ def validate(
     return model
 
 
-def main():
-    validate(torch.device('mps'), )
+if __name__ == "__main__":
+    intp_device = torch.device('cpu')
+    intp_name = 'main_model'
+    interpret(device=intp_device, name=intp_name)
