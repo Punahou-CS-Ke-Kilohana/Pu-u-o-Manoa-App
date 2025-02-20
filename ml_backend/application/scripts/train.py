@@ -79,15 +79,28 @@ def train(
 
         # save config
         shutil.copy(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'configs', 'model_config.py'), model_path)
+        shutil.copy(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'configs', 'loader_config.py'), model_path)
         os.sync()
 
-        # write docstring
+        # write model docstring
         with open(os.path.join(model_path, 'model_config.py'), 'r') as f:
             lines = f.readlines()[5:]
         with open(os.path.join(model_path, 'model_config.py'), 'w') as f:
             top_level_doc = (
                 f'r"""\nCNN build for {save_name}.\n\n'
-                f'For any questions or issues regarding this file, contact one of the Pu-u-o-Manoa-App developers.\n"""\n'
+                f'For any questions or issues regarding this file, contact one of the Pu-u-o-Manoa-App developers.'
+                f'\n"""\n'
+            )
+            f.write(top_level_doc)
+            f.writelines(lines)
+        # write loader docstring
+        with open(os.path.join(model_path, 'loader_config.py'), 'r') as f:
+            lines = f.readlines()[5:]
+        with open(os.path.join(model_path, 'loader_config.py'), 'w') as f:
+            top_level_doc = (
+                f'r"""\nCNN loader build for {save_name}.\n\n'
+                f'For any questions or issues regarding this file, contact one of the Pu-u-o-Manoa-App developers.'
+                f'\n"""\n'
             )
             f.write(top_level_doc)
             f.writelines(lines)
@@ -130,6 +143,39 @@ def train(
             sys.stdout.write(f"Removed existing model at {save_name}.\n")
             sys.stdout.flush()
             os.mkdir(model_path)
+
+            # save config
+            shutil.copy(
+                os.path.join(os.path.dirname(os.path.dirname(__file__)), 'configs', 'model_config.py'), model_path
+            )
+            shutil.copy(
+                os.path.join(os.path.dirname(os.path.dirname(__file__)), 'configs', 'loader_config.py'), model_path
+            )
+            os.sync()
+
+            # write model docstring
+            with open(os.path.join(model_path, 'model_config.py'), 'r') as f:
+                lines = f.readlines()[5:]
+            with open(os.path.join(model_path, 'model_config.py'), 'w') as f:
+                top_level_doc = (
+                    f'r"""\nCNN build for {save_name}.\n\n'
+                    f'For any questions or issues regarding this file, contact one of the Pu-u-o-Manoa-App developers.'
+                    f'\n"""\n'
+                )
+                f.write(top_level_doc)
+                f.writelines(lines)
+            # write loader docstring
+            with open(os.path.join(model_path, 'loader_config.py'), 'r') as f:
+                lines = f.readlines()[5:]
+            with open(os.path.join(model_path, 'loader_config.py'), 'w') as f:
+                top_level_doc = (
+                    f'r"""\nCNN loader build for {save_name}.\n\n'
+                    f'For any questions or issues regarding this file, contact one of the Pu-u-o-Manoa-App developers.'
+                    f'\n"""\n'
+                )
+                f.write(top_level_doc)
+                f.writelines(lines)
+            os.sync()
         elif not isinstance(epoch, int):
             # retain save dir
             sys.stdout.write(f"Exiting training and retaining {save_name}.\n")
@@ -170,7 +216,9 @@ def train(
     # training
     max_idx = len(loader)
     start_time = time.perf_counter()
-    for ep in range(epoch + 1 or 1, training_config.epochs + 1):
+    if epoch is None:
+        epoch = 0
+    for ep in range(epoch + 1, training_config.epochs + 1):
         if ep % training_config.save_gap == 0:
             # gap report
             sys.stdout.write(

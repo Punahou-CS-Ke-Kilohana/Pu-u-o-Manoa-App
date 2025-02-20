@@ -10,6 +10,8 @@ from torchvision import transforms
 from easydict import EasyDict as Edict
 
 
+h, w = 256, 256
+
 loader_config = Edict()
 
 # image location path
@@ -17,10 +19,18 @@ loader_config.root = os.path.join(os.path.join((os.path.dirname(os.path.dirname(
 
 # image transformation
 loader_config.transform = transforms.Compose([
-    transforms.Resize((256, 256)),
+    transforms.Resize((h, w)),
     transforms.ToTensor(),
     transforms.ConvertImageDtype(torch.float)
 ])
+
+loader_config.interpret_params = {
+    'color_channels': 3,
+    'initial_dims': (h, w)
+}
+
+# input image path
+loader_config.image_loc = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'input_images')
 
 # dataloader parameters
 loader_config.dataloader_params = {
