@@ -30,12 +30,12 @@ loader_config.interpret_params = {
 }
 
 # input image path
-loader_config.image_loc = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'input_images')
+loader_config.image_loc = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'test_images')
 
 # dataloader parameters
 loader_config.dataloader_params = {
     'classes': 15,
-    'batch_size': 16,
+    'batch_size': 1,
     'shuffle': True,
     'num_workers': 0,
     'pin_memory': True,

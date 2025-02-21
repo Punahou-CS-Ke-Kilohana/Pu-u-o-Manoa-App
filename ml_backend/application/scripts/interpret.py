@@ -82,19 +82,23 @@ def interpret(
     model = model.to(device=device)
     model.eval()
 
+    # transformation
     transform = transforms.Compose([
         transforms.Resize(loader_config.interpret_params['initial_dims']),
         transforms.ToTensor(),
         transforms.ConvertImageDtype(torch.float)
     ])
 
+    # label names
+    labels = os.listdir(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'images', 'local'))
+    labels = labels[0:loader_config.dataloader_params['classes']]
+
     while True:
         # todo: this is fried as hell
         img_path = input('Image name: ')
         img = Image.open(os.path.join(loader_config.image_loc, img_path))
-        img = transform(img).to(device=device)
-        print(img)
-        model.forward(x=img)
+        pred = model.forward_no_grad(x=transform(img).to(device=device))
+        print(labels[int(torch.argmax(pred))])
 
 
 if __name__ == "__main__":
