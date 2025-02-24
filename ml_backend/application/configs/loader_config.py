@@ -30,9 +30,11 @@ loader_config.interpret_params = {
     'color_channels': 3,
     'initial_dims': (h, w)
 }
-loader_config.label_names = os.listdir(
-    os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'images', 'local')
-)[:classes]  # todo: this won't write at runtime
+
+loader_config.label_names = [
+    d for d in os.listdir(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'images', 'local'))
+    if os.path.isdir(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'images', 'local', d))
+]
 
 # input image path
 loader_config.image_loc = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'test_images')

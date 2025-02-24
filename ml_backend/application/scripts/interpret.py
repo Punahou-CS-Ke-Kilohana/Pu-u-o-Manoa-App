@@ -4,6 +4,7 @@ This module consists of the interpreting script for the Pu-u-o-Manoa-App.
 For any questions or issues regarding this file, contact one of the Pu-u-o-Manoa-App developers.
 """
 
+import csv
 import importlib.util
 import os
 import torch
@@ -90,8 +91,9 @@ def interpret(
     ])
 
     # label names
-    labels = os.listdir(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'images', 'local'))
-    labels = labels[0:loader_config.dataloader_params['classes']]
+    with open(os.path.join(model_path, 'label_names.csv'), 'r', newline='') as f:
+        reader = csv.reader(f)
+        labels = next(reader)
 
     while True:
         # todo: this is fried as hell
