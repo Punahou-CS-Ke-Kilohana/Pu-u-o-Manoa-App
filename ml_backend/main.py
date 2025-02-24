@@ -9,6 +9,7 @@ import torch
 
 from application.scripts.train import train
 from application.scripts.validate import validate
+from application.scripts.interpret import interpret
 
 
 def parse():
@@ -57,11 +58,13 @@ def main() -> int:
     # method reference
     methods = {
         'train': train,
-        'validate': validate
+        'validate': validate,
+        'interpret': interpret
     }
     method_titles = {
         'train': 'Training',
-        'validate': 'Validating'
+        'validate': 'Validating',
+        'interpret': 'Interpreting'
     }
     if args.script not in methods.keys():
         # invalid method

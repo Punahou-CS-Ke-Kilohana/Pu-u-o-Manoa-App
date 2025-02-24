@@ -4,3 +4,5 @@ matplotlib~=3.10.0
 easydict~=1.13
 SimpleITK~=2.4.1
 setuptools~=75.8.0
+RHCCCore~=0.9.0
+pillow~=11.1.0

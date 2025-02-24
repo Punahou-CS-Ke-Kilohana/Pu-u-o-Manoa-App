@@ -672,20 +672,20 @@ class CNNCore(nn.Module):
                 # set forward
                 for act, conv, pool in zip(self._conv_acts, self._conv, self._pool):
                     x = pool(act(conv(x)))
-                x = torch.flatten(x, 1)
-                for act, dense in zip(self._dense_acts, self._dense):
+                x = torch.flatten(x, 0)
+                for act, dense in zip(self._dense_acts[:-1], self._dense[:-1]):
                     x = act(dense(x))
-                return x
+                return self._dense[-1](x)
 
         def _forward_no_grad(x: torch.Tensor) -> torch.Tensor:
             # set forward w/o grad
-            with torch.no_grad:
+            with torch.no_grad():
                 for act, conv, pool in zip(self._conv_acts, self._conv, self._pool):
                     x = pool(act(conv(x)))
-                x = torch.flatten(x, 1)
-                for act, dense in zip(self._dense_acts, self._dense):
+                x = torch.flatten(x, 0)
+                for act, dense in zip(self._dense_acts[:-1], self._dense[:-1]):
                     x = act(dense(x))
-                return x
+                return self._dense[-1](x)
 
         return _forward, _forward_no_grad
 
