@@ -77,13 +77,17 @@ crashlytics-build.properties
 
 ./Library/artifacts/*
 
-# ml backend
+# IDE
 *.idea
 *.swp
+
+# ml backend
 ml_backend/RHCCCore/RHCCCore.egg-info/*
-*.egg-info
-*.pyc
 ml_backend/models/*
 !ml_backend/models/model_clear.py
 ml_backend/test_images/*
 !ml_backend/test_images/image_clear.py
+
+# auto-generated files
+*.egg-info
+*.pyc

@@ -11,6 +11,7 @@ from easydict import EasyDict as Edict
 
 
 h, w = 256, 256
+classes = 15
 
 loader_config = Edict()
 
@@ -24,18 +25,22 @@ loader_config.transform = transforms.Compose([
     transforms.ConvertImageDtype(torch.float)
 ])
 
+# interpreter params
 loader_config.interpret_params = {
     'color_channels': 3,
     'initial_dims': (h, w)
 }
+loader_config.label_names = os.listdir(
+    os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'images', 'local')
+)[:classes]  # todo: this won't write at runtime
 
 # input image path
 loader_config.image_loc = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'test_images')
 
 # dataloader parameters
 loader_config.dataloader_params = {
-    'classes': 15,
-    'batch_size': 1,
+    'classes': classes,
+    'batch_size': 16,
     'shuffle': True,
     'num_workers': 0,
     'pin_memory': True,

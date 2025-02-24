@@ -4,6 +4,7 @@ This module consists of the training script for the Pu-u-o-Manoa-App.
 For any questions or issues regarding this file, contact one of the Pu-u-o-Manoa-App developers.
 """
 
+import csv
 import importlib.util
 import os
 import sys
@@ -23,6 +24,7 @@ from RHCCCore.utils import (
 from application.dataloader.dataloader import loader
 
 from application.configs.hyperparameters_config import hyperparameters_config
+from application.configs.loader_config import loader_config
 from application.configs.model_config import model_config
 from application.configs.training_config import training_config
 
@@ -80,6 +82,9 @@ def train(
         # save config
         shutil.copy(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'configs', 'model_config.py'), model_path)
         shutil.copy(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'configs', 'loader_config.py'), model_path)
+        with open(os.path.join(model_path, 'label_names.csv'), 'w', newline='') as f:
+            writer = csv.writer(f)
+            writer.writerow(loader_config.label_names)
         os.sync()
 
         # write model docstring
