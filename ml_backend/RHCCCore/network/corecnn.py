@@ -1,15 +1,15 @@
 r"""
-This module consists of the core of the CNN model for the Pu-u-o-Manoa-App.
-It contains the main CNN core model.
+**Pu-u-Manoa-App Core CNN.**
 
-For any questions or issues regarding this file, contact one of the Pu-u-o-Manoa-App developers.
+Contains:
+    - :class:`CNNCore`
 """
 
-from typing import Optional
-import warnings
 import torch
 import torch.nn as nn
+from typing import Callable, Dict, List, Tuple, Optional
 from torch.utils.data import DataLoader
+from warnings import warn
 
 from ..utils.utils import Params, ParamChecker
 from ..utils.errors import (
@@ -20,16 +20,25 @@ from ..utils.errors import (
 
 class CNNCore(nn.Module):
     r"""
+    **Main configurable CNN Object.**
+
+    A configurable Convolutional Neural Network (CNN) based on PyTorch.
     CNNCore is the core component of a configurable Convolutional Neural Network (CNN) model.
 
-    This class allows for the ease of construction of a CNN model based in PyTorch. It sets
-    activation functions, convolutional layers, pooling layers (optionally), and dense layers.
-    It automatically calculates internal components that would otherwise require math to find.
-    Additionally, it makes sure that components are instantiated correctly. Any internal
-    components that are restricted, such as activations, can be altered with relative ease.
+    Note:
+        CNNCore automatically assembles activation functions, convolutional layers, pooling layers, and dense layers
+        automatically.
+        These can be set manually as well.
+
+    Note:
+        Layer sizes are automatically calculated with a dataloader and the layer sizes.
+
+    Note:
+        CNNCore is built with modular additional settings.
+        It's built to be easily mutable without significant changes.
     """
-    # allowed activations list
-    _allowed_acts = [
+    # activation list
+    _allowed_acts: List[str] = [
         'ReLU',
         'Softplus',
         'Softmax',
@@ -40,25 +49,22 @@ class CNNCore(nn.Module):
 
     def __init__(self, *, ikwiad: bool = False):
         r"""
-        Initializes the CNNCore class.
+        **Instantiates CNNCore.**
 
         Args:
-            ikwiad (bool, optional):
-                "I know what I am doing" (ikwiad).
-                If True, removes all warning messages.
-                Defaults to False.
+            ikwiad (bool), default = False: Turns off all warning messages ("I know what I am doing" - ikwiad).
         """
         super(CNNCore, self).__init__()
 
-        # allowed activations list
-        self._allowed_acts = self.allowed_acts()
+        # activation list
+        self._allowed_acts: List[str] = self.allowed_acts()
 
         # internals
-        self.forward = self.forward
-        self.forward_no_grad = self.forward_no_grad
+        self.forward: Callable = self.forward
+        self.forward_no_grad: Callable = self.forward_no_grad
         # internal checkers
-        self._ikwiad = ikwiad
-        self._instantiations = {
+        self._ikwiad: bool = bool(ikwiad)
+        self._instantiations: Dict[str, bool] = {
             'channels': False,
             'training_params': False,
             'activators': False,
@@ -68,20 +74,20 @@ class CNNCore(nn.Module):
             'fully_instantiated': False
         }
         # network features
-        self._in_dims = None
-        self._conv_sizes = None
-        self._dense_sizes = None
+        self._in_dims: Optional[Tuple[int, int]] = None
+        self._conv_sizes: Optional[List[int]] = None
+        self._dense_sizes: Optional[List[int]] = None
         self._conv_params = None
         self._pool_params = None
         self._dense_params = None
-        # activation container
         self._act_params = None
-        self._conv_acts = nn.ModuleList()
-        self._dense_acts = nn.ModuleList()
+        # activation container
+        self._conv_acts: nn.ModuleList = nn.ModuleList()
+        self._dense_acts: nn.ModuleList = nn.ModuleList()
         # layer containers
-        self._conv = nn.ModuleList()
-        self._pool = nn.ModuleList()
-        self._dense = nn.ModuleList()
+        self._conv: nn.ModuleList = nn.ModuleList()
+        self._pool: nn.ModuleList = nn.ModuleList()
+        self._dense: nn.ModuleList = nn.ModuleList()
 
     @classmethod
     def allowed_acts(cls):
@@ -93,16 +99,13 @@ class CNNCore(nn.Module):
 
     def set_channels(self, *, conv_channels: Optional[list] = None, dense_channels: Optional[list] = None) -> None:
         r"""
-        Sets the channel sizes for convolutional and dense layers. Internal items are
-        temporarily set to a string item that will be calculated or set and substituted later.
+        **Sets the channel sizes for convolutional and dense layers.**
+
+        Internal items are temporarily set to a string item that will be calculated or set and substituted later.
 
         Args:
-            conv_channels (list, optional):
-                List of integers specifying convolutional channel sizes.
-                Defaults to ['colors', 16, 32, 64, 128].
-            dense_channels (list, optional):
-                List of integers specifying dense channel sizes.
-                Defaults to ['flattened', 256, 128, 64, 32].
+            conv_channels (list, optional), default = ['colors', 16, 32, 64, 128]: Convolutional channel sizes.
+            dense_channels (list, optional), default = ['flattened', 256, 128, 64, 32]: Dense channel sizes.
 
         Returns:
             None
@@ -113,19 +116,19 @@ class CNNCore(nn.Module):
         """
         # check for duplicate initialization attempts
         if self._instantiations['channels']:
-            raise AlreadySetError("Channels can't be set twice")
+            raise AlreadySetError("Attempted second set of channels.")
 
         # check channel types
         if not (
             (isinstance(conv_channels, list) and all(isinstance(itm, int) and 0 < itm for itm in conv_channels))
             or conv_channels is None
         ):
-            raise ValueError("'conv_channels' must be a list of positive integers or None")
+            raise ValueError("Attempted convolutional channel set with incorrect type (list of ints or None)")
         if not (
             (isinstance(dense_channels, list) and all(isinstance(itm, int) and 0 < itm for itm in dense_channels))
             or dense_channels is None
         ):
-            raise ValueError("'dense_channels' must be a list of positive integers or None")
+            raise ValueError("Attempted dense channel set with incorrect type (list of ints or None)")
 
         # set channels
         conv_channels = conv_channels or [16, 32, 64, 128]
@@ -144,7 +147,7 @@ class CNNCore(nn.Module):
             loader: Optional[DataLoader] = None
     ) -> None:
         r"""
-        Transfers DataLoader parameters into the model so internal components can be set.
+        **Transfers DataLoader parameters into the model so internal components can be set.**
 
         Args:
             color_channels (int, optional):
@@ -181,7 +184,7 @@ class CNNCore(nn.Module):
             # loader provided, but not as the correct object
             if not self._ikwiad:
                 print()
-                warnings.warn("A loader was set, but wasn't a torch dataloader and was ignored", UserWarning)
+                warn("A loader was set, but wasn't a torch dataloader and was ignored", UserWarning)
         if not isinstance(loader, DataLoader):
             # check for errors
             if not (isinstance(color_channels, int) and 0 < color_channels,):
@@ -619,7 +622,7 @@ class CNNCore(nn.Module):
         final_size = int(h * w * self._conv_sizes[-1])
         if final_size <= 0 and not self._ikwiad:
             print()
-            warnings.warn(
+            warn(
                 "This model is about to be instantiated with a flattened size of 0",
                 UserWarning
             )
