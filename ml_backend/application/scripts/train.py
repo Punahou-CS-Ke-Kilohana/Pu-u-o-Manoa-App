@@ -21,8 +21,8 @@ from RHCCCore.utils import (
     convert_time,
     progress
 )
-from application.dataloader.dataloader import loader
 
+from application.dataloader.dataloader import loader
 from application.configs.hyperparameters_config import hyperparameters_config
 from application.configs.loader_config import loader_config
 from application.configs.model_config import model_config
