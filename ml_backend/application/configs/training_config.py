@@ -28,10 +28,10 @@ training_config.save_params = {
                  f"{str(datetime.datetime.now().month).zfill(2)}_"
                  f"{str(datetime.datetime.now().day).zfill(2)}"
 }
-training_config.save_gap = 4
+training_config.save_gap = 25
 
 # epochs
-training_config.epochs = 10
+training_config.epochs = 500
 
 # expose to import
 __all__ = ['training_config']

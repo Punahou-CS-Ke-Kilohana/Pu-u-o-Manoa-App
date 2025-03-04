@@ -224,10 +224,15 @@ def train(
     if epoch is None:
         epoch = 0
     for ep in range(epoch + 1, training_config.epochs + 1):
+        e_start = time.perf_counter()
         if ep % training_config.save_gap == 0:
+            # loss change
             # gap report
             sys.stdout.write(
-                f"Epoch {str(ep).zfill(len(str(training_config.epochs)))}/{training_config.epochs}\n")
+                f"Epoch {str(ep).zfill(len(str(training_config.epochs)))}/{training_config.epochs}  "
+                f"Elapsed {convert_time(time.perf_counter() - start_time)}  "
+                f"Diff [BROKEN]\n"
+            )
             sys.stdout.flush()
         # initial bar
         desc = (
@@ -252,7 +257,7 @@ def train(
 
             # bar update
             running_loss += loss.item()
-            elapsed = time.perf_counter() - start_time
+            elapsed = time.perf_counter() - e_start
             desc = (
                 f"{str(i).zfill(len(str(max_idx)))}it/{max_idx}it  "
                 f"{(100 * i / max_idx):05.1f}%  "

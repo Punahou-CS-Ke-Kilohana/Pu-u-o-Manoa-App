@@ -37,14 +37,14 @@ def main() -> int:
     # get args
     args = parse()
     # get device
-    if args.device == 'mps':
+    if args.device.lower() == 'mps':
         if torch.backends.mps.is_available():
             device = torch.device('mps')
             print("Utilizing Metal.")
         else:
             device = torch.device('cpu')
             print("Failed utilizing Metal.")
-    elif torch.cuda.is_available() and args.device == 'cuda':
+    elif args.device.lower() == 'cuda':
         if torch.cuda.is_available():
             device = torch.device('cuda')
             print("Utilizing CUDA.")
