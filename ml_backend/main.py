@@ -37,7 +37,11 @@ def main() -> int:
     # get args
     args = parse()
     # get device
-    if args.device.lower() == 'mps':
+    if not args.device():
+        # temporary (hopefully) bandaid fix
+        device = torch.device('cpu')
+        print("Utilizing CPU.")
+    elif args.device.lower() == 'mps':
         if torch.backends.mps.is_available():
             device = torch.device('mps')
             print("Utilizing Metal.")

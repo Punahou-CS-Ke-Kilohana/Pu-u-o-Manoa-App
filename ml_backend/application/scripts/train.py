@@ -85,7 +85,10 @@ def train(
         with open(os.path.join(model_path, 'label_names.csv'), 'w', newline='') as f:
             writer = csv.writer(f)
             writer.writerow(loader_config.label_names)
-        os.sync()
+        try:
+            os.sync()
+        except AttributeError:
+            os.fsync(fd=os.open(os.path.join(model_path, 'label_names.csv'), os.O_RDWR))
 
         # write model docstring
         with open(os.path.join(model_path, 'model_config.py'), 'r') as f:
@@ -109,7 +112,10 @@ def train(
             )
             f.write(top_level_doc)
             f.writelines(lines)
-        os.sync()
+        try:
+            os.sync()
+        except AttributeError:
+            os.fsync(fd=os.open(os.path.join(model_path, 'loader_config.py'), os.O_RDWR))
     except FileExistsError:
         confirm = None
         # use old model
@@ -156,7 +162,12 @@ def train(
             shutil.copy(
                 os.path.join(os.path.dirname(os.path.dirname(__file__)), 'configs', 'loader_config.py'), model_path
             )
-            os.sync()
+            try:
+                os.sync()
+            except AttributeError:
+                # todo: fix this (hopefully inconsequential bug)
+                pass
+                # os.fsync(fd=os.open(os.path.join(os.path.dirname(__file__))))
 
             # write model docstring
             with open(os.path.join(model_path, 'model_config.py'), 'r') as f:
@@ -180,7 +191,10 @@ def train(
                 )
                 f.write(top_level_doc)
                 f.writelines(lines)
-            os.sync()
+            try:
+                os.sync()
+            except AttributeError:
+                os.fsync(fd=os.open(os.path.join(model_path, 'loader_config.py'), os.O_RDWR))
         elif not isinstance(epoch, int):
             # retain save dir
             sys.stdout.write(f"Exiting training and retaining {save_name}.\n")
@@ -271,10 +285,16 @@ def train(
         if ep % training_config.save_gap == 0:
             # save gap model
             torch.save(model.state_dict(), os.path.join(model_path, f"epoch_{ep}"))
-            os.sync()
+            try:
+                os.sync()
+            except AttributeError:
+                os.fsync(fd=os.open(os.path.join(model_path, f"epoch_{ep}"), os.O_RDWR))
 
     # save final model
     torch.save(model.state_dict(), os.path.join(model_path, f"epoch_{training_config.epochs}"))
-    os.sync()
+    try:
+        os.sync()
+    except AttributeError:
+        os.fsync(fd=os.open(os.path.join(model_path, f"epoch_{training_config.epochs}"), os.O_RDWR))
 
     return None
