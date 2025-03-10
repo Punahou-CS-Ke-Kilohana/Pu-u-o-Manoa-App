@@ -81,17 +81,24 @@ public class CapImg : MonoBehaviour
             Debug.Log("Webcam has been stopped.");
 
             ExifData PictureExif;
+            GeoCoordinate lat;
+            GeoCoordinate lon;
             DateTime DateTaken;
             try
             {
-                PictureExif = new ExifData(@"../ImageCaptures/test.png");
-                if (PictureExif.GetTagValue(ExifTag.DateTimeOriginal, out DateTaken))
-                {
-                    print(DateTaken);
-                }
+                PictureExif = new ExifData(fullPath);
+                //PictureExif = new ExifData(Path.Combine(Path.Combine(Application.dataPath, "ImageCaptures"), "test.jpg"));
+                PictureExif.GetDateTaken(out DateTaken);
+                PictureExif.GetGpsLatitude(out lat);
+                PictureExif.GetGpsLongitude(out lon);
+                Debug.Log(DateTaken);
+                Debug.Log(lat.Degree);
+                Debug.Log(lon.Degree);
+
             }
             catch
             {
+                print("error");
                 // Error occurred while reading image file
             }
 
