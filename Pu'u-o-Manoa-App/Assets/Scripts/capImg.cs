@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement; // switching scenes
 using System.IO; // for files
 using System; // for timestamps
+using CompactExifLib;
 //using ImagePlacer;
 
 public class CapImg : MonoBehaviour
@@ -81,6 +82,22 @@ public class CapImg : MonoBehaviour
             // Stop the webcam
             webcam.Stop();
             Debug.Log("Webcam has been stopped.");
+
+            ExifData PictureExif;
+            DateTime DateTaken;
+            try
+            {
+                PictureExif = new ExifData(@"../ImageCaptures/test.png");
+                if (PictureExif.GetTagValue(ExifTag.DateTimeOriginal, out DateTaken))
+                {
+                    print(DateTaken);
+                }
+            }
+            catch
+            {
+                // Error occurred while reading image file
+            }
+
             ImagePlacer.Instance.Place(21.1816f, 157.4930f, "e");
         }
         else
