@@ -16,6 +16,14 @@ from RHCCCore.network import CNNCore
 
 from application.configs.training_config import training_config
 
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Navigate up from ml_backend/application/scripts to the root of Pu'u-o-Manoa-App
+project_root = os.path.abspath(os.path.join(current_dir, '../../../..'))
+
+# Construct the path to ImageCaptures
+image_captures_path = os.path.join(project_root, "Pu'u-o-Manoa-App/Assets/ImageCaptures")
+
 
 def interpret(
         device: torch.device = torch.device('cpu'),
@@ -97,13 +105,29 @@ def interpret(
 
     while True:
         # todo: this is fried as hell
-        img_path = input('Image name: ')
-        img = Image.open(os.path.join(loader_config.image_loc, img_path))
+        # 
+
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+
+        image_dir = os.path.join(current_dir, "../../../Pu'u-o-Manoa-App/Assets/ImageCaptures")
+        image_dir = os.path.abspath(image_dir)
+
+        image_files = [os.path.join(image_dir, f) for f in os.listdir(image_dir) if f.lower().endswith('.jpg') and os.path.isfile(os.path.join(image_dir, f))]
+
+        if not image_files:
+            raise FileNotFoundError(f"No image files found in directory: {image_dir}")
+
+        # Get the most recently jpg
+        latest_image = max(image_files, key=os.path.getmtime)
+
+        # Ensure the image is in RGB format
+        img = Image.open(latest_image)
         pred = model.forward_no_grad(x=transform(img).to(device=device))
         print(labels[int(torch.argmax(pred))])
+        break
 
 
 if __name__ == "__main__":
     intp_device = torch.device('cpu')
-    intp_name = 'main_model'
+    intp_name = 'test_model'
     interpret(device=intp_device, name=intp_name)
