@@ -1215,7 +1215,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startLat: 21.1816
   startLon: 157.493
-  imagePrefab: {fileID: 820742650477658671, guid: 37393ab9ecb7d4ab099381992b3901c7,
+  imagePrefab: {fileID: 7554996332541514510, guid: a8186910707b84380880196ca8c610b6,
     type: 3}
 --- !u!1 &1620381981
 GameObject:
