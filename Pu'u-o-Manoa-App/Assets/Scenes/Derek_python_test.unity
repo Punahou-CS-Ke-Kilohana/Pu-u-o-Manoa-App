@@ -255,7 +255,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3ed1564d63174763bd5455e2cd059b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pythonScriptPath: /Users/dyee25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Assets/PythonScripts/preload_forward.py
+  pythonScriptRelativePath: ml_backend/main.py
 --- !u!1 &803337582
 GameObject:
   m_ObjectHideFlags: 0
@@ -268,7 +268,6 @@ GameObject:
   - component: {fileID: 803337585}
   - component: {fileID: 803337584}
   - component: {fileID: 803337583}
-  - component: {fileID: 803337587}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -359,21 +358,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &803337587
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 803337582}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4ecfae104ae1c4f2a9ee8cd323d0bb00, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cameraDisplay: {fileID: 0}
-  captureButton: {fileID: 0}
-  imagePlacer: {fileID: 0}
 --- !u!1 &845343851
 GameObject:
   m_ObjectHideFlags: 0
