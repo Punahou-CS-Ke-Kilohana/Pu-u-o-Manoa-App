@@ -55,7 +55,7 @@ public class CapImg : MonoBehaviour
             photo.Apply();
 
             // Encode image as a PNG
-            byte[] photoBytes = photo.EncodeToPNG();
+            byte[] photoBytes = photo.EncodeToJPG();
 
             // Save in ImageCaptures flder
             string saveFolder = Path.Combine(Application.dataPath, "ImageCaptures");
@@ -68,7 +68,7 @@ public class CapImg : MonoBehaviour
 
             // Generate a unique filename with a timestamp
             string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss"); // e.g., 20241119_095112
-            string fileName = $"CapturedPhoto_{timestamp}.png";
+            string fileName = $"CapturedPhoto_{timestamp}.jpg";
 
             // 
             string fullPath = Path.Combine(saveFolder, fileName);
