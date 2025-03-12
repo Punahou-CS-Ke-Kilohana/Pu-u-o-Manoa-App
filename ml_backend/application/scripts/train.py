@@ -165,9 +165,7 @@ def train(
             try:
                 os.sync()
             except AttributeError:
-                # todo: fix this (hopefully inconsequential bug)
-                pass
-                # os.fsync(fd=os.open(os.path.join(os.path.dirname(__file__))))
+                os.fsync(fd=os.open(os.path.join(model_path, 'loader_config.py'), os.O_RDWR))
 
             # write model docstring
             with open(os.path.join(model_path, 'model_config.py'), 'r') as f:

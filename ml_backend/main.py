@@ -37,9 +37,7 @@ def main() -> int:
     # get args
     args = parse()
     # get torch device
-    # todo: this is a super messed up bandaid fix
-    if not True:  # args.device():
-        # temporary (hopefully) bandaid fix
+    if not args.device:
         device = torch.device('cpu')
         print("Utilizing CPU.")
     elif args.device.lower() == 'mps':
