@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.IO;
 
 public class DatabaseUIController : MonoBehaviour
 {
@@ -71,9 +72,52 @@ public class DatabaseUIController : MonoBehaviour
 
             // Set the plant name in the cell
             TMPro.TextMeshProUGUI cellText = newCell.GetComponentInChildren<TMPro.TextMeshProUGUI>();
+            UnityEngine.UI.RawImage cellImage = newCell.GetComponentInChildren<UnityEngine.UI.RawImage>();
+
+            string projectRoot = Directory.GetParent(Directory.GetParent(Application.dataPath).FullName).FullName;
+            string folderPath = Path.Combine(projectRoot, "ml_backend/images/local/" + cellList[i]);
+
             if (cellText != null)
             {
                 cellText.text = cellList[i];
+            }
+
+            if (Directory.Exists(folderPath))
+            {
+                // Get all image files from the folder
+                string[] imageFiles = Directory.GetFiles(folderPath, "*.jpg");
+
+                if (imageFiles.Length > 0)
+                {
+                    string firstImagePath = imageFiles[0];
+                    StartCoroutine(LoadImage(firstImagePath));
+                }
+                else
+                {
+                    Debug.LogWarning("No images found in " + folderPath);
+                }
+            }
+            else
+            {
+                Debug.LogError("Folder not found: " + folderPath);
+            }
+
+            System.Collections.IEnumerator LoadImage(string path)
+            {
+                byte[] imageData = File.ReadAllBytes(path);
+                Texture2D texture = new Texture2D(2, 2);
+
+                texture = RotateTexture(texture);
+
+                if (texture.LoadImage(imageData))
+                {
+                    cellImage.texture = texture;
+                }
+                else
+                {
+                    Debug.LogError("Failed to load image: " + path);
+                }
+                yield return null;
             }
         }
 
@@ -91,5 +135,22 @@ public class DatabaseUIController : MonoBehaviour
     {
         List<string> plantNames = plantLoader.GetPlantNames();
         PopulateScrollView(plantNames);
+    }
+
+    Texture2D RotateTexture(Texture2D originalTexture)
+    {
+        int width = originalTexture.width;
+        int height = originalTexture.height;
+        Texture2D rotatedTexture = new Texture2D(height, width);
+
+        for (int i = 0; i < width; i++)
+        {
+            for (int j = 0; j < height; j++)
+            {
+                rotatedTexture.SetPixel(j, width - 1 - i, originalTexture.GetPixel(i, j));
+            }
+        }
+        rotatedTexture.Apply();
+        return rotatedTexture;
     }
 }

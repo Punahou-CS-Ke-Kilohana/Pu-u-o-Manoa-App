@@ -4,6 +4,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
+using System.IO;
 
 public class MoreSpeciesDisplay : MonoBehaviour
 {
@@ -12,7 +14,8 @@ public class MoreSpeciesDisplay : MonoBehaviour
     public TMP_Text speciesNameText;
     public TMP_Text hawaiianNameText;
     public TMP_Text speciesStatusText;
-    public TMP_Text BioText; 
+    public TMP_Text BioText;
+    public RawImage speciesImage;
 
     // Start is called before the first frame update
     void Start()
@@ -39,6 +42,46 @@ public class MoreSpeciesDisplay : MonoBehaviour
             hawaiianNameText.text = string.Join(", ", hawaiianNames);
             speciesStatusText.text = speciesStatus;
             BioText.text = bio;
+
+            string projectRoot = Directory.GetParent(Directory.GetParent(Application.dataPath).FullName).FullName;
+            string folderPath = Path.Combine(projectRoot, "ml_backend/images/local/" + speciesNameText.text);
+
+
+            if (Directory.Exists(folderPath))
+            {
+                // Get all image files from the folder
+                string[] imageFiles = Directory.GetFiles(folderPath, "*.jpg");
+
+                if (imageFiles.Length > 0)
+                {
+                    string firstImagePath = imageFiles[0];
+                    StartCoroutine(LoadImage(firstImagePath));
+                }
+                else
+                {
+                    Debug.LogWarning("No images found in " + folderPath);
+                }
+            }
+            else
+            {
+                Debug.LogError("Folder not found: " + folderPath);
+            }
+
+            System.Collections.IEnumerator LoadImage(string path)
+            {
+                byte[] imageData = File.ReadAllBytes(path);
+                Texture2D texture = new Texture2D(2, 2);
+
+                if (texture.LoadImage(imageData))
+                {
+                    speciesImage.texture = texture;
+                }
+                else
+                {
+                    Debug.LogError("Failed to load image: " + path);
+                }
+                yield return null;
+            }
         }
     }
 }
