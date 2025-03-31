@@ -37,20 +37,7 @@ public class DatabaseUIController : MonoBehaviour
         float cellWidth = cellRect.rect.width;
         float cellHeight = cellRect.rect.height;
 
-        // Set a fixed width for the content panel
-        float fixedContentWidth = 0; // Fixed width
-
-        // Calculate total number of rows needed
-        int totalRows = Mathf.CeilToInt((float)cellList.Count / itemsPerRow);
-        
-        // Calculate total height needed
-        float totalHeight = Mathf.Max((totalRows * 79), 175);
-
-        // Set the content panel size with fixed width and dynamic height
-        contentPanel.sizeDelta = new Vector2(fixedContentWidth, totalHeight);
-
-        // Enable or disable scrolling based on height
-        scrollRect.vertical = totalHeight > 175;
+        int numPlants = cellList.Count;
 
         // Loop through the plant list and create each prefab in the correct position
         for (int i = 0; i < cellList.Count; i++)
@@ -94,12 +81,14 @@ public class DatabaseUIController : MonoBehaviour
                 }
                 else
                 {
-                    Debug.LogWarning("No images found in " + folderPath);
+                    Destroy(newCell);
+                    numPlants -= 1;
                 }
             }
             else
             {
-                Debug.LogError("Folder not found: " + folderPath);
+                Destroy(newCell);
+                numPlants -= 1;
             }
 
             System.Collections.IEnumerator LoadImage(string path)
@@ -115,11 +104,27 @@ public class DatabaseUIController : MonoBehaviour
                 }
                 else
                 {
-                    Debug.LogError("Failed to load image: " + path);
+                    Destroy(newCell);
+                    numPlants -= 1;
                 }
                 yield return null;
             }
         }
+
+        // Set a fixed width for the content panel
+        float fixedContentWidth = 0; // Fixed width
+
+        // Calculate total number of rows needed
+        int totalRows = Mathf.CeilToInt((float)numPlants / itemsPerRow);
+
+        // Calculate total height needed
+        float totalHeight = Mathf.Max((totalRows * 79), 175);
+
+        // Set the content panel size with fixed width and dynamic height
+        contentPanel.sizeDelta = new Vector2(fixedContentWidth, totalHeight);
+
+        // Enable or disable scrolling based on height
+        scrollRect.vertical = totalHeight > 175;
 
         // After creating all cells, reset scroll position to top
         scrollRect.normalizedPosition = new Vector2(0, 1);
