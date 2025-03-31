@@ -80,27 +80,7 @@ public class CapImg : MonoBehaviour
             webcam.Stop();
             Debug.Log("Webcam has been stopped.");
 
-            ExifData PictureExif;
-            GeoCoordinate lat;
-            GeoCoordinate lon;
-            DateTime DateTaken;
-            try
-            {
-                PictureExif = new ExifData(fullPath);
-                //PictureExif = new ExifData(Path.Combine(Path.Combine(Application.dataPath, "ImageCaptures"), "test.jpg"));
-                PictureExif.GetDateTaken(out DateTaken);
-                PictureExif.GetGpsLatitude(out lat);
-                PictureExif.GetGpsLongitude(out lon);
-                Debug.Log(DateTaken);
-                Debug.Log(lat.Degree);
-                Debug.Log(lon.Degree);
-
-            }
-            catch
-            {
-                print("error");
-                // Error occurred while reading image file
-            }
+            // insert gps / location code here
 
             ImagePlacer.Instance.Place(21.1816f, 157.4930f, "e");
         }
@@ -119,3 +99,26 @@ public class CapImg : MonoBehaviour
         }
     }
 }
+
+            // unused exifdata code :(
+            // ExifData PictureExif;
+            // GeoCoordinate lat;
+            // GeoCoordinate lon;
+            // DateTime DateTaken;
+            // try
+            // {
+            //     PictureExif = new ExifData(fullPath);
+            //     //PictureExif = new ExifData(Path.Combine(Path.Combine(Application.dataPath, "ImageCaptures"), "test.jpg"));
+            //     PictureExif.GetDateTaken(out DateTaken);
+            //     PictureExif.GetGpsLatitude(out lat);
+            //     PictureExif.GetGpsLongitude(out lon);
+            //     Debug.Log(DateTaken);
+            //     Debug.Log(lat.Degree);
+            //     Debug.Log(lon.Degree);
+
+            // }
+            // catch
+            // {
+            //     print("error");
+            //     // Error occurred while reading image file
+            // }
