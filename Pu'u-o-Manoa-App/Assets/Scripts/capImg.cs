@@ -80,9 +80,40 @@ public class CapImg : MonoBehaviour
             webcam.Stop();
             Debug.Log("Webcam has been stopped.");
 
-            // insert gps / location code here
+            float lat = 21.1816f;
+            float lon = 157.4930f;
+            if (!Input.location.isEnabledByUser)
+            {
+                Debug.Log("Location not enabled on device or app does not have permission to access location");
+            }
+            else
+            {
+                Input.location.Start(10f, 10f);
+                int maxWait = 10;
+                while (Input.location.status == LocationServiceStatus.Initializing && maxWait > 0)
+                {
+                    new WaitForSeconds(1);
+                    maxWait--;
+                }
+                if (maxWait < 1)
+                {
+                    Debug.Log("Timed out");
+                }
 
-            ImagePlacer.Instance.Place(21.1816f, 157.4930f, "e");
+                if (Input.location.status == LocationServiceStatus.Failed)
+                {
+                    Debug.LogError("Unable to determine device location");
+                }
+                else
+                {
+                    Debug.Log("Location: " + Input.location.lastData.latitude + " " + Input.location.lastData.longitude + " " + Input.location.lastData.altitude + " " + Input.location.lastData.horizontalAccuracy + " " + Input.location.lastData.timestamp);
+                    lat = Input.location.lastData.latitude;
+                    lon = Input.location.lastData.longitude;
+                }
+                Input.location.Stop();
+            }
+
+            ImagePlacer.Instance.Place(lat, lon, "e");
         }
         else
         {
