@@ -432,6 +432,7 @@ GameObject:
   - component: {fileID: 803337584}
   - component: {fileID: 803337583}
   - component: {fileID: 803337587}
+  - component: {fileID: 803337588}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -538,7 +539,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cameraDisplay: {fileID: 1286122939}
   captureButton: {fileID: 778175700}
-  backgroundPanel: {fileID: 0}
+  imagePlacer: {fileID: 0}
+--- !u!114 &803337588
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 803337582}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3ed1564d63174763bd5455e2cd059b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pythonScriptRelativePath: ml_backend/main.py
 --- !u!1 &845343851
 GameObject:
   m_ObjectHideFlags: 0

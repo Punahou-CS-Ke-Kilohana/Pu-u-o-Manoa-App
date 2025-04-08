@@ -39,6 +39,8 @@ public class CapImg : MonoBehaviour
 
         // Bring user to the more species information scene (scene 4 in scene manager)
         // you can edit this in build settings
+        GetComponent<RunPython>().RunPythonScript();
+
         SceneManager.LoadScene(4);
     }
 

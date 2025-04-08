@@ -1,15 +1,13 @@
 using System.Diagnostics;
 using UnityEngine;
 using System.IO;
+using System;
+using UnityEngine.SceneManagement;
 
 public class RunPython : MonoBehaviour
 {
     public string pythonScriptRelativePath = "ml_backend/main.py";
-    public void Start()
-    {
-        RunPythonScript();
-    }
-   
+
     public void RunPythonScript()
     {
         string projectRoot = Directory.GetParent(Directory.GetParent(Application.dataPath).FullName).FullName;
@@ -33,7 +31,19 @@ public class RunPython : MonoBehaviour
                 using (System.IO.StreamReader reader = process.StandardOutput)
                 {
                     string result = reader.ReadToEnd();
-                    UnityEngine.Debug.Log("Python Output: " + result);
+                    string[] lines = result.Split(new[] { '\r', '\n' }, StringSplitOptions.None);
+                    string lastLine = lines[lines.Length - 2].Trim();
+                    lastLine = lastLine.ToLower();
+                    lastLine = lastLine.Replace("_", " ");
+                    lastLine = char.ToUpper(lastLine[0]) + lastLine.Substring(1);
+                    UnityEngine.Debug.Log("Python Output: " + lastLine);
+
+                    // Save the plant name in PlayerPrefs
+                    PlayerPrefs.SetString("PlantName", lastLine);
+                    PlayerPrefs.Save(); // Optional, ensures data is written immediately
+
+                    // Load the next scene
+                    SceneManager.LoadScene(4);
                 }
 
                 using (System.IO.StreamReader errorReader = process.StandardError)

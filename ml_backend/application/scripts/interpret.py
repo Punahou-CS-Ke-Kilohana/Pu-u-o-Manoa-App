@@ -120,11 +120,10 @@ def interpret(
         # Get the most recently jpg
         latest_image = max(image_files, key=os.path.getmtime)
 
-        # Ensure the image is in RGB format
         img = Image.open(latest_image)
         pred = model.forward_no_grad(x=transform(img).to(device=device))
         print(labels[int(torch.argmax(pred))])
-        break
+        return labels[int(torch.argmax(pred))]
 
 
 if __name__ == "__main__":
