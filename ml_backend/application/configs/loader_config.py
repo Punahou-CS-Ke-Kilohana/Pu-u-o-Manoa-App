@@ -11,7 +11,8 @@ from easydict import EasyDict as Edict
 
 
 h, w = 256, 256
-classes = 15
+# WAS 15
+classes = 145
 
 loader_config = Edict()
 

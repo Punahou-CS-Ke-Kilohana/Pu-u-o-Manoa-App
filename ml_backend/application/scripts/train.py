@@ -4,6 +4,8 @@ This module consists of the training script for the Pu-u-o-Manoa-App.
 For any questions or issues regarding this file, contact one of the Pu-u-o-Manoa-App developers.
 """
 
+# to load a new model: python main.py --script train --device cuda --name model_3 --epoch 75 (whichever epoch you want to load)
+
 import csv
 import importlib.util
 import os
@@ -82,7 +84,7 @@ def train(
         # save config
         shutil.copy(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'configs', 'model_config.py'), model_path)
         shutil.copy(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'configs', 'loader_config.py'), model_path)
-        with open(os.path.join(model_path, 'label_names.csv'), 'w', newline='') as f:
+        with open(os.path.join(model_path, 'label_names.csv'), 'w', newline='', encoding='utf-8') as f:
             writer = csv.writer(f)
             writer.writerow(loader_config.label_names)
         try:
@@ -238,6 +240,7 @@ def train(
     if epoch is None:
         epoch = 0
     for ep in range(epoch + 1, training_config.epochs + 1):
+        print(f"\n===== Epoch {ep}/{training_config.epochs} =====")
         e_start = time.perf_counter()
         if ep % training_config.save_gap == 0:
             # loss change
