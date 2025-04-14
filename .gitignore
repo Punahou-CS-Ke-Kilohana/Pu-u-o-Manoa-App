@@ -88,6 +88,7 @@ ml_backend/models/*
 ml_backend/test_images/*
 !ml_backend/test_images/image_clear.py
 Pu'u-o-Manoa-App/Assets/ImageCaptures
+!models/model_3
 
 # auto-generated files
 *.egg-info
