@@ -1,3 +1,5 @@
+// each scene has its own scene manager which we may want to change later
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;

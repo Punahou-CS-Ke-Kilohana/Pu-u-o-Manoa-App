@@ -1,31 +1,44 @@
 r"""
-This module consists of the core of the CNN model for the Pu-u-o-Manoa-App.
-It contains the main CNN core model.
+**Pu-u-Manoa-App Core CNN.**
 
-For any questions or issues regarding this file, contact one of the Pu-u-o-Manoa-App developers.
+Contains:
+    - :class:`CNNCore`
 """
 
-from typing import Optional
-import warnings
 import torch
 import torch.nn as nn
+from typing import Callable, Dict, List, Tuple, Optional
 from torch.utils.data import DataLoader
+from warnings import warn
 
-from ..utils.utils import ParamChecker
+from ..utils.utils import Params, ParamChecker
+from ..utils.errors import (
+    AlreadySetError,
+    MissingMethodError
+)
 
 
 class CNNCore(nn.Module):
     r"""
+    **Main configurable CNN Object.**
+
+    A configurable Convolutional Neural Network (CNN) based on PyTorch.
     CNNCore is the core component of a configurable Convolutional Neural Network (CNN) model.
 
-    This class allows for the ease of construction of a CNN model based in PyTorch. It sets
-    activation functions, convolutional layers, pooling layers (optionally), and dense layers.
-    It automatically calculates internal components that would otherwise require math to find.
-    Additionally, it makes sure that components are instantiated correctly. Any internal
-    components that are restricted, such as activations, can be altered with relative ease.
+    Note:
+        CNNCore automatically assembles activation functions, convolutional layers, pooling layers, and dense layers
+        automatically.
+        These can be set manually as well.
+
+    Note:
+        Layer sizes are automatically calculated with a dataloader and the layer sizes.
+
+    Note:
+        CNNCore is built with modular additional settings.
+        It's built to be easily mutable without significant changes.
     """
-    # allowed activations list
-    _allowed_acts = [
+    # activation list
+    _allowed_acts: List[str] = [
         'ReLU',
         'Softplus',
         'Softmax',
@@ -36,23 +49,22 @@ class CNNCore(nn.Module):
 
     def __init__(self, *, ikwiad: bool = False):
         r"""
-        Initializes the CNNCore class.
+        **Instantiates CNNCore.**
 
         Args:
-            ikwiad (bool, optional):
-                "I know what I am doing" (ikwiad).
-                If True, removes all warning messages.
-                Defaults to False.
+            ikwiad (bool), default = False: Turns off all warning messages ("I know what I am doing" - ikwiad).
         """
         super(CNNCore, self).__init__()
 
-        # allowed activations list
-        self._allowed_acts = self.allowed_acts
+        # activation list
+        self._allowed_acts: List[str] = self.allowed_acts()
 
         # internals
+        self.forward: Callable = self.forward
+        self.forward_no_grad: Callable = self.forward_no_grad
         # internal checkers
-        self._ikwiad = ikwiad
-        self._instantiations = {
+        self._ikwiad: bool = bool(ikwiad)
+        self._instantiations: Dict[str, bool] = {
             'channels': False,
             'training_params': False,
             'activators': False,
@@ -62,20 +74,20 @@ class CNNCore(nn.Module):
             'fully_instantiated': False
         }
         # network features
-        self._in_dims = None
-        self._conv_sizes = None
-        self._dense_sizes = None
+        self._in_dims: Optional[Tuple[int, int]] = None
+        self._conv_sizes: Optional[List[int]] = None
+        self._dense_sizes: Optional[List[int]] = None
         self._conv_params = None
         self._pool_params = None
         self._dense_params = None
-        # activation container
         self._act_params = None
-        self._conv_acts = nn.ModuleList()
-        self._dense_acts = nn.ModuleList()
+        # activation container
+        self._conv_acts: nn.ModuleList = nn.ModuleList()
+        self._dense_acts: nn.ModuleList = nn.ModuleList()
         # layer containers
-        self._conv = nn.ModuleList()
-        self._pool = nn.ModuleList()
-        self._dense = nn.ModuleList()
+        self._conv: nn.ModuleList = nn.ModuleList()
+        self._pool: nn.ModuleList = nn.ModuleList()
+        self._dense: nn.ModuleList = nn.ModuleList()
 
     @classmethod
     def allowed_acts(cls):
@@ -87,39 +99,36 @@ class CNNCore(nn.Module):
 
     def set_channels(self, *, conv_channels: Optional[list] = None, dense_channels: Optional[list] = None) -> None:
         r"""
-        Sets the channel sizes for convolutional and dense layers. Internal items are
-        temporarily set to a string item that will be calculated or set and substituted later.
+        **Sets the channel sizes for convolutional and dense layers.**
+
+        Internal items are temporarily set to a string item that will be calculated or set and substituted later.
 
         Args:
-            conv_channels (list, optional):
-                List of integers specifying convolutional channel sizes.
-                Defaults to ['colors', 16, 32, 64, 128].
-            dense_channels (list, optional):
-                List of integers specifying dense channel sizes.
-                Defaults to ['flattened', 256, 128, 64, 32].
+            conv_channels (list, optional), default = ['colors', 16, 32, 64, 128]: Convolutional channel sizes.
+            dense_channels (list, optional), default = ['flattened', 256, 128, 64, 32]: Dense channel sizes.
 
         Returns:
             None
 
         Raises:
-            RuntimeError: If the channels have already been set.
+            AlreadySetError: If the channels have already been set.
             ValueError: If invalid values were passed for either of the channels.
         """
         # check for duplicate initialization attempts
         if self._instantiations['channels']:
-            raise RuntimeError("Channels can't be set twice")
+            raise AlreadySetError("Attempted second set of channels.")
 
         # check channel types
         if not (
             (isinstance(conv_channels, list) and all(isinstance(itm, int) and 0 < itm for itm in conv_channels))
             or conv_channels is None
         ):
-            raise ValueError("'conv_channels' weren't set correctly (list of positive integers or None)")
+            raise ValueError("Attempted convolutional channel set with incorrect type (list of ints or None)")
         if not (
             (isinstance(dense_channels, list) and all(isinstance(itm, int) and 0 < itm for itm in dense_channels))
             or dense_channels is None
         ):
-            raise ValueError("'dense_channels' weren't set correctly (list of positive integers or None)")
+            raise ValueError("Attempted dense channel set with incorrect type (list of ints or None)")
 
         # set channels
         conv_channels = conv_channels or [16, 32, 64, 128]
@@ -138,7 +147,7 @@ class CNNCore(nn.Module):
             loader: Optional[DataLoader] = None
     ) -> None:
         r"""
-        Transfers DataLoader parameters into the model so internal components can be set.
+        **Transfers DataLoader parameters into the model so internal components can be set.**
 
         Args:
             color_channels (int, optional):
@@ -154,28 +163,29 @@ class CNNCore(nn.Module):
             None
 
         Raises:
-            RuntimeError: If channels weren't set or training parameters were already set.
+            MissingMethodError: If channels weren't set.
+            AlreadySetError: If training parameters were already set.
             ValueError: If invalid values were passed for any of the parameters.
         """
         # check for channel set
         if not self._instantiations['channels']:
-            raise RuntimeError("Channels weren't set")
+            raise MissingMethodError("Channels weren't set")
         # check for duplicate initialization attempts
         if self._instantiations['training_params']:
-            raise RuntimeError("Training parameters can't be set twice")
+            raise AlreadySetError("Training parameters can't be set twice")
 
         if isinstance(loader, DataLoader):
             # transfer from the dataloader
             images, labels = next(iter(loader))
             _, self._conv_sizes[0], h, w = images.shape
+            _, self._dense_sizes[-1] = labels.shape
             self._in_dims = (h, w)
-            self._dense_sizes[-1] = len(torch.unique(labels))
         elif loader:
             # loader provided, but not as the correct object
             if not self._ikwiad:
                 print()
-                warnings.warn("A loader was in, but wasn't a torch dataloader and was ignored", UserWarning)
-        else:
+                warn("A loader was set, but wasn't a torch dataloader and was ignored", UserWarning)
+        if not isinstance(loader, DataLoader):
             # check for errors
             if not (isinstance(color_channels, int) and 0 < color_channels,):
                 raise ValueError("'color_channels' must be a positive integer")
@@ -211,80 +221,73 @@ class CNNCore(nn.Module):
             None
 
         Raises:
-            RuntimeError: If channels weren't set or activations were already set.
-            TypeError: If any parameters were of the wrong type.
+            MissingMethodError: If channels weren't set.
+            AlreadySetError: If activations were already set.
+            TypeError: If any methods or parameters were of the wrong type.
             ValueError: If invalid values were passed for any of the methods or parameters.
         """
         # activation parameter reference
         act_params = {
-            'ReLU': {
-                'default': {'inplace': False},
-                'dtypes': {'inplace': (bool, int)},
-                'vtypes': {'inplace': lambda x: True},
-                'ctypes': {'inplace': lambda x: bool(x)}
-            },
-            'Softplus': {
-                'default': {
+            'ReLU': Params(
+                default={'inplace': False},
+                dtypes={'inplace': (bool, int)},
+                vtypes={'inplace': lambda x: True},
+                ctypes={'inplace': lambda x: bool(x)}
+            ),
+            'Softplus': Params(
+                default={
                     'beta': 1.0,
                     'threshold': 20.0
                 },
-                'dtypes': {
+                dtypes={
                     'beta': (float, int),
                     'threshold': (float, int)
                 },
-                'vtypes': {
+                vtypes={
                     'beta': lambda x: 0 < x,
                     'threshold': lambda x: 0 < x
                 },
-                'ctypes': {
+                ctypes={
                     'beta': lambda x: float(x),
                     'threshold': lambda x: float(x)
                 }
-            },
-            'Softmax': {
-                'default': {'dim': None},
-                'dtypes': {'dim': (type(None), int)},
-                'vtypes': {'dim': lambda x: True},
-                'ctypes': {'dim': lambda x: x}
-            },
-            'Tanh': {
-                'default': None,
-                'dtypes': None,
-                'vtypes': None,
-                'ctypes': None
-            },
-            'Sigmoid': {
-                'default': None,
-                'dtypes': None,
-                'vtypes': None,
-                'ctypes': None
-            },
-            'Mish': {
-                'default': {'inplace': False},
-                'dtypes': {'inplace': (bool, int)},
-                'vtypes': {'inplace': lambda x: True},
-                'ctypes': {'inplace': lambda x: bool(x)}
-            }
+            ),
+            'Softmax': Params(
+                default={'dim': None},
+                dtypes={'dim': (type(None), int)},
+                vtypes={'dim': lambda x: True},
+                ctypes={'dim': lambda x: x}
+            ),
+            'Tanh': Params(
+            ),
+            'Sigmoid': Params(
+            ),
+            'Mish': Params(
+                default={'inplace': False},
+                dtypes={'inplace': (bool, int)},
+                vtypes={'inplace': lambda x: True},
+                ctypes={'inplace': lambda x: bool(x)}
+            )
         }
 
         # check for channel set
         if not self._instantiations['channels']:
-            raise RuntimeError("Channels weren't set")
+            raise MissingMethodError("Channels weren't set")
         # check for duplicate initialization attempts
         if self._instantiations['activators']:
-            raise RuntimeError("Activators can't be set twice")
+            raise AlreadySetError("Activators can't be set twice")
 
         if methods is None:
             # set default activators
-            methods = ['ReLU'] * (len(self._dense_sizes) + len(self._conv_sizes) - 2)
+            methods = ['ReLU'] * (len(self._dense_sizes) + len(self._conv_sizes) - 3)
             methods.append('Softmax')
-            parameters = [{}] * (len(self._dense_sizes) + len(self._conv_sizes) - 1)
+            parameters = [{}] * (len(self._dense_sizes) + len(self._conv_sizes) - 2)
         else:
             # check for errors
-            if not (len(methods) == len(parameters) == (len(self._conv_sizes) + len(self._dense_sizes))):
+            if not (len(methods) == len(parameters) == (len(self._conv_sizes) + len(self._dense_sizes) - 2)):
                 raise ValueError(
                     "Invalid matching of 'params', 'methods', and channels\n"
-                    f"({len(methods)} != {len(parameters)} != {len(self._conv_sizes) + len(self._dense_sizes)})"
+                    f"({len(methods)} != {len(parameters)} != {len(self._conv_sizes) + len(self._dense_sizes) - 2})"
                 )
             if not all([mth in self._allowed_acts for mth in methods]):
                 raise ValueError(
@@ -295,20 +298,18 @@ class CNNCore(nn.Module):
                 raise TypeError("'methods' must be a list")
             if not isinstance(parameters, list):
                 raise TypeError("'parameters' must be a list")
-            if not len(parameters) == len(self._dense_sizes) + len(self._conv_sizes) - 1:
-                raise ValueError(
-                    "'methods' and/or 'parameters' must correspond with the amount of layers in the network\n"
-                    f"({len(self._dense_sizes) + len(self._conv_sizes) - 1})"
-                )
 
         self._act_params = []
         for mthd, prms in zip(methods, parameters):
             # set activation objects
-            act_checker = ParamChecker(name=f'Activator Parameters ({mthd})', ikwiad=self._ikwiad)
-            act_checker.set_types(**act_params[mthd])
+            act_checker = ParamChecker(
+                prefix=f'Activator parameters ({mthd})',
+                parameters=act_params[mthd],
+                ikwiad=self._ikwiad
+            )
             self._act_params.append({
                 'mthd': mthd,
-                'prms': act_checker.check_params(prms)
+                'prms': act_checker(prms)
             })
 
         self._instantiations['activators'] = True
@@ -327,13 +328,13 @@ class CNNCore(nn.Module):
             None
 
         Raises:
-            RuntimeError: If channels weren't set or convolutional layers were already set.
+            MissingMethodError: If channels weren't set.
+            AlreadySetError: If convolutional layers were already set.
             TypeError: If any parameters were of the wrong type.
             ValueError: If invalid values were passed for any of the parameters.
         """
         # instantiate parameter checker
-        conv_checker = ParamChecker(name='Convolutional Parameters', ikwiad=self._ikwiad)
-        conv_checker.set_types(
+        conv_params = Params(
             default={
                 'kernel_size': 3,
                 'stride': 1,
@@ -362,7 +363,7 @@ class CNNCore(nn.Module):
                         or (isinstance(x, tuple) and len(x) == 2 and all(isinstance(i, int) and 0 < i for i in x))
                 ),
                 'padding': lambda x: (
-                        (isinstance(x, int) and 0 < x)
+                        (isinstance(x, int) and 0 <= x)
                         or (isinstance(x, tuple) and len(x) == 2 and all(isinstance(i, int) and 0 < i for i in x))
                 ),
                 'dilation': lambda x: (
@@ -383,13 +384,14 @@ class CNNCore(nn.Module):
                 'padding_mode': lambda x: x
             }
         )
+        conv_checker = ParamChecker(prefix='Convolutional Parameters', parameters=conv_params, ikwiad=self._ikwiad)
 
         # check for channel set
         if not self._instantiations['channels']:
-            raise RuntimeError("Channels weren't set")
+            raise MissingMethodError("Channels weren't set")
         # check for duplicate initialization attempts
         if self._instantiations['convolutional']:
-            raise RuntimeError("Convolutional layers can't be set twice")
+            raise AlreadySetError("Convolutional layers can't be set twice")
 
         if parameters is None:
             # form parameter list
@@ -398,14 +400,14 @@ class CNNCore(nn.Module):
             # check parameter list
             if not isinstance(parameters, list):
                 raise TypeError("'parameters' must be a list")
-            if len(parameters) != len(self._conv_sizes):
+            if len(parameters) != len(self._conv_sizes) - 1:
                 raise ValueError(
                     "'parameters' length must match conv layers\n"
-                    f"({len(parameters)} != {len(self._conv_sizes)})"
+                    f"({len(parameters)} != {len(self._conv_sizes) - 1})"
                 )
 
         # validate conv params
-        self._conv_params = [conv_checker.check_params(prm) for prm in parameters]
+        self._conv_params = [conv_checker(prm) for prm in parameters]
         self._instantiations['convolutional'] = True
         return None
 
@@ -422,13 +424,13 @@ class CNNCore(nn.Module):
                 None
 
             Raises:
-                RuntimeError: If channels weren't set or pooling layers were already set.
+                MissingMethodError: If channels weren't set.
+                AlreadySetError: If pooling layers were already set.
                 TypeError: If any parameters were of the wrong type.
                 ValueError: If invalid values were passed for any of the parameters.
             """
         # instantiate parameter checker
-        pool_checker = ParamChecker(name='Pooling Parameters', ikwiad=self._ikwiad)
-        pool_checker.set_types(
+        pool_params = Params(
             default={
                 'kernel_size': 3,
                 'stride': None,
@@ -450,12 +452,12 @@ class CNNCore(nn.Module):
                         (isinstance(x, int) and 0 < x)
                         or (isinstance(x, tuple) and len(x) == 2 and all(isinstance(i, int) and 0 < i for i in x))
                 ),
-                'stride': lambda x: (
+                'stride': lambda x: x is None or (
                         (isinstance(x, int) and 0 < x)
                         or (isinstance(x, tuple) and len(x) == 2 and all(isinstance(i, int) and 0 < i for i in x))
                 ),
                 'padding': lambda x: (
-                        (isinstance(x, int) and 0 < x)
+                        (isinstance(x, int) and 0 <= x)
                         or (isinstance(x, tuple) and len(x) == 2 and all(isinstance(i, int) and 0 < i for i in x))
                 ),
                 'dilation': lambda x: (
@@ -474,13 +476,14 @@ class CNNCore(nn.Module):
                 'ceil_mode': lambda x: bool(x)
             }
         )
+        pool_checker = ParamChecker(prefix='Pooling Parameters', parameters=pool_params, ikwiad=self._ikwiad)
 
         # check for channel set
         if not self._instantiations['channels']:
-            raise RuntimeError("Channels weren't set")
+            raise MissingMethodError("Channels weren't set")
         # check for duplicate initialization attempts
         if self._instantiations['pooling']:
-            raise RuntimeError("Pooling layers can't be set twice")
+            raise AlreadySetError("Pooling layers can't be set twice")
 
         if parameters is None:
             # form parameter list
@@ -489,14 +492,14 @@ class CNNCore(nn.Module):
             # check parameter list
             if not isinstance(parameters, list):
                 raise TypeError("'parameters' must be a list")
-            if len(parameters) != len(self._conv_sizes):
+            if len(parameters) != len(self._conv_sizes) - 1:
                 raise ValueError(
                     "'parameters' length must match conv layers\n"
-                    f"({len(parameters)} != {len(self._conv_sizes)})"
+                    f"({len(parameters)} != {len(self._conv_sizes) - 1})"
                 )
 
         # validate pool params
-        self._pool_params = [pool_checker.check_params(prm) if prm is not None else None for prm in parameters]
+        self._pool_params = [pool_checker(prm) if prm is not None else None for prm in parameters]
         self._instantiations['pooling'] = True
         return None
 
@@ -513,25 +516,26 @@ class CNNCore(nn.Module):
             None
 
         Raises:
-            RuntimeError: If channels weren't set or pooling layers were already set.
+            MissingMethodError: If channels weren't set.
+            AlreadySetError: If dense layers were already set.
             TypeError: If any parameters were of the wrong type.
             ValueError: If invalid values were passed for any of the parameters.
         """
         # initialize parameter checker
-        dense_checker = ParamChecker(name='Dense Parameters', ikwiad=self._ikwiad)
-        dense_checker.set_types(
+        dense_params = Params(
             default={'bias': True},
             dtypes={'bias': (bool, int)},
             vtypes={'bias': lambda x: True},
             ctypes={'bias': lambda x: bool(x)}
         )
+        dense_checker = ParamChecker(prefix='Dense Parameters', parameters=dense_params, ikwiad=self._ikwiad)
 
         # check for channel set
         if not self._instantiations['channels']:
-            raise RuntimeError("Channels weren't set")
+            raise MissingMethodError("Channels weren't set")
         # check for duplicate initialization attempts
         if self._instantiations['dense']:
-            raise RuntimeError("Dense layers can't be set twice")
+            raise AlreadySetError("Dense layers can't be set twice")
 
         if parameters is None:
             # form parameter list
@@ -540,14 +544,14 @@ class CNNCore(nn.Module):
             # check parameter list
             if not isinstance(parameters, list):
                 raise TypeError("'parameters' must be a list")
-            if len(parameters) != len(self._dense_sizes):
+            if len(parameters) != len(self._dense_sizes) - 1:
                 raise ValueError(
                     "'parameters' length must match dense layers\n"
-                    f"({len(parameters)} != {len(self._conv_sizes)})"
+                    f"({len(parameters)} != {len(self._dense_sizes) - 1})"
                 )
 
         # validate dense params
-        self._dense_params = [dense_checker.check_params(prm) for prm in parameters]
+        self._dense_params = [dense_checker(prm) for prm in parameters]
         self._instantiations['dense'] = True
         return None
 
@@ -583,13 +587,13 @@ class CNNCore(nn.Module):
             None
 
         Raises:
-            RuntimeError: If all the necessary components weren't set.
+            MissingMethodError: If all the necessary components weren't set.
         """
         # check for proper instantiation
         nec_instantiations = self._instantiations.copy()
         nec_instantiations.pop('fully_instantiated')
         if not all(nec_instantiations.values()):
-            raise RuntimeError(
+            raise MissingMethodError(
                 "Necessary settings weren't fully instantiated:\n"
                 f"{nec_instantiations}"
             )
@@ -618,7 +622,7 @@ class CNNCore(nn.Module):
         final_size = int(h * w * self._conv_sizes[-1])
         if final_size <= 0 and not self._ikwiad:
             print()
-            warnings.warn(
+            warn(
                 "This model is about to be instantiated with a flattened size of 0",
                 UserWarning
             )
@@ -636,7 +640,7 @@ class CNNCore(nn.Module):
             self._dense.append(nn.Linear(*self._dense_sizes[i:i + 2], **prms))
 
         # set forward method
-        self.forward = self._compile_forward(bool(crossentropy))
+        self.forward, self.forward_no_grad = self._compile_forward(bool(crossentropy))
         self._instantiations['fully_instantiated'] = True
         return None
 
@@ -671,12 +675,22 @@ class CNNCore(nn.Module):
                 # set forward
                 for act, conv, pool in zip(self._conv_acts, self._conv, self._pool):
                     x = pool(act(conv(x)))
-                x = torch.flatten(x, 1)
-                for act, dense in zip(self._dense_acts, self._dense):
+                x = torch.flatten(x, 0)
+                for act, dense in zip(self._dense_acts[:-1], self._dense[:-1]):
                     x = act(dense(x))
-                return x
+                return self._dense[-1](x)
 
-        return _forward
+        def _forward_no_grad(x: torch.Tensor) -> torch.Tensor:
+            # set forward w/o grad
+            with torch.no_grad():
+                for act, conv, pool in zip(self._conv_acts, self._conv, self._pool):
+                    x = pool(act(conv(x)))
+                x = torch.flatten(x, 0)
+                for act, dense in zip(self._dense_acts[:-1], self._dense[:-1]):
+                    x = act(dense(x))
+                return self._dense[-1](x)
+
+        return _forward, _forward_no_grad
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         r"""
@@ -692,10 +706,33 @@ class CNNCore(nn.Module):
                 Outputs to the model.
 
         Raises:
-            RuntimeError: If the model hasn't been fully instantiated.
+            MissingMethodError: If the model hasn't been fully instantiated.
         """
         # model not fully instantiated
-        raise RuntimeError(
+        raise MissingMethodError(
+            "Model wasn't fully instantiated\n"
+            f"({self._instantiations})"
+        )
+
+    def forward_no_grad(self, x: torch.Tensor) -> torch.Tensor:
+        r"""
+        Runs a forward pass of the model if the model is fully built without grad
+        and with the final activation method.
+        instantiate_model must be run before this function can be run.
+
+        Args:
+            x (torch.Tensor):
+                Inputs to the model.
+
+        Returns:
+            torch.Tensor:
+                Outputs to the model.
+
+        Raises:
+            MissingMethodError: If the model hasn't been fully instantiated.
+        """
+        # model not fully instantiated
+        raise MissingMethodError(
             "Model wasn't fully instantiated\n"
             f"({self._instantiations})"
         )

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.IO;
 
 public class DatabaseUIController : MonoBehaviour
 {
@@ -36,20 +37,7 @@ public class DatabaseUIController : MonoBehaviour
         float cellWidth = cellRect.rect.width;
         float cellHeight = cellRect.rect.height;
 
-        // Set a fixed width for the content panel
-        float fixedContentWidth = 0; // Fixed width
-
-        // Calculate total number of rows needed
-        int totalRows = Mathf.CeilToInt((float)cellList.Count / itemsPerRow);
-        
-        // Calculate total height needed
-        float totalHeight = Mathf.Max((totalRows * 79), 175);
-
-        // Set the content panel size with fixed width and dynamic height
-        contentPanel.sizeDelta = new Vector2(fixedContentWidth, totalHeight);
-
-        // Enable or disable scrolling based on height
-        scrollRect.vertical = totalHeight > 175;
+        int numPlants = cellList.Count;
 
         // Loop through the plant list and create each prefab in the correct position
         for (int i = 0; i < cellList.Count; i++)
@@ -71,11 +59,72 @@ public class DatabaseUIController : MonoBehaviour
 
             // Set the plant name in the cell
             TMPro.TextMeshProUGUI cellText = newCell.GetComponentInChildren<TMPro.TextMeshProUGUI>();
+            UnityEngine.UI.RawImage cellImage = newCell.GetComponentInChildren<UnityEngine.UI.RawImage>();
+
+            string projectRoot = Directory.GetParent(Directory.GetParent(Application.dataPath).FullName).FullName;
+            string folderPath = Path.Combine(projectRoot, "ml_backend/images/local/" + cellList[i]);
+
             if (cellText != null)
             {
                 cellText.text = cellList[i];
             }
+
+            if (Directory.Exists(folderPath))
+            {
+                // Get all image files from the folder
+                string[] imageFiles = Directory.GetFiles(folderPath, "*.jpg");
+
+                if (imageFiles.Length > 0)
+                {
+                    string firstImagePath = imageFiles[0];
+                    StartCoroutine(LoadImage(firstImagePath));
+                }
+                else
+                {
+                    Destroy(newCell);
+                    numPlants -= 1;
+                }
+            }
+            else
+            {
+                Destroy(newCell);
+                numPlants -= 1;
+            }
+
+            System.Collections.IEnumerator LoadImage(string path)
+            {
+                byte[] imageData = File.ReadAllBytes(path);
+                Texture2D texture = new Texture2D(2, 2);
+
+                texture = RotateTexture(texture);
+
+                if (texture.LoadImage(imageData))
+                {
+                    cellImage.texture = texture;
+                }
+                else
+                {
+                    Destroy(newCell);
+                    numPlants -= 1;
+                }
+                yield return null;
+            }
         }
+
+        // Set a fixed width for the content panel
+        float fixedContentWidth = 0; // Fixed width
+
+        // Calculate total number of rows needed
+        int totalRows = Mathf.CeilToInt((float)numPlants / itemsPerRow);
+
+        // Calculate total height needed
+        float totalHeight = Mathf.Max((totalRows * 79), 175);
+
+        // Set the content panel size with fixed width and dynamic height
+        contentPanel.sizeDelta = new Vector2(fixedContentWidth, totalHeight);
+
+        // Enable or disable scrolling based on height
+        scrollRect.vertical = totalHeight > 175;
 
         // After creating all cells, reset scroll position to top
         scrollRect.normalizedPosition = new Vector2(0, 1);
@@ -91,5 +140,22 @@ public class DatabaseUIController : MonoBehaviour
     {
         List<string> plantNames = plantLoader.GetPlantNames();
         PopulateScrollView(plantNames);
+    }
+
+    Texture2D RotateTexture(Texture2D originalTexture)
+    {
+        int width = originalTexture.width;
+        int height = originalTexture.height;
+        Texture2D rotatedTexture = new Texture2D(height, width);
+
+        for (int i = 0; i < width; i++)
+        {
+            for (int j = 0; j < height; j++)
+            {
+                rotatedTexture.SetPixel(j, width - 1 - i, originalTexture.GetPixel(i, j));
+            }
+        }
+        rotatedTexture.Apply();
+        return rotatedTexture;
     }
 }

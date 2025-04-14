@@ -1,10 +1,12 @@
 import time
 
-from RHCCCore.network import CNNCore
+from core.network.corecnn import CNNCore
 
-from RHCCCore.utils import (
+from core.utils.algorithms import (
     OptimSetter,
-    LossSetter,
+    LossSetter
+)
+from core.utils.utils import (
     convert_time,
     progress
 )
@@ -12,7 +14,6 @@ from RHCCCore.utils import (
 from ..configs.hyperparameters_config import hyperparameters_config
 from ..configs.model_config import model_config
 from ..configs.loader_config import loader_config
-from ..configs.training_config import training_config
 
 
 def train(ikwiad: bool = False):
@@ -31,7 +32,7 @@ def train(ikwiad: bool = False):
     # initialize model
     model = CNNCore(ikwiad=bool(ikwiad))
     model.set_channels(conv_channels=model_config.conv.sizes, dense_channels=model_config.dense.sizes)
-    model.transfer_training_params(**model_config.training_params)
+    model.transfer_training_params(**model_config.training_params)  # this line is outdated
     model.set_acts(methods=model_config.acts.methods, parameters=model_config.acts.params)
     model.set_conv(parameters=model_config.conv.conv_params)
     model.set_pool(parameters=model_config.conv.pool_params)

@@ -1,4 +1,4 @@
-# todo: we use torch for dataloaders, so having this in utils doesn't make sense. It should actually be in application.
+# we use torch for dataloaders, so having this in utils doesn't make sense. It should actually be in application.
 
 import torch
 from torch.utils.data import Dataset, DataLoader

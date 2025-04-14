@@ -9,6 +9,7 @@ plantLinks = []
 # gets links for all plants
 for i in range(24):
     plantPage = f"index/page/{i + 1}/"
+    print("hello")
     r = requests.get(f'http://nativeplants.hawaii.edu/plant/{plantPage}')
     soup = BeautifulSoup(r.content, 'html.parser')
     linksHtml = soup.find_all(href=re.compile("plant/view"))
@@ -17,7 +18,9 @@ for i in range(24):
 
 all_results = {}
 
+
 for plant in plantLinks:
+    print("hello")
     r = requests.get(f'http://nativeplants.hawaii.edu{plant}')
 
     if r.status_code == 200:
