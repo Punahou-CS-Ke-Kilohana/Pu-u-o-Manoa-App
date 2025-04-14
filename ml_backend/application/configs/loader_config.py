@@ -17,7 +17,10 @@ classes = 145
 loader_config = Edict()
 
 # image location path
-loader_config.root = os.path.join(os.path.join((os.path.dirname(os.path.dirname(os.path.dirname(__file__)))), 'images', 'local'))
+loader_config.root = os.path.join(os.path.join(
+    (os.path.dirname(os.path.dirname(os.path.dirname(__file__)))),
+    'images', 'local')
+)
 
 # image transformation
 loader_config.transform = transforms.Compose([

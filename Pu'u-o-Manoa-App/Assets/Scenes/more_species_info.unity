@@ -497,6 +497,7 @@ MonoBehaviour:
   hawaiianNameText: {fileID: 1135648025}
   speciesStatusText: {fileID: 1027426640}
   BioText: {fileID: 1829752845}
+  speciesImage: {fileID: 666639059}
 --- !u!4 &562326205
 Transform:
   m_ObjectHideFlags: 0

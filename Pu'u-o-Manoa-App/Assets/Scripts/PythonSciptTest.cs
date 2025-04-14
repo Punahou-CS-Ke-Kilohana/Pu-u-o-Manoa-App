@@ -1,28 +1,28 @@
 using System.Diagnostics;
 using UnityEngine;
+using System.IO;
+using System;
+using UnityEngine.SceneManagement;
 
 public class RunPython : MonoBehaviour
 {
-    public string pythonScriptPath = "/Users/dyee25/Documents/GitHub/Pu-u-o-Manoa-App/Pu'u-o-Manoa-App/Assets/PythonScripts/preload_forward.py";
+    public string pythonScriptRelativePath = "ml_backend/main.py";
 
-    //private string input = "{\"data\": [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]}";
-
-    public void Start()
-    {
-        RunPythonScript();
-    }
-   
     public void RunPythonScript()
     {
+        string projectRoot = Directory.GetParent(Directory.GetParent(Application.dataPath).FullName).FullName;
+        string pythonScriptPath = Path.Combine(projectRoot, pythonScriptRelativePath);
+        string pythonPath = Path.Combine(projectRoot, "ml_backend");
         ProcessStartInfo start = new ProcessStartInfo
         {
-            FileName = "python3", // Adjust if necessary
-            //Arguments = $"\"{pythonScriptPath}\" \"{input}\"",
-            Arguments = $"\"{pythonScriptPath}\"",
+            FileName = "python3",
+            Arguments = $"\"{pythonScriptPath}\" --s interpret --d cpu --n test_model --e 10",
             UseShellExecute = false,
             RedirectStandardOutput = true,
             RedirectStandardError = true
         };
+
+        start.EnvironmentVariables["PYTHONPATH"] = pythonPath;
 
         try
         {
@@ -31,7 +31,19 @@ public class RunPython : MonoBehaviour
                 using (System.IO.StreamReader reader = process.StandardOutput)
                 {
                     string result = reader.ReadToEnd();
-                    UnityEngine.Debug.Log("Python Output: " + result);
+                    string[] lines = result.Split(new[] { '\r', '\n' }, StringSplitOptions.None);
+                    string lastLine = lines[lines.Length - 2].Trim();
+                    lastLine = lastLine.ToLower();
+                    lastLine = lastLine.Replace("_", " ");
+                    lastLine = char.ToUpper(lastLine[0]) + lastLine.Substring(1);
+                    UnityEngine.Debug.Log("Python Output: " + lastLine);
+
+                    // Save the plant name in PlayerPrefs
+                    PlayerPrefs.SetString("PlantName", lastLine);
+                    PlayerPrefs.Save(); // Optional, ensures data is written immediately
+
+                    // Load the next scene
+                    SceneManager.LoadScene(4);
                 }
 
                 using (System.IO.StreamReader errorReader = process.StandardError)
