@@ -70,6 +70,39 @@ public class PlantLoader : MonoBehaviour
         }
     }
 
+    public List<string> GetCommonNames(string inputPlantName)
+    {
+        // Load the JSON file
+        TextAsset jsonFile = Resources.Load<TextAsset>("plant_data");
+        if (jsonFile == null)
+        {
+            Debug.LogError("Plant data JSON file not found!");
+            return new List<string> { "Plant data file not found." };
+        }
+
+        // Deserialize the JSON file into the PlantData object
+        PlantData plantData = JsonConvert.DeserializeObject<PlantData>(jsonFile.text);
+        string newInputPlantName = inputPlantName.Replace(" ", "_");
+
+        // Check if the plant exists in the dictionary
+        if (plantData.Plants.TryGetValue(newInputPlantName, out PlantInfo plantInfo))
+        {
+            var commonNames = plantInfo.CommonNames;
+            if (commonNames != null && commonNames.Count > 0)
+            {
+                return commonNames;
+            }
+            else
+            {
+                return new List<string> { "No common names found for the given input." };
+            }
+        }
+        else
+        {
+            return new List<string> { "Plant name not found in the data." };
+        }
+    }
+
     public string GetConservationStatus(string inputPlantName)
     {
         // Load the JSON file

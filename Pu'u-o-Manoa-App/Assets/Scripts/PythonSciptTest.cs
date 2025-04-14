@@ -3,6 +3,9 @@ using UnityEngine;
 using System.IO;
 using System;
 using UnityEngine.SceneManagement;
+using Newtonsoft.Json;
+using System.Collections.Generic;
+using Debug = UnityEngine.Debug;
 
 public class RunPython : MonoBehaviour
 {
@@ -38,8 +41,25 @@ public class RunPython : MonoBehaviour
                     lastLine = char.ToUpper(lastLine[0]) + lastLine.Substring(1);
                     UnityEngine.Debug.Log("Python Output: " + lastLine);
 
-                    // Save the plant name in PlayerPrefs
-                    PlayerPrefs.SetString("PlantName", lastLine);
+                    PlantLoader plantLoader = new PlantLoader();
+
+                    List<string> plantNames = plantLoader.GetPlantNames();
+
+                    foreach (var plant in plantNames)
+                    {
+                        PlayerPrefs.SetString("PlantName", plant);
+                        List<string> commonNames = plantLoader.GetCommonNames("Abutilon eremitopetalum");
+
+                        foreach (var commonName in commonNames)
+                        {
+                            Debug.Log(commonName);
+                            if (commonName == lastLine)
+                            {
+                                // Save the plant name in PlayerPrefs
+                                PlayerPrefs.SetString("PlantName", plant);
+                            }
+                        }
+                    }
                     PlayerPrefs.Save(); // Optional, ensures data is written immediately
 
                     // Load the next scene
