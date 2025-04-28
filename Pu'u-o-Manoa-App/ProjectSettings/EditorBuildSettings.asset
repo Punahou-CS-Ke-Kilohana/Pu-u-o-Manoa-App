@@ -8,4 +8,18 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Game.unity
     guid: c850ee8c3b14cc8459e7e186857cf567
-  m_configObjects: {}
+  - enabled: 1
+    path: Assets/Scenes/startUI.unity
+    guid: 0b870b9ce675847048aed1f5ca7566b8
+  - enabled: 1
+    path: Assets/Scenes/DatabaseUI.unity
+    guid: 1eeb9e155bcc34332861a7d60d15f276
+  - enabled: 1
+    path: Assets/Scenes/Camera.unity
+    guid: 0493ee6d828c24669aeb57501d13bd26
+  - enabled: 1
+    path: Assets/Scenes/more_species_info.unity
+    guid: 6c031a2e803df489186bf05bbfae1950
+  m_configObjects:
+    com.unity.adaptiveperformance.simulator.provider_settings: {fileID: 11400000,
+      guid: 7699356afb7f149259e5a620c996dc23, type: 2}

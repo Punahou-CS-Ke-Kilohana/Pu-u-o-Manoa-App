@@ -2,6 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+
+Purpose: This is the PlayerController script. It handles keypresses, movement, physics, and camera. It also limits the player's speed.
+Date: 11/25/24
+Project: Pu'u-o-Manoa App
+By: Isaac Verbrugge
+
+*/
+
 public class PlayerController : MonoBehaviour
 {
 
@@ -11,6 +20,12 @@ public class PlayerController : MonoBehaviour
     public float maxSpeed = 2.5f;
     bool canJump;
     public Transform cameraTransform;
+    private GameObject player;
+    public Camera mainCamera;
+
+    // joystick
+    public Joystick joystick;
+
 
     // Called before start
     private void Awake()
@@ -21,7 +36,8 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        player = GameObject.FindGameObjectWithTag("Player");
+        joystick = FindObjectOfType<Joystick>();
     }
 
     // Update is called once per frame
@@ -33,15 +49,18 @@ public class PlayerController : MonoBehaviour
         cameraRight.y = 0f;
         cameraForward.Normalize();
         cameraRight.Normalize();
-
+        Vector2 joystickDirection = joystick.Direction;
+        //Debug.Log($"Horizontal: {joystickDirection.x}, Vertical: {joystickDirection.y}");
         CheckPressedKeys(cameraForward, cameraRight);
+        CheckJoystick(joystickDirection, cameraForward, cameraRight);
+
         LimitSpeed();
 
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        if(collision.gameObject.tag == "Ground")
+        if (collision.gameObject.tag == "Ground")
         {
             canJump = true;
         }
@@ -66,6 +85,7 @@ public class PlayerController : MonoBehaviour
         {
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         }
+
         Vector3 moveDirection = Vector3.zero;
 
         if (Input.GetKey(KeyCode.W))
@@ -84,6 +104,35 @@ public class PlayerController : MonoBehaviour
         {
             this.Move(moveDirection += cameraRight * speedMultiplier);
         }
+
+        if (Input.GetKey(KeyCode.V))
+        {
+            Destroy(player);
+            mainCamera.enabled = true;
+        }
+    }
+
+    private void CheckJoystick(Vector2 joyDir, Vector3 cameraForward, Vector3 cameraRight)
+    {
+
+        Vector3 moveDirection = Vector3.zero;
+
+        if (joyDir.y > 0)
+        {
+            moveDirection += cameraForward * speedMultiplier;
+        }
+        if (joyDir.y < 0)
+        {
+            moveDirection -= cameraForward * speedMultiplier;
+        }
+
+        if (joyDir.x != 0)
+        {
+            moveDirection += cameraRight * joyDir.x * speedMultiplier;
+        }
+
+        this.Move(moveDirection);
+
     }
 
     private void LimitSpeed()

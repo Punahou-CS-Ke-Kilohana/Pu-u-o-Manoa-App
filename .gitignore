@@ -2,6 +2,10 @@
 #
 # Get latest from https://github.com/github/gitignore/blob/main/Unity.gitignore
 #
+Pu'u-o-Manoa-App/Library/
+Pu'u-o-Manoa-App/UserSettings/
+Pu'u-o-Manoa-App/Temp/
+Pu'u-o-Manoa-App/Logs/
 /[Ll]ibrary/
 /[Tt]emp/
 /[Oo]bj/
@@ -73,5 +77,19 @@ crashlytics-build.properties
 
 ./Library/artifacts/*
 
-# PyCharm Settings
-.idea
+# IDE
+*.idea
+*.swp
+
+# ml backend
+ml_backend/RHCCCore/RHCCCore.egg-info/*
+ml_backend/models/*
+!ml_backend/models/model_clear.py
+ml_backend/test_images/*
+!ml_backend/test_images/image_clear.py
+Pu'u-o-Manoa-App/Assets/ImageCaptures
+!models/model_3
+
+# auto-generated files
+*.egg-info
+*.pyc
