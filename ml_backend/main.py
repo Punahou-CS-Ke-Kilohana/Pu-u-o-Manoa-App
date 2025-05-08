@@ -37,7 +37,7 @@ def main() -> int:
     # get args
     args = parse()
     # get device
-    if not args.device():
+    if not args.device:
         # temporary (hopefully) bandaid fix
         device = torch.device('cpu')
         print("Utilizing CPU.")

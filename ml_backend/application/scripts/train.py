@@ -82,7 +82,10 @@ def train(
         # save config
         shutil.copy(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'configs', 'model_config.py'), model_path)
         shutil.copy(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'configs', 'loader_config.py'), model_path)
+
+        # save label names
         with open(os.path.join(model_path, 'label_names.csv'), 'w', newline='') as f:
+            print('is it working?')
             writer = csv.writer(f)
             writer.writerow(loader_config.label_names)
         try:
@@ -168,6 +171,16 @@ def train(
                 # todo: fix this (hopefully inconsequential bug)
                 pass
                 # os.fsync(fd=os.open(os.path.join(os.path.dirname(__file__))))
+
+            # save label names
+            with open(os.path.join(model_path, 'label_names.csv'), 'w', newline='') as f:
+                print('is it working?')
+                writer = csv.writer(f)
+                writer.writerow(loader_config.label_names)
+            try:
+                os.sync()
+            except AttributeError:
+                os.fsync(fd=os.open(os.path.join(model_path, 'label_names.csv'), os.O_RDWR))
 
             # write model docstring
             with open(os.path.join(model_path, 'model_config.py'), 'r') as f:
