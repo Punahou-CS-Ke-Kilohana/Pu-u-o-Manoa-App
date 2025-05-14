@@ -16,7 +16,7 @@ public class UISceneManager : MonoBehaviour
 
     public void StartMapScene()
     {
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene(1);
     }
 
     public void StartCameraScene()
@@ -26,7 +26,7 @@ public class UISceneManager : MonoBehaviour
 
     public void StartMainScene()
     {
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene(0);
     }
 
     public void StartMoreSpeciesScene()
