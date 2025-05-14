@@ -35,7 +35,7 @@ Users will be able to interact with specific plants and animals to understand mo
 <img width="851" alt="Rotation Joystick Location" src="https://github.com/user-attachments/assets/a6598cd1-627e-4005-889d-8da416b1d3cb" />
 
 ## Return Button Location
-<img width="851" alt="Screenshot 2025-05-14 at 9 33 19 AM" src="https://github.com/user-attachments/assets/9275f6e1-d0df-4127-9beb-4cadfefdbc9d" 
+<img width="851" alt="Screenshot 2025-05-14 at 9 33 19 AM" src="https://github.com/user-attachments/assets/9275f6e1-d0df-4127-9beb-4cadfefdbc9d" />
 
 ## Movement Joystick Location
 <img width="851" alt="Movement Joystick Location" src="https://github.com/user-attachments/assets/de47b0c7-b5fa-47c1-8150-9e3436b8a464" />
