@@ -51,7 +51,7 @@ public class DatabaseUIController : MonoBehaviour
 
             // Calculate the x and y position for this cell
             float xPos = (column + 1) * 85 + column * cellWidth; // Adjust spacing as needed
-            float yPos = -(row + 1) * 45 - row * cellHeight / 3; // Negative to move down
+            float yPos = -(row + 1) * 45; // Negative to move down
 
             // Set the position of the new cell
             RectTransform cellRectTransform = newCell.GetComponent<RectTransform>();
@@ -63,6 +63,7 @@ public class DatabaseUIController : MonoBehaviour
 
             string projectRoot = Directory.GetParent(Directory.GetParent(Application.dataPath).FullName).FullName;
             string folderPath = Path.Combine(projectRoot, "ml_backend/images/local/" + cellList[i]);
+
 
             if (cellText != null)
             {
