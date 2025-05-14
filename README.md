@@ -53,10 +53,10 @@ The camera button on the bottom right of the home screen is used to take a pictu
 <img width="615" alt="Screenshot 2025-05-14 at 9 44 04 AM" src="https://github.com/user-attachments/assets/5825dd11-af6b-420c-b788-d0ce6433cb99" />
 
 ## Info Example
-/><img width="615" alt="Screenshot 2025-05-14 at 9 43 46 AM" src="https://github.com/user-attachments/assets/2e5fd9ec-18a2-4944-8b63-cdb0dfae916e" 
+<img width="615" alt="Screenshot 2025-05-14 at 9 43 46 AM" src="https://github.com/user-attachments/assets/2e5fd9ec-18a2-4944-8b63-cdb0dfae916e" />
 
 ## Camera Button Location
-/><img width="616" alt="Screenshot 2025-05-14 at 9 44 11 AM" src="https://github.com/user-attachments/assets/bc53206d-12c8-4d63-9912-6306083eb1a8" />
+<img width="616" alt="Screenshot 2025-05-14 at 9 44 11 AM" src="https://github.com/user-attachments/assets/bc53206d-12c8-4d63-9912-6306083eb1a8" />
 
 ## Take Photo Button Location
 <img width="620" alt="Screenshot 2025-05-14 at 9 44 33 AM" src="https://github.com/user-attachments/assets/ecce245d-d3ac-4315-b146-802af11fb311" />
