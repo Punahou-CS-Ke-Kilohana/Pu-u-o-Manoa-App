@@ -31,9 +31,16 @@ On mobile, drag the "Place Me!" block anywhere on the map you'd like the marker 
 
 Users will be able to interact with specific plants and animals to understand more about them, being given a description with a text bubble appearing on the screen. 
 
+## Rotation Joystick Location
 <img width="851" alt="Rotation Joystick Location" src="https://github.com/user-attachments/assets/a6598cd1-627e-4005-889d-8da416b1d3cb" />
+
+## Return Button Location
 <img width="851" alt="RETURN BUTTON LOCATION" src="https://github.com/user-attachments/assets/5109564c-213b-46f5-9a63-ff45bd4ec8b2" />
+
+## Movement Joystick Location
 <img width="851" alt="Movement Joystick Location" src="https://github.com/user-attachments/assets/de47b0c7-b5fa-47c1-8150-9e3436b8a464" />
+
+## Marker Location
 <img width="853" alt="Marker Location" src="https://github.com/user-attachments/assets/e2b69174-1c0a-4ddf-a80f-30f76a7ff781" />
 
 
