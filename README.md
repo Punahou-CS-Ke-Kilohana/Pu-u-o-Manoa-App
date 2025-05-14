@@ -35,7 +35,7 @@ Users will be able to interact with specific plants and animals to understand mo
 <img width="851" alt="Rotation Joystick Location" src="https://github.com/user-attachments/assets/a6598cd1-627e-4005-889d-8da416b1d3cb" />
 
 ## Return Button Location
-<img width="851" alt="RETURN BUTTON LOCATION" src="https://github.com/user-attachments/assets/5109564c-213b-46f5-9a63-ff45bd4ec8b2" />
+<img width="851" alt="Screenshot 2025-05-14 at 9 33 19 AM" src="https://github.com/user-attachments/assets/9275f6e1-d0df-4127-9beb-4cadfefdbc9d" />
 
 ## Movement Joystick Location
 <img width="851" alt="Movement Joystick Location" src="https://github.com/user-attachments/assets/de47b0c7-b5fa-47c1-8150-9e3436b8a464" />
@@ -48,8 +48,7 @@ Users will be able to interact with specific plants and animals to understand mo
 	
 Will primarily be on mobile devices, iOS, etc. 
 
-## Dependencies:<img width="853" alt="Marker Location" src="https://github.com/user-attachments/assets/c3c206de-cf26-4182-a9b3-b228e0903026" />
-
+## Dependencies
 
 Map is primarily coded on Unity 2022.3.46f1 and C#. 
 
